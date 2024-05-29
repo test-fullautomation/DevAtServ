@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+rm -rf /opt/devatserv/
+
+rm -rf ${HOME}/.local/share/applications/devatserv.desktop
+
+echo -e "${MSG_DONE} Device Automation Services App has been successfully removed."
