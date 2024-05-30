@@ -56,3 +56,4 @@ echo -e "${MSG_DONE} Device Automation Services App has been successfully create
 cp /opt/devatserv/share/applications/devatserv.desktop ${APPS_PATH}/devatserv.desktop
 chown -R "${CURRENT_USER}:${sGROUP}" ${APPS_PATH}/devatserv.desktop
 chmod +x ${APPS_PATH}/devatserv.desktop
+chmod +x /opt/devatserv/bin/start-devatserv.sh
