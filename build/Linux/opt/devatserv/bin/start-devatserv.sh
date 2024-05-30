@@ -28,3 +28,5 @@ EOF
 # Starting ...
 ############################
 start_devatserv
+
+read -p "Press Enter to continue..."
