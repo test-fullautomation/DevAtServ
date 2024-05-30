@@ -57,3 +57,4 @@ cp /opt/devatserv/share/applications/devatserv.desktop ${APPS_PATH}/devatserv.de
 chown -R "${CURRENT_USER}:${sGROUP}" ${APPS_PATH}/devatserv.desktop
 chmod +x ${APPS_PATH}/devatserv.desktop
 chmod +x /opt/devatserv/bin/start-devatserv.sh
+chmod +x /opt/devatserv/bin/stop-devatserv.sh
