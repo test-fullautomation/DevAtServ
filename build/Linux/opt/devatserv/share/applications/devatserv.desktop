@@ -2,6 +2,6 @@
 Name=DevAtServ
 Exec=/opt/devatserv/bin/start-devatserv.sh
 Icon=/opt/devatserv/share/applications/devatserv.png
-Terminal=false
+Terminal=true
 Type=Application
 Categories=Utility;Application;
