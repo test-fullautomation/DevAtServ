@@ -1,5 +1,14 @@
 #!/bin/bash
 
+set -e
+
 if [ "$1" = "remove" ]; then
   /opt/devatserv/bin/stop-devatserv.sh
 fi
+
+rm -rf /opt/devatserv/
+
+rm -rf ${HOME}/.local/share/applications/devatserv.desktop
+
+echo -e "${MSG_DONE} DevAtServ has been successfully removed."
+
