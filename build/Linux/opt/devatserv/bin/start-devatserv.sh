@@ -30,9 +30,7 @@ You can access the website at http://$ip_address:15672 to access RabbitMQ Manage
 EOF
 }
 
-############################
-# main
-############################
+
 main() {
   echo "Starting DevAtServ installation..."
 
@@ -49,3 +47,7 @@ main() {
   read -p "Press Enter to continue..."
 }
 
+############################
+# main execution
+############################
+main
