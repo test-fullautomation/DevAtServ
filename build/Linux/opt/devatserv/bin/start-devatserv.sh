@@ -1,14 +1,20 @@
 #!/bin/bash
 
-cd /opt/devatserv/share/start-services
+set -e 
 
+load_devatserv() {
+  echo "Loading DevAtServ's docker images"
+  /opt/devatserv/bin/load-devtaserv.sh
+}
+
+cd /opt/devatserv/share/start-services
 
 start_devatserv() {
   echo "Starting DevAtServ's docker containers"
 
   if ! docker compose up --remove-orphans -d; then
     echo "Could not start. Check for errors above."
-    exit 1
+    return 1
   fi
 
   show_success_message
@@ -25,8 +31,21 @@ EOF
 }
 
 ############################
-# Starting ...
+# main
 ############################
-start_devatserv
+main() {
+  echo "Starting DevAtServ installation..."
 
-read -p "Press Enter to continue..."
+  load_devatserv || {
+    echo 'error loading Docker images '
+    exit 1
+  }
+
+  start_devatserv || {
+    echo 'error starting Docker containers'
+    exit 1
+  }
+
+  read -p "Press Enter to continue..."
+}
+

@@ -21,9 +21,7 @@ services:
       - devatserv-network
 
   cleware-service:
-    build:
-      context: ./repos/python-microservice-cleware-switch/MicroserviceClewareSwitch
-      dockerfile: Dockerfile
+    images: "devatserv-cleware-service"
     container_name: cleware-service
     depends_on:
       - rabbitmq
@@ -43,9 +41,7 @@ services:
 
   service-base:
     container_name: base-service
-    build:
-      context: ./repos/python-microservice-base/MicroserviceBase/ServiceRegistry
-      dockerfile: Dockerfile
+    images: "devatserv-service-base"
     restart: always
     environment:
       RABBITMQ_USERNAME: guest
