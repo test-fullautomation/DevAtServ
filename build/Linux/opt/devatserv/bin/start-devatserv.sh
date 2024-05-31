@@ -11,7 +11,7 @@ start_devatserv() {
     exit 1
   fi
 
-  show_friendly_message
+  show_success_message
 }
 
 show_success_message() {
