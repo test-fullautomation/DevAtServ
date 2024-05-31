@@ -21,7 +21,7 @@ services:
       - devatserv-network
 
   cleware-service:
-    images: "devatserv-cleware-service"
+    image: "devatserv-cleware-service"
     container_name: cleware-service
     depends_on:
       - rabbitmq
@@ -40,8 +40,8 @@ services:
       timeout: 5s
 
   service-base:
+    image: "devatserv-service-base"
     container_name: base-service
-    images: "devatserv-service-base"
     restart: always
     environment:
       RABBITMQ_USERNAME: guest

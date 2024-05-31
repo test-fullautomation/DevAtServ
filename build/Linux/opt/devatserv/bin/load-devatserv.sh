@@ -7,7 +7,7 @@ STORAGE_DIR=/opt/devatserv/share/storage
 cd "$STORAGE_DIR"
 
 # Load all Docker images from storage
-for IMAGE_FILE in "$STORAGE_DIR"/*.tar; do
+for IMAGE_FILE in "$STORAGE_DIR"/*.tar.gz; do
   echo "Loading Docker image from $IMAGE_FILE..."
   docker load -i "$IMAGE_FILE"
 done

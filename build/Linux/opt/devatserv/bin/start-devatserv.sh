@@ -4,7 +4,7 @@ set -e
 
 load_devatserv() {
   echo "Loading DevAtServ's docker images"
-  /opt/devatserv/bin/load-devtaserv.sh
+  /opt/devatserv/bin/load-devatserv.sh
 }
 
 cd /opt/devatserv/share/start-services
