@@ -10,6 +10,27 @@ MSG_INFO="${COL_GREEN}[INFO]${COL_RESET}"
 MSG_DONE="${COL_ORANGE}[DONE]${COL_RESET}"
 MSG_ERR="${COL_RED}[ERR]${COL_RESET} "
 
+function errormsg(){
+   echo -e "${COL_RED}>>>> ERROR: $1!${COL_RESET}"
+   echo
+   exit 1
+}
+
+
+function goodmsg(){
+   echo -e "${COL_GREEN}>>>> $1.${COL_RESET}"
+   echo
+}
+
+function logresult(){
+	if [ "$1" -eq 0 ]; then
+	    goodmsg "Successfully $2"
+	else
+		errormsg "FATAL: Could not $3"
+	fi
+}
+
+
 echo 
 echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
@@ -31,25 +52,6 @@ echo "Source Directory: $DAS_PACK_SRC_DIR"
 echo "Destination Directory: $DAS_PACK_DEST_DIR"
 echo "Debian Package Name: $DAS_DEBIAN_NAME"
 
-function errormsg(){
-   echo -e "${COL_RED}>>>> ERROR: $1!${COL_RESET}"
-   echo
-   exit 1
-}
-
-
-function goodmsg(){
-   echo -e "${COL_GREEN}>>>> $1.${COL_RESET}"
-   echo
-}
-
-function logresult(){
-	if [ "$1" -eq 0 ]; then
-	    goodmsg "Successfully $2"
-	else
-		errormsg "FATAL: Could not $3"
-	fi
-}
 
 function build_debian() {
 
@@ -63,8 +65,9 @@ function build_debian() {
 
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
     chmod 755 "$DAS_PACK_DEST_DIR"/DEBIAN/*
+    chmod 755 "$DAS_PACK_DEST_DIR"/opt/devatserv/share/storage/*
     
-    dpkg-deb --root-owner-group --build ./output_lx/${PACK_NAME} ./output_lx/${DAS_DEBIAN_NAME}
+    dpkg-deb --root-owner-group --build ${DAS_PACK_DEST_DIR} ./output_lx/${DAS_DEBIAN_NAME}
 	logresult "$?" "built deb package" "build deb package"
 
 	dpkg -I ./output_lx/${DAS_DEBIAN_NAME}

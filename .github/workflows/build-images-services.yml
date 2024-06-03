@@ -20,6 +20,15 @@ jobs:
 
       - name: Starting all services
         run: ./install.sh
+
+      - name: Extract all services into images
+        run: |
+          docker ps
+          docker image save --output devarserv-cleware-service.tar.gz devarserv-cleware-service
+          docker image save --output devarserv-service-base.tar.gz devarserv-service-base
+          mkdir -p ./build/storage
+          mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz ./build/storage
+          ls -la ./build/storage
   
       - name: Stop containers
         if: always()
