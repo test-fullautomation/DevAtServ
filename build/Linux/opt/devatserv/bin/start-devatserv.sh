@@ -21,11 +21,9 @@ start_devatserv() {
 }
 
 show_success_message() {
-  local ip_address
-  ip_address=$(hostname -I | awk '{print $1}')
   cat <<EOF
 Device Automation Services App successfully deployed!
-You can access the website at http://$ip_address:15672 to access RabbitMQ Management
+You can access the website at http://localhost:15672 to access RabbitMQ Management
 ---------------------------------------------------
 EOF
 }
