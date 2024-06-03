@@ -53,18 +53,13 @@ function logresult(){
 
 function build_debian() {
 
-    cd $CURDIR
 	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 	echo -e "${COL_GREEN}#          Executing dpkg to create installer...                                   #${COL_RESET}"
 	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 
-	if [ -d "$DAS_PACK_DEST_DIR" ]; then
-        echo "Directory $DAS_PACK_DEST_DIR exists. Removing..."
-        rm -rf "$DAS_PACK_DEST_DIR"
-    else
-        echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
-        mkdir -p "$DAS_PACK_DEST_DIR"
-    fi
+
+    echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
+    mkdir -p "$DAS_PACK_DEST_DIR"
 
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
     chmod 755 "$DAS_PACK_DEST_DIR"/DEBIAN/*
