@@ -24,6 +24,21 @@ pre_check_installation() {
   echo -e "${MSG_DONE} Pre-check-installation completed successfully"
 }
 
+install_gui_devatserv() {
+  echo -e "${MSG_INFO} Starting DevAtServ's GUI"
+
+  apt-get update
+
+  # Install DevAtServ'GUI 
+  if sudo dpkg -i /opt/share/applications/electron_1.0.0_amd64.deb; then
+    echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
+  else
+    echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
+    return 1
+  fi
+
+}
+
 load_devatserv() {
   echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   /opt/devatserv/bin/load-devatserv.sh
@@ -46,7 +61,7 @@ start_devatserv() {
 
 show_success_message() {
   cat <<EOF
-Device Automation Services App successfully deployed!
+${MSG_DONE} Device Automation Services App successfully deployed!
 You can access the website at http://localhost:15672 to access RabbitMQ Management
 ---------------------------------------------------
 EOF
@@ -59,6 +74,10 @@ main() {
   pre_check_installation || {
     echo 'error pre-check installation'
     return -1
+  }
+
+  install_gui_devatserv || {
+
   }
 
   load_devatserv || {
