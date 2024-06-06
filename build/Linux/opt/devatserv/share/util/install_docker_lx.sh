@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Check Doc
+# Check docker was ins
 check_docker_installed() {
     if command -v docker &> /dev/null; then
         return 0
@@ -10,7 +10,7 @@ check_docker_installed() {
     fi
 }
 
-# Hàm cài đặt Docker mới
+# Install docker 
 install_docker() {
     sudo apt-get remove -y docker docker-engine docker.io containerd runc
     sudo apt-get update
@@ -24,7 +24,7 @@ install_docker() {
     sudo apt-get install -y docker-compose-plugin
 }
 
-# Kiểm tra xem Docker đã được cài đặt hay chưa
+# Docker already installed or not
 if check_docker_installed; then
     echo "Docker is already installed."
     read -p "Do you want to install the latest version of Docker? (y/n): " choice
@@ -39,7 +39,10 @@ if check_docker_installed; then
     fi
 else
     echo "Docker is not installed. Installing Docker..."
-    install_docker
+    read -p "Do you want to install the latest version of Docker? (y/n): " choice
+    if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
+        install_docker
+    fi
 fi
 
 echo "Docker installation script completed successfully."

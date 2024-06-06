@@ -82,5 +82,4 @@ main
 res=$?
 if [ $res != 0 ]; then 
   echo "DevAtServ occurs error, please check and install it later."
-  exit 1
 fi
