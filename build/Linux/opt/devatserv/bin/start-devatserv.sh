@@ -70,6 +70,8 @@ main() {
     echo 'error starting Docker containers'
     return -1
   }
+  
+  read -p "Press Enter to continue..."
 
 }
 
