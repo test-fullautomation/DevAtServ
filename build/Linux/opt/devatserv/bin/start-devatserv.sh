@@ -2,6 +2,23 @@
 
 set -e 
 
+pre_check_installation() {
+  
+  if ! command -v docker &> /dev/null; then
+    echo "failed to find 'docker'"
+    echo "Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
+    echo "Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
+    return 1
+  fi
+
+  if ! docker compose >/dev/null 2>&1; then
+    echo "failed to find 'docker compose'"
+    echo "Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
+    echo "Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
+    return 1
+  fi
+}
+
 load_devatserv() {
   echo "Loading DevAtServ's docker images"
   /opt/devatserv/bin/load-devatserv.sh
@@ -11,6 +28,13 @@ cd /opt/devatserv/share/start-services
 
 start_devatserv() {
   echo "Starting DevAtServ's docker containers"
+
+  if ! docker compose >/dev/null 2>&1; then
+    echo "failed to find 'docker compose'"
+    echo "Please ensure Docker is installed on your machine before proceeding with the installation of this application."
+    echo "Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
+    return 1
+  fi
 
   if ! docker compose up --remove-orphans -d; then
     echo "Could not start. Check for errors above."
@@ -32,8 +56,13 @@ EOF
 main() {
   echo "Starting DevAtServ installation..."
 
+  pre_check_installation || {
+    echo 'error pre-check installation'
+    exit 1
+  }
+
   load_devatserv || {
-    echo 'error loading Docker images '
+    echo 'error loading Docker images'
     exit 1
   }
 
