@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Kiểm tra xem Docker đã được cài đặt hay chưa
+# Check Doc
 check_docker_installed() {
     if command -v docker &> /dev/null; then
         return 0
