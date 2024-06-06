@@ -2,16 +2,7 @@
 
 set -e
 
-COL_GREEN='\033[0;32m'
-COL_ORANGE='\033[0;33m'
-COL_BLUE='\033[0;34m'
-COL_RED='\033[1;31m'
-COL_RESET='\033[0m' # No Color
-
-MSG_INFO="${COL_GREEN}[INFO]${COL_RESET}"
-MSG_DONE="${COL_ORANGE}[DONE]${COL_RESET}"
-MSG_ERR="${COL_RED}[ERR]${COL_RESET} "
-
+source /opt/share/util/format.sh
 
 CURRENT_USER=${SUDO_USER}
 if [ -z ${CURRENT_USER} ]; then

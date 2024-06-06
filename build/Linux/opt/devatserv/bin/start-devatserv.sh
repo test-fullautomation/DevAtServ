@@ -9,44 +9,39 @@ pre_check_installation() {
 
   if ! command -v docker &> /dev/null; then
     echo -e "${MSG_ERR} Failed to find 'docker'"
-    echo "Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
-    echo "Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
+    echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
+    echo -e "${MSG_INFO} Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
     return 1
   fi
   
   if ! docker compose >/dev/null 2>&1; then
-    echo -e "${MSG_ERR} Failed to find 'docker-compose'"
-    echo "Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
-    echo "Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
+    echo -e "${MSG_ERR} Failed to find 'docker compose'"
+    echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
+    echo -e "${MSG_INFO} Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
     return 1
   fi
-  
+
   echo -e "${MSG_DONE} Pre-check-installation completed successfully"
 }
 
 load_devatserv() {
-  echo "Loading DevAtServ's docker images"
+  echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   /opt/devatserv/bin/load-devatserv.sh
+  echo -e "${MSG_DONE} All images are loaded successfully"
 }
 
 cd /opt/devatserv/share/start-services
 
 start_devatserv() {
-  echo "Starting DevAtServ's docker containers"
-
-  if ! docker compose >/dev/null 2>&1; then
-    echo "failed to find 'docker compose'"
-    echo "Please ensure Docker is installed on your machine before proceeding with the installation of this application."
-    echo "Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
-    return 1
-  fi
+  echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
 
   if ! docker compose up --remove-orphans -d; then
-    echo "Could not start. Check for errors above."
+    echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
   fi
 
   show_success_message
+
 }
 
 show_success_message() {
@@ -76,7 +71,6 @@ main() {
     return -1
   }
 
-  read -p "Press Enter to continue..."
 }
 
 ############################
@@ -86,4 +80,5 @@ main
 res=$?
 if [ $res != 0 ]; then 
   echo "DevAtServ occurs error, please check and install it later."
+  read -p "Press Enter to exit..."
 fi
