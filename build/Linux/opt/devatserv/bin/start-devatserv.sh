@@ -3,7 +3,8 @@
 set -e 
 
 pre_check_installation() {
-  
+  echo "Starting pre-check-installation"
+
   if ! command -v docker &> /dev/null; then
     echo "failed to find 'docker'"
     echo "Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
@@ -58,17 +59,17 @@ main() {
 
   pre_check_installation || {
     echo 'error pre-check installation'
-    exit 1
+    return -1
   }
 
   load_devatserv || {
     echo 'error loading Docker images'
-    exit 1
+    return -1
   }
 
   start_devatserv || {
     echo 'error starting Docker containers'
-    exit 1
+    return -1
   }
 
   read -p "Press Enter to continue..."
@@ -78,3 +79,8 @@ main() {
 # main execution
 ############################
 main
+res=$?
+if [ $res != 0 ]; then 
+  echo "DevAtServ occurs error, please check and install it later."
+  exit 1
+fi
