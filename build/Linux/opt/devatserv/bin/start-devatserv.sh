@@ -30,7 +30,7 @@ install_gui_devatserv() {
   sudo apt-get update
 
   # Install DevAtServ'GUI 
-  if sudo dpkg -i /opt/devatserv/share/applications/electron_1.0.0_amd64.deb; then
+  if sudo dpkg -i /opt/share/applications/electron_1.0.0_amd64.deb; then
     echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
   else
     echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."

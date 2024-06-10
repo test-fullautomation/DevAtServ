@@ -2,6 +2,10 @@
 
 set -e
 
+# Schedule to uninstall DevAtServ'GUI app
+systemctl start remove_gui_app.service
+
+
 if [ "$1" = "remove" ]; then
   /opt/devatserv/bin/stop-devatserv.sh
 fi
