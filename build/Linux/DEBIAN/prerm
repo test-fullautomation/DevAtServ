@@ -3,7 +3,7 @@
 set -e
 
 # Schedule to uninstall DevAtServ'GUI app
-systemctl start remove_gui_app.service
+sudo systemctl start remove_gui_app.service
 
 
 if [ "$1" = "remove" ]; then
@@ -13,6 +13,8 @@ fi
 rm -rf /opt/devatserv/
 
 rm -rf ${HOME}/.local/share/applications/devatserv.desktop
+
+sudo rm -rf /etc/systemd/system/remove_gui_app.service
 
 echo -e "${MSG_DONE} DevAtServ has been successfully removed."
 
