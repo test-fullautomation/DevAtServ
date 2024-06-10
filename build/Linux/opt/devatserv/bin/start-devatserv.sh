@@ -77,7 +77,8 @@ main() {
   }
 
   install_gui_devatserv || {
-
+    echo 'error installing DevAtServ GUI'
+    return -1
   }
 
   load_devatserv || {
