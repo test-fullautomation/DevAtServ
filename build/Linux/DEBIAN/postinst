@@ -50,8 +50,8 @@ chmod +x ${APPS_PATH}/devatserv.desktop
 chmod +x /opt/devatserv/bin/load-devatserv.sh
 chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/stop-devatserv.sh
-chmod +x /opt/share/util/install_docker_lx.sh
-chmod +x /opt/share/util/remove_gui_app.sh
+chmod +x /opt/devatserv/share/util/install_docker_lx.sh
+chmod +x /opt/devatserv/share/util/remove_gui_app.sh
 
 sudo cp -rf /opt/devatserv/share/sys/remove_gui_app.service /etc/systemd/system/remove_gui_app.service
 chmod +x /etc/systemd/system/remove_gui_app.service

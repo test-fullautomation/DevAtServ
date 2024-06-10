@@ -3,7 +3,7 @@ Description=Remove DevAtServ'GUI App Service
 
 [Service]
 Type=exec
-ExecStart=/opt/share/util/remove_gui_app.sh
+ExecStart=/opt/devatserv/share/util/remove_gui_app.sh
 
 [Install]
 WantedBy=multi-user.target

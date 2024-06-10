@@ -10,14 +10,14 @@ pre_check_installation() {
   if ! command -v docker &> /dev/null; then
     echo -e "${MSG_ERR} Failed to find 'docker'"
     echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
+    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
     return 1
   fi
   
   if ! docker compose >/dev/null 2>&1; then
     echo -e "${MSG_ERR} Failed to find 'docker compose'"
     echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/share/util/install_docker_lx.sh to install it"
+    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
     return 1
   fi
 
@@ -30,7 +30,7 @@ install_gui_devatserv() {
   sudo apt-get update
 
   # Install DevAtServ'GUI 
-  if sudo dpkg -i /opt/share/applications/electron_1.0.0_amd64.deb; then
+  if sudo dpkg -i /opt/devatserv/share/applications/electron_1.0.0_amd64.deb; then
     echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
   else
     echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
