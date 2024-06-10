@@ -27,7 +27,7 @@ pre_check_installation() {
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  apt-get update
+  sudo apt-get update
 
   # Install DevAtServ'GUI 
   if sudo dpkg -i /opt/share/applications/electron_1.0.0_amd64.deb; then
