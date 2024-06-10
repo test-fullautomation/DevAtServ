@@ -2,7 +2,7 @@
 
 set -e
 
-source /opt/share/util/format.sh
+source /opt/devatserv/share/util/format.sh
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"

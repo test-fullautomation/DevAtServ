@@ -2,7 +2,7 @@
 
 set -e
 
-source /opt/share/util/format.sh
+source /opt/devatserv/share/util/format.sh
 
 CURRENT_USER=${SUDO_USER}
 if [ -z ${CURRENT_USER} ]; then
@@ -52,3 +52,8 @@ chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/stop-devatserv.sh
 chmod +x /opt/share/util/install_docker_lx.sh
 chmod +x /opt/share/util/remove_gui_app.sh
+
+sudo cp -rf /opt/devatserv/share/sys/remove_gui_app.service /etc/systemd/system/remove_gui_app.service
+chmod +x /etc/systemd/system/remove_gui_app.service
+sudo systemctl daemon-reload
+sudo systemctl enable remove_gui_app.service

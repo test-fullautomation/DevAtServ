@@ -1,6 +1,2 @@
 #!/bin/bash
 
-sudo cp /opt/share/sys/remove_gui_app.service /etc/systemd/system/remove_gui_app.service
-chmod +x /etc/systemd/system/remove_gui_app.service
-sudo systemctl daemon-reload
-sudo systemctl enable remove_gui_app.service
