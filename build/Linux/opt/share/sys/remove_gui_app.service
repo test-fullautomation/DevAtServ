@@ -1,0 +1,6 @@
+[Unit]
+Description=Remove DevAtServ'GUI App Service
+
+[Service]
+Type=exec
+ExecStart=/opt/share/util/remove_gui_app.sh

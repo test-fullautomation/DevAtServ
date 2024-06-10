@@ -61,7 +61,7 @@ start_devatserv() {
 
 show_success_message() {
   cat <<EOF
-${MSG_DONE} Device Automation Services App successfully deployed!
+Device Automation Services App successfully deployed!
 You can access the website at http://localhost:15672 to access RabbitMQ Management
 ---------------------------------------------------
 EOF

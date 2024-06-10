@@ -51,3 +51,4 @@ chmod +x /opt/devatserv/bin/load-devatserv.sh
 chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/stop-devatserv.sh
 chmod +x /opt/share/util/install_docker_lx.sh
+chmod +x /opt/share/util/remove_gui_app.sh
