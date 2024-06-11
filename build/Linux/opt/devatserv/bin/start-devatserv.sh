@@ -14,6 +14,14 @@ pre_check_installation() {
     echo -e "${MSG_ERR} Failed to find 'docker'"
     echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
     echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
+    read -p "Do you want to install it? (y/n)" choice
+    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
+      /opt/devatserv/share/util/install_docker_lx.sh
+      if [ $? -ne 0 ]; then
+        echo "Error occurred during Docker installation."
+        exit 1
+      fi
+    fi 
     return 1
   fi
   
@@ -21,6 +29,14 @@ pre_check_installation() {
     echo -e "${MSG_ERR} Failed to find 'docker compose'"
     echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
     echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
+    read -p "Do you want to install it? (y/n)" choice
+    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
+      /opt/devatserv/share/util/install_docker_lx.sh
+      if [ $? -ne 0 ]; then
+        echo "Error occurred during Docker installation."
+        exit 1
+      fi
+    fi 
     return 1
   fi
 
@@ -101,7 +117,7 @@ main() {
   start_devatserv || handle_error 'Error starting Docker containers'
   
   read -p "Press Enter to continue..."
-  
+
   return 0
 }
 

@@ -39,10 +39,7 @@ if check_docker_installed; then
     fi
 else
     echo "Docker is not installed. Installing Docker..."
-    read -p "Do you want to install the latest version of Docker? (y/n): " choice
-    if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
-        install_docker
-    fi
+    install_docker
 fi
 
 echo "Docker installation script completed successfully."
