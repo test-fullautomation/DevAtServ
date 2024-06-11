@@ -9,8 +9,10 @@ on:
     branches:
     - develop
 
+  workflow_dispatch:
+
 jobs:
-  docker:
+  build-devatserv:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
@@ -23,13 +25,11 @@ jobs:
 
       - name: Extract all services into images
         run: |
-          docker ps
-          docker image save --output devarserv-cleware-service.tar.gz devarserv-cleware-service
-          docker image save --output devarserv-service-base.tar.gz devarserv-service-base
+          docker image save --output devarserv_cleware-service.tar.gz devatserv_cleware-service
+          docker image save --output devarserv-service-base.tar.gz multirepo_service-base
           mkdir -p ./build/storage
           mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz ./build/storage
           ls -la ./build/storage
   
-      - name: Stop containers
-        if: always()
-        run: docker-compose -f "docker-compose.yml" down
+      - name: Build DevAtServ
+        run: ./build.sh
