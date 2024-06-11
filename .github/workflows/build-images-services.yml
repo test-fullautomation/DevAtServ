@@ -2,10 +2,14 @@ name: Device Automation Services
 
 on:
   push:
-    branches:
-    - develop
-
+    tags:
+      - "rel/das/*.*.*.*"
+      - "dev/das/*.*.*.*"
   pull_request:
+    types:
+      - closed
+      - opened
+      - synchronize
     branches:
     - develop
 
