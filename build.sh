@@ -1,35 +1,6 @@
 #!/bin/bash
 
-COL_GREEN='\033[0;32m'
-COL_ORANGE='\033[0;33m'
-COL_BLUE='\033[0;34m'
-COL_RED='\033[1;31m'
-COL_RESET='\033[0m' # No Color
-
-MSG_INFO="${COL_GREEN}[INFO]${COL_RESET}"
-MSG_DONE="${COL_ORANGE}[DONE]${COL_RESET}"
-MSG_ERR="${COL_RED}[ERR]${COL_RESET} "
-
-function errormsg(){
-   echo -e "${COL_RED}>>>> ERROR: $1!${COL_RESET}"
-   echo
-   exit 1
-}
-
-
-function goodmsg(){
-   echo -e "${COL_GREEN}>>>> $1.${COL_RESET}"
-   echo
-}
-
-function logresult(){
-	if [ "$1" -eq 0 ]; then
-	    goodmsg "Successfully $2"
-	else
-		errormsg "FATAL: Could not $3"
-	fi
-}
-
+source ./util/format.sh
 
 echo 
 echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
@@ -63,7 +34,10 @@ function build_debian() {
     echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
     mkdir -p "$DAS_PACK_DEST_DIR"
 
+    # Copy source & util
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
+    cp -r util "$DAS_PACK_DEST_DIR"/opt/devatserv/share/
+
     chmod 755 "$DAS_PACK_DEST_DIR"/DEBIAN/*
     chmod 755 "$DAS_PACK_DEST_DIR"/opt/devatserv/share/storage/*
     

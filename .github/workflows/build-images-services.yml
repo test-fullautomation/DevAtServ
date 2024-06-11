@@ -13,29 +13,32 @@ on:
 
 jobs:
   build-devatserv:
-    timeout-minutes: 10
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Starting all services
-        run: ./install.sh
+        run: |
+          chmod +x ./install.sh
+          ./install.sh
 
       - name: Extract all services into images
         run: |
-          docker image save --output devarserv_cleware-service.tar.gz devatserv_cleware-service
-          docker image save --output devarserv-service-base.tar.gz multirepo_service-base
-          mkdir -p ./build/storage
-          mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz ./build/storage
-          ls -la ./build/storage
+          docker images
+          docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
+          docker image save --output devarserv-service-base.tar.gz devatserv-service-base
+          docker image save --output rabbitmq.tar.gz rabbitmq
+          mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
+          chmod 777 ./build/Linux/opt/devatserv/share/storage/*
   
       - name: Build DevAtServ
-        run: ./build.sh
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
 
       - name: Upload built package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: devatserv-linux-package
           path: output_lx/*.deb

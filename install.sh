@@ -1,21 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
+set -e
+
+source ./util/format.sh
 
 # URLs for the repositories
 BASE_SERVICE=https://github.com/test-fullautomation/python-microservice-base
 CLEWARE_SERVICE=https://github.com/test-fullautomation/python-microservice-cleware-switch
 
-
-function logresult(){
-	if [ "$1" -eq 0 ]; then
-	    echo -e "\e[32mSuccessfully $2\e[0m"
-	else
-		echo -e "\e[31mSuccessfully $2\e[0m"
-	fi
-}
 
 create_repos_directory() {
   local repos_dir='./repos'
@@ -139,4 +131,4 @@ main
 Exit=$?
 if [ $Exit != 0 ]; then
 	echo "Can't not install DevArtServ successfully..."
-
+fi
