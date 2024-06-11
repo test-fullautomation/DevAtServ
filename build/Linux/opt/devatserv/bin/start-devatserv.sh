@@ -48,7 +48,10 @@ install_gui_devatserv() {
         echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
         return 1
       fi
+    else
+      echo -e "${MSG_INFO} Skip to install the newest DevAtServ's GUI version."
     fi
+  fi
 }
 
 load_devatserv() {
