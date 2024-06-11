@@ -4,6 +4,9 @@ set -e
 
 source /opt/devatserv/share/util/format.sh
 
+DAS_GUI_NAME="electron"
+DAS_GUI_DIR="/opt/share/applications/electron_1.0.0_amd64.deb"
+
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
 
@@ -27,14 +30,25 @@ pre_check_installation() {
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  # Install DevAtServ'GUI 
-  if sudo dpkg -i /opt/share/applications/electron_1.0.0_amd64.deb; then
-    echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
-  else
-    echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
-    return 1
-  fi
+  CUR_VERSION=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME )
+  NEW_VERSION=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
 
+  if [ "$CUR_VERSION" = "$NEW_VERSION" ]; then
+    echo "${MSG_INFO} DevAtServ's GUI is already installed with version $CUR_VERSION."
+  else
+
+    read -p "There are new version $NEW_VERSION, Do you want to install it? (y/n)" choice
+    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
+
+      echo "${MSG_INFO} Installing version $NEW_VERSION..."
+
+      if sudo dpkg -i $DAS_GUI_DIR; then
+        echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
+      else
+        echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
+        return 1
+      fi
+    fi
 }
 
 load_devatserv() {
