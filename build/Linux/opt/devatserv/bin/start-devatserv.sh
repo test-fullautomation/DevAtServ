@@ -30,12 +30,12 @@ pre_check_installation() {
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  package_status=$(dpkg-query -W --showformat='${db:Status-Status}\n' electron 2>/dev/null)
+  package_status=$(dpkg-query -W --showformat='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
   cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME || echo "$DAS_GUI_NAME not installed" )
   new_version=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
 
-  if [ "$cur_version" = "$new_version" ] || [ "$package_status" != "installed"]; then
-    echo -e "${MSG_INFO} DevAtServ's GUI is already installed with version $cur_version."
+  if [ "$cur_version" = "$new_version" ] && [ "$package_status" = "installed" ]; then
+    echo -e "${MSG_DONE} DevAtServ's GUI is already installed with version $cur_version."
   else
 
     read -p "There are new version $new_version, Do you want to install it? (y/n)" choice
@@ -83,32 +83,26 @@ You can access the website at http://localhost:15672 to access RabbitMQ Manageme
 EOF
 }
 
+handle_error() {
+  echo -e "${MSG_ERR} $1"
+  read -p "Press Enter to continue..."
+  exit -1
+}
 
 main() {
   echo "Starting DevAtServ installation..."
 
-  pre_check_installation || {
-    echo 'error pre-check installation'
-    return -1
-  }
+  pre_check_installation || handle_error 'Error pre-check installation'
 
-  install_gui_devatserv || {
-    echo 'error installing DevAtServ GUI'
-    return -1
-  }
+  install_gui_devatserv || handle_error 'Error installing DevAtServ GUI'
 
-  load_devatserv || {
-    echo 'error loading Docker images'
-    return -1
-  }
+  load_devatserv || handle_error 'Error loading Docker images'
 
-  start_devatserv || {
-    echo 'error starting Docker containers'
-    return -1
-  }
+  start_devatserv || handle_error 'Error starting Docker containers'
   
   read -p "Press Enter to continue..."
-
+  
+  return 0
 }
 
 ############################
@@ -118,5 +112,4 @@ main
 res=$?
 if [ $res != 0 ]; then 
   echo "DevAtServ occurs error, please check and install it later."
-  read -p "Press Enter to exit..."
 fi
