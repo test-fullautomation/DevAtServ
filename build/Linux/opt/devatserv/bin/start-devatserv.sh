@@ -30,17 +30,18 @@ pre_check_installation() {
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  CUR_VERSION=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME )
-  NEW_VERSION=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
+  package_status=$(dpkg-query -W --showformat='${db:Status-Status}\n' electron 2>/dev/null)
+  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME || echo "$DAS_GUI_NAME not installed" )
+  new_version=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
 
-  if [ "$CUR_VERSION" = "$NEW_VERSION" ]; then
-    echo "${MSG_INFO} DevAtServ's GUI is already installed with version $CUR_VERSION."
+  if [ "$cur_version" = "$new_version" ] || [ "$package_status" != "installed"]; then
+    echo -e "${MSG_INFO} DevAtServ's GUI is already installed with version $cur_version."
   else
 
-    read -p "There are new version $NEW_VERSION, Do you want to install it? (y/n)" choice
+    read -p "There are new version $new_version, Do you want to install it? (y/n)" choice
     if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
 
-      echo "${MSG_INFO} Installing version $NEW_VERSION..."
+      echo -e "${MSG_INFO} Installing version $new_version..."
 
       if sudo dpkg -i $DAS_GUI_DIR; then
         echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
