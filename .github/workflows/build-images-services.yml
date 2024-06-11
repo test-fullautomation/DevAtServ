@@ -29,6 +29,7 @@ jobs:
           docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
           docker image save --output devarserv-service-base.tar.gz devatserv-service-base
           docker image save --output rabbitmq.tar.gz rabbitmq
+          mkdir -p ./build/Linux/opt/devatserv/share/storage
           mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
           chmod 777 ./build/Linux/opt/devatserv/share/storage/*
   
