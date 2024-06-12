@@ -49,6 +49,7 @@ jobs:
   build-devatserv:
     runs-on: ubuntu-latest
     name: DevAtServ tool
+    needs: [ devatserv-gui ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
