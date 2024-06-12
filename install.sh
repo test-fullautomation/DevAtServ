@@ -12,7 +12,7 @@ CLEWARE_SERVICE=https://github.com/test-fullautomation/python-microservice-clewa
 create_repos_directory() {
   local repos_dir='./repos'
 
-  echo "Creating repos directory for all DevAtServ service..."
+  echo -e "${MSG_INFO} Creating repos directory for all DevAtServ service..."
 
   if [[ -e $repos_dir ]]; then
     echo "     Directory $repos_dir already exists. Updating clone."
@@ -25,7 +25,7 @@ create_repos_directory() {
 
 
 start_docker_compose() {
-  echo "Starting the DevArtServ Docker containers"
+  echo -e "${MSG_INFO} Starting the DevArtServ Docker containers"
 
   if ! docker compose >/dev/null 2>&1; then
     echo "failed to find 'docker compose'"
@@ -107,14 +107,14 @@ function clone_update_repo () {
 
 #
 main() {
-	echo -e "\e[33mStarting DevArtServ inslallation...\e[0m"
+	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
 	create_repos_directory || {
 		echo 'error creating repos directory' 
 		return 1
 	}
 
-	clone_update_repo ../repos/python-microservice-base $BASE_SERVICE "htv3hc/feat/dockerize-microservice-base"
-	clone_update_repo ../repos/python-microservice-cleware-switch $CLEWARE_SERVICE "htv3hc/feat/dockerize-cleware-service"
+	clone_update_repo ../repos/python-microservice-base $BASE_SERVICE
+	clone_update_repo ../repos/python-microservice-cleware-switch $CLEWARE_SERVICE
 
 	# Build and start the services
 	start_docker_compose || {
@@ -122,7 +122,7 @@ main() {
 		return 1
 	}
 
-	echo -e "\e[33mAll services are running...\e[0m"
+	echo -e "${MSG_DONE} All services are running..."
 	return 0 
 }
 

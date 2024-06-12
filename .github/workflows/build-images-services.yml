@@ -16,11 +16,48 @@ on:
   workflow_dispatch:
 
 jobs:
+  devatserv-gui:
+    name: DevAtServ's GUI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Clone python-microservice-base
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          depth: 1
+          branch: 'htv3hc/feat/release-microservice-base-gui'
+          owner: 'test-fullautomation'
+          repository: 'python-microservice-base'
+
+      - name: Run npm install
+        run: npm install
+
+      - name: Run npm dist
+        run: |
+          npm run dist
+    
+      - uses: actions/upload-artifact@v4
+        with:
+          name: das-gui-artifact
+          path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
+
   build-devatserv:
     runs-on: ubuntu-latest
+    name: DevAtServ tool
+    needs: [ devatserv-gui ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download DevAtServ's GUI
+        uses: actions/download-artifact@v4
+        with:
+          name: das-gui-artifact
 
       - name: Starting all services
         run: |
@@ -34,8 +71,11 @@ jobs:
           docker image save --output devarserv-service-base.tar.gz devatserv-service-base
           docker image save --output rabbitmq.tar.gz rabbitmq
           mkdir -p ./build/Linux/opt/devatserv/share/storage
+          mkdir -p ./build/Linux/opt/share/applications/
+          mv *.deb ./build/Linux/opt/share/applications
           mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
           chmod 777 ./build/Linux/opt/devatserv/share/storage/*
+          chmod 777 ./build/Linux/opt/share/applications/*
   
       - name: Build DevAtServ
         run: |
