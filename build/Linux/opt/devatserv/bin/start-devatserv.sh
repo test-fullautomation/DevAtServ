@@ -9,30 +9,42 @@ DAS_GUI_DIR="/opt/share/applications/DevAtServGUI_1.0.0_amd64.deb"
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
+  local err=0
 
   if ! command -v docker &> /dev/null; then
+    err=1
     echo -e "${MSG_ERR} Failed to find 'docker'"
     echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
     echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
     read -p "Do you want to install it? (y/n)" choice
     if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
       /opt/devatserv/share/util/install_docker_lx.sh
+      err=0
     fi 
-    return 1
   fi
   
   if ! docker compose >/dev/null 2>&1; then
+    err=1
     echo -e "${MSG_ERR} Failed to find 'docker compose'"
     echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
     echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
     read -p "Do you want to install it? (y/n)" choice
     if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
       /opt/devatserv/share/util/install_docker_lx.sh
+      err=0
     fi 
-    return 1
+  fi
+  
+  if [ $err -eq 0 ]; then 
+    if ! command -v docker &> /dev/null || ! docker compose >/dev/null 2>&1; then
+      echo "${MSG_ERR} Error occurred during Docker installation." 
+      err=1
+    else
+      echo -e "${MSG_DONE} Pre-check-installation completed successfully"
+    fi
   fi
 
-  echo -e "${MSG_DONE} Pre-check-installation completed successfully"
+  return $err
 }
 
 install_gui_devatserv() {
