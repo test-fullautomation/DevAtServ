@@ -46,8 +46,8 @@ pre_check_installation() {
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  package_status=$(dpkg-query -W --showformat='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
-  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME || echo "$DAS_GUI_NAME not installed" )
+  package_status=$(dpkg-query -W -f='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
+  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME 2>/dev/null || echo "$DAS_GUI_NAME not installed" )
   new_version=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
 
   if [ "$cur_version" = "$new_version" ] && [ "$package_status" = "installed" ]; then
