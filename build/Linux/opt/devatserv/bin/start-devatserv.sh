@@ -17,10 +17,6 @@ pre_check_installation() {
     read -p "Do you want to install it? (y/n)" choice
     if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
       /opt/devatserv/share/util/install_docker_lx.sh
-      if [ $? -ne 0 ]; then
-        echo "Error occurred during Docker installation."
-        exit 1
-      fi
     fi 
     return 1
   fi
@@ -32,10 +28,6 @@ pre_check_installation() {
     read -p "Do you want to install it? (y/n)" choice
     if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
       /opt/devatserv/share/util/install_docker_lx.sh
-      if [ $? -ne 0 ]; then
-        echo "Error occurred during Docker installation."
-        exit 1
-      fi
     fi 
     return 1
   fi
