@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Check docker was ins
 check_docker_installed() {
