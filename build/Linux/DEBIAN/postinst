@@ -14,18 +14,32 @@ if [ ${CURRENT_USER} != 'root' ]; then
    HOME=/home/${CURRENT_USER}
 fi
 
-#in osd4 group name is the user name.
-#in osd5 group name is "domain users". Therefore
-#look if a group wi th the user name exists, if not
-#then we assume that we are on OSD5
-sGROUP=$(id -G)
-if ! getent group "${sGROUP}" | grep "${sGROUP}" ; then
-   sGROUP='domain users'
-   echo -e "Assuming OSD7 and using group 'domain users' as user group for private files"
-else
-   echo -e "Assuming OSD4 and using group ${sGROUP} as user group for private files"
-fi
+# Introduce group `robot-aio` which allow access for group of multiple users
+sGROUP=devatserv
 
+
+if [ "$(id -u)" = "0" ]; then
+   # Run with sudo
+   if [ ! $(getent group $sGROUP) ]; then
+      addgroup $sGROUP
+   fi
+   usermod -a -G $sGROUP ${CURRENT_USER}
+   echo -e "Using group ${sGROUP} as user group for devatserv permission"
+else
+   if [ ! $(getent group $sGROUP) ]; then
+      echo -e "${MSG_ERR} User group '$sGROUP' is not found"
+      echo -e "${MSG_ERR} Please verify the installation of devatserv"
+      exit 1
+   fi
+
+   if groups ${CURRENT_USER} | grep $sGROUP; then
+      echo -e "${MSG_INFO} User '${CURRENT_USER}' already belongs to group '$sGROUP'"
+   else
+      echo -e "${MSG_ERR} Please add '${CURRENT_USER}' to group '$sGROUP' as below command then try again"
+      echo -e "${MSG_ERR} sudo usermod -a -G $sGROUP ${CURRENT_USER}"
+      exit 1
+   fi
+fi
 
 
 # Configure Unitiy Launchers folder
