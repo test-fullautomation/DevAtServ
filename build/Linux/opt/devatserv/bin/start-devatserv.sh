@@ -12,26 +12,14 @@ pre_check_installation() {
   local err=0
 
   if ! command -v docker &> /dev/null; then
-    err=1
-    echo -e "${MSG_ERR} Failed to find 'docker'"
-    echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
-    read -p "Do you want to install it? (y/n)" choice
-    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
-      /opt/devatserv/share/util/install_docker_lx.sh
-      err=0
-    fi 
+    echo -e "${MSG_INFO} Installing 'docker'..."
+    /opt/devatserv/share/util/install_docker_lx.sh
+    err=0
   fi
   
   if ! docker compose >/dev/null 2>&1; then
-    err=1
-    echo -e "${MSG_ERR} Failed to find 'docker compose'"
-    echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
-    read -p "Do you want to install it? (y/n)" choice
-    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
+    echo -e "${MSG_INFO} Installing 'docker compose'..."
       /opt/devatserv/share/util/install_docker_lx.sh
-      err=0
     fi 
   fi
   
