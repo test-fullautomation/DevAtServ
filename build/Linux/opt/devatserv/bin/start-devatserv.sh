@@ -14,13 +14,11 @@ pre_check_installation() {
   if ! command -v docker &> /dev/null; then
     echo -e "${MSG_INFO} Installing 'docker'..."
     /opt/devatserv/share/util/install_docker_lx.sh
-    err=0
   fi
   
   if ! docker compose >/dev/null 2>&1; then
     echo -e "${MSG_INFO} Installing 'docker compose'..."
-      /opt/devatserv/share/util/install_docker_lx.sh
-    fi 
+    /opt/devatserv/share/util/install_docker_lx.sh
   fi
   
   if [ $err -eq 0 ]; then 
