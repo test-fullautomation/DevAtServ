@@ -9,45 +9,35 @@ DAS_GUI_DIR="/opt/share/applications/DevAtServGUI_1.0.0_amd64.deb"
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
+  local err=0
 
   if ! command -v docker &> /dev/null; then
-    echo -e "${MSG_ERR} Failed to find 'docker'"
-    echo -e "${MSG_INFO} Please ensure 'docker' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
-    read -p "Do you want to install it? (y/n)" choice
-    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
-      /opt/devatserv/share/util/install_docker_lx.sh
-      if [ $? -ne 0 ]; then
-        echo "Error occurred during Docker installation."
-        exit 1
-      fi
-    fi 
-    return 1
+    echo -e "${MSG_INFO} Installing 'docker'..."
+    /opt/devatserv/share/util/install_docker_lx.sh
   fi
   
   if ! docker compose >/dev/null 2>&1; then
-    echo -e "${MSG_ERR} Failed to find 'docker compose'"
-    echo -e "${MSG_INFO} Please ensure 'docker compose' is installed on your machine before proceeding with the installation of this application."
-    echo -e "${MSG_INFO} Or you can run script: /opt/devatserv/share/util/install_docker_lx.sh to install it"
-    read -p "Do you want to install it? (y/n)" choice
-    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
-      /opt/devatserv/share/util/install_docker_lx.sh
-      if [ $? -ne 0 ]; then
-        echo "Error occurred during Docker installation."
-        exit 1
-      fi
-    fi 
-    return 1
+    echo -e "${MSG_INFO} Installing 'docker compose'..."
+    /opt/devatserv/share/util/install_docker_lx.sh
+  fi
+  
+  if [ $err -eq 0 ]; then 
+    if ! command -v docker &> /dev/null || ! docker compose >/dev/null 2>&1; then
+      echo "${MSG_ERR} Error occurred during Docker installation." 
+      err=1
+    else
+      echo -e "${MSG_DONE} Pre-check-installation completed successfully"
+    fi
   fi
 
-  echo -e "${MSG_DONE} Pre-check-installation completed successfully"
+  return $err
 }
 
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
-  package_status=$(dpkg-query -W --showformat='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
-  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME || echo "$DAS_GUI_NAME not installed" )
+  package_status=$(dpkg-query -W -f='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
+  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME 2>/dev/null || echo "$DAS_GUI_NAME not installed" )
   new_version=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
 
   if [ "$cur_version" = "$new_version" ] && [ "$package_status" = "installed" ]; then
