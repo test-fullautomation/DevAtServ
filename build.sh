@@ -9,12 +9,21 @@ echo -e "${COL_GREEN}#          Compiling DevAtServ setup...                    
 echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
 echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 
+UNAME=$(uname)
+if [ "$UNAME" == "Linux" ] ; then
+	PLATFORM="Linux"
+elif [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]] ; then
+	PLATFORM="Windows"
+else
+	errormsg "Operation system '$UNAME' is not supported."
+fi
+
+
 DAS_VERSION="0.1.0.0"
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
-DAS_PACK_SRC_DIR="./build/Linux"
-DAS_PACK_DEST_DIR="./output_lx/${DAS_PACK_NAME}"
+DAS_PACK_SRC_DIR="./build/${PLATFORM}"
+DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
-UNAME=$(uname)
 
 # Display info for compiling
 echo "DAS Version: $DAS_VERSION"
@@ -41,11 +50,25 @@ function build_debian() {
     chmod 755 "$DAS_PACK_DEST_DIR"/DEBIAN/*
     chmod 755 "$DAS_PACK_DEST_DIR"/opt/devatserv/share/storage/*
     
-    dpkg-deb --root-owner-group --build ${DAS_PACK_DEST_DIR} ./output_lx/${DAS_DEBIAN_NAME}
+    dpkg-deb --root-owner-group --build ${DAS_PACK_DEST_DIR} ./output_Linux/${DAS_DEBIAN_NAME}
 	logresult "$?" "built deb package" "build deb package"
 
-	dpkg -I ./output_lx/${DAS_DEBIAN_NAME}
+	dpkg -I ./output_Linux/${DAS_DEBIAN_NAME}
 	goodmsg "done."
+}
+
+function build_windows() {
+
+	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+	echo -e "${COL_GREEN}#          Executing InnoSetup to create installer...                              #${COL_RESET}"
+	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+
+    echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
+    mkdir -p "$DAS_PACK_DEST_DIR"
+	# ./scripts/precompile.bat $ProjectConfigFile
+	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./scripts/RobotFrameworkSetup.iss
+	logresult "$?" "built RobotFramework AIO installer" "build RobotFramework AIO installer"
+	# ./scripts/postcompile.bat
 }
 
 main() {
