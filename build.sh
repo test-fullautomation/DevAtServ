@@ -65,9 +65,14 @@ function build_windows() {
 
     echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
     mkdir -p "$DAS_PACK_DEST_DIR"
+
+    # Copy source & util
+    cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
+    cp -r util "$DAS_PACK_DEST_DIR"/devatserv/share/
+
 	# ./scripts/precompile.bat $ProjectConfigFile
-	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./scripts/RobotFrameworkSetup.iss
-	logresult "$?" "built RobotFramework AIO installer" "build RobotFramework AIO installer"
+	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
+	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 	# ./scripts/postcompile.bat
 }
 
