@@ -79,10 +79,7 @@ Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.
 
 [Run]
 ; Check if Docker is installed and run a script to load and run Docker images
-Filename: "{app}\check_docker_and_run.bat"; Flags: runhidden
-
-; Starting DevAtServ's docker containers
-Filename: "cmd"; Parameters: "/C cd ""{app}\share\start-services"" && docker-compose up -d"; Flags: runhidden
+Filename: "{app}\bin\precheck.bat"; Flags: runhidden
 
 [Code]
 function InitializeSetup(): Boolean;
@@ -92,9 +89,14 @@ begin
   Result := True;
   if not ShellExec('', 'docker', '', '', SW_HIDE, ewNoWait, ErrorCode) then
   begin
-    MsgBox('Docker is not installed. Please install Docker before running this setup.', mbInformation, MB_OK);
+    MsgBox('Docker Desktop is not installed. Please install Docker Desktop before running this setup.', mbInformation, MB_OK);
     Result := False;
   end;
 end;
 
 
+[UninstallRun]
+; Remove all services in DevAtServ
+Filename: "{app}\bin\stop-devatserv.bat"; Flags: runhidden
+
+Filename: "{app}\share\GUI\DevAtServGUISetup1.0.0.exe"; Parameters: "/uninstall /quiet"
