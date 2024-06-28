@@ -99,4 +99,14 @@ end;
 ; Remove all services in DevAtServ
 Filename: "{app}\bin\stop-devatserv.bat"; Flags: runhidden
 
-Filename: "{app}\share\GUI\DevAtServGUISetup1.0.0.exe"; Parameters: "/uninstall /quiet"
+[UninstallDelete]
+Name: {app}\bin\*; Type: filesandordirs;
+Name: {app}\share\applications\*; Type: filesandordirs;
+Name: {app}\share\start-services\*; Type: filesandordirs;
+Name: {app}\share\storage\*; Type: filesandordirs;
+
+[InstallDelete]
+Name: {app}\bin\*; Type: filesandordirs;
+Name: {app}\share\applications\*; Type: filesandordirs;
+Name: {app}\share\start-services\*; Type: filesandordirs;
+Name: {app}\share\storage\*; Type: filesandordirs;
