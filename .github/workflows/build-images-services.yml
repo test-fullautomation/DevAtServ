@@ -81,6 +81,14 @@ jobs:
         with:
           name: das-gui-artifact-exe
 
+      - name: Set up Docker Desktop with WSL 2
+        run: |
+          wsl --install
+          wsl --set-default-version 2
+          # Install a Linux distribution, e.g., Ubuntu
+          wsl --install -d Ubuntu
+          # Start Docker Desktop and ensure it uses WSL 2
+
       - name: Starting all services
         shell: bash
         run: |
