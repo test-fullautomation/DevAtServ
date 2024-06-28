@@ -58,25 +58,45 @@ jobs:
           name: das-gui-artifact-exe
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
 
-  build-devatserv:
-    name: DevAtServ tool
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  build-devatserv-liunx:
+    name: DevAtServ tool Linux
+    runs-on: ubuntu-latest
     needs: [ devatserv-gui ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Download DevAtServ's GUI on Unbuntu
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/download-artifact@v4
         with:
           name: das-gui-artifact-deb
 
+      - name: Starting all services
+        run: |
+          chmod +x ./install.sh
+          ./install.sh
+
+      - name: Build DevAtServ
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-linux-package
+          path: output_Linux/*.deb
+
+
+  build-devatserv-windows:
+    name: DevAtServ tool Windows
+    runs-on: windows-latest
+    needs: [ devatserv-gui ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download DevAtServ's GUI on Windows
-        if: matrix.os == 'windows-latest'
         uses: actions/download-artifact@v4
         with:
           name: das-gui-artifact-exe
@@ -101,15 +121,7 @@ jobs:
           chmod +x ./build.sh
           ./build.sh
 
-      - name: Upload Debian package
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: devatserv-linux-package
-          path: output_Linux/*.deb
-
       - name: Upload Exe package
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: devatserv-windows-package
