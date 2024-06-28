@@ -69,10 +69,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download DevAtServ's GUI
+      - name: Download DevAtServ's GUI on Unbuntu
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/download-artifact@v4
         with:
-          name: das-gui-artifact
+          name: das-gui-artifact-deb
+
+      - name: Download DevAtServ's GUI on Windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/download-artifact@v4
+        with:
+          name: das-gui-artifact-exe
 
       - name: Starting all services
         run: |
