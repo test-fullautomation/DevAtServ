@@ -44,7 +44,6 @@ jobs:
         run: |
           npm run dist
     
-      # Upload artifact for Ubuntu
       - name: Upload Ubuntu artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
@@ -52,7 +51,6 @@ jobs:
           name: das-gui-artifact-deb
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
 
-      # Upload artifact for Windows
       - name: Upload Windows artifact
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
@@ -61,8 +59,11 @@ jobs:
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
 
   build-devatserv:
-    runs-on: ubuntu-latest
     name: DevAtServ tool
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     needs: [ devatserv-gui ]
     steps:
       - name: Checkout
@@ -78,26 +79,21 @@ jobs:
           chmod +x ./install.sh
           ./install.sh
 
-      - name: Extract all services into images
-        run: |
-          docker images
-          docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-          docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-          docker image save --output rabbitmq.tar.gz rabbitmq
-          mkdir -p ./build/Linux/opt/devatserv/share/storage
-          mkdir -p ./build/Linux/opt/share/applications/
-          mv *.deb ./build/Linux/opt/share/applications
-          mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
-          chmod 777 ./build/Linux/opt/devatserv/share/storage/*
-          chmod 777 ./build/Linux/opt/share/applications/*
-  
       - name: Build DevAtServ
         run: |
           chmod +x ./build.sh
           ./build.sh
 
-      - name: Upload built package
+      - name: Upload Debian package
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: devatserv-linux-package
           path: output_Linux/*.deb
+
+      - name: Upload Exe package
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-windows-package
+          path: output_Windows/*.exe
