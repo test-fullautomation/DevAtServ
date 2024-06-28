@@ -82,11 +82,13 @@ jobs:
           name: das-gui-artifact-exe
 
       - name: Starting all services
+        shell: bash
         run: |
           chmod +x ./install.sh
           ./install.sh
 
       - name: Build DevAtServ
+        shell: bash
         run: |
           chmod +x ./build.sh
           ./build.sh
