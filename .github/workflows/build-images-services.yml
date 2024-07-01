@@ -58,6 +58,19 @@ jobs:
           name: das-gui-artifact-exe
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
 
+      - name: Download and compress rabbitmq image for Windows
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          docker pull rabbitmq:3.13-management
+          docker image save --output rabbitmq.tar.gz rabbitmq
+
+      - name: Upload compressed image as artifact
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rabbitmq-image
+          path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/rabbitmq.tar.gz
+
   build-devatserv-liunx:
     name: DevAtServ tool Linux
     runs-on: ubuntu-latest
@@ -101,17 +114,14 @@ jobs:
         with:
           name: das-gui-artifact-exe
 
-      - name: Start Docker Desktop with WSL 2
-        run: |
-          # Enable WSL 2 integration for Docker Desktop
-          & 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchLinuxEngine
+      - name: Download compressed image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: rabbitmq-image
 
-          # Start Docker Desktop service
-          Start-Service -Name "com.docker.service"
-
-          # Wait for Docker to start (optional)
-          Start-Sleep -Seconds 20
-
+      - name: Load Docker image from tar file
+        run: docker load -i rabbitmq.tar.gz
+      
       - name: Starting all services
         shell: bash
         run: |
