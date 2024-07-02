@@ -60,6 +60,7 @@ Source: ..\devatserv\bin\*; DestDir: "{app}\bin"; Flags: ignoreversion onlyifdoe
 Source: ..\devatserv\share\applications\*; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\storage\*; DestDir: "{app}\share\storage"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\start-services\docker-compose.yml; DestDir: "{app}\share\start-services"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: ..\devatserv\share\docker\DockerDesktopInstaller.exe; DestDir: "{app}\share\docker"; Flags: ignoreversion; Permissions: users-full;
 
 ; ############### DevAtServ'GUI ###############
 Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversion
@@ -68,32 +69,58 @@ Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversi
 ;
 ;   DESKTOP
 ;
-
-;
-;   START MENU
-;
-;  !! Attention !! space after \ is intended. win10 sorts entries alphabetically and this bring the corresponding entries
-;                  up before Android links
 Name: "{group}\DevAtServ"; Filename: "{app}\bin\start-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
 Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.0.exe;
 
 [Run]
 ; Check if Docker is installed and run a script to load and run Docker images
-Filename: "{app}\bin\precheck.bat"; Flags: runhidden
+Filename: "{app}\share\docker\DockerDesktopInstaller.exe"; WorkingDir: {app}; Description: "Install Docker Desktop"; Flags: postinstall skipifsilent runminimized
 
 [Code]
-function InitializeSetup(): Boolean;
+const
+  DockerExecutable = 'C:\Program Files\Docker\Docker\Docker Desktop.exe';
+
+procedure RunOtherInstaller;
 var
-  ErrorCode: Integer;
+  ResultCode: Integer;
 begin
-  Result := True;
-  if not ShellExec('', 'docker', '', '', SW_HIDE, ewNoWait, ErrorCode) then
+  if not Exec(ExpandConstant('{app}\share\docker\DockerDesktopInstaller.exe'), '', '', SW_SHOWNORMAL,
+    ewWaitUntilTerminated, ResultCode)
+  then
+    MsgBox('Other installer failed to run!' + #13#10 +
+      SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+function IsDockerInstalled(): Boolean;
+begin
+  Result := FileExists(DockerExecutable);
+  if not Result then
   begin
-    MsgBox('Docker Desktop is not installed. Please install Docker Desktop before running this setup.', mbInformation, MB_OK);
-    Result := False;
+    MsgBox('Docker Desktop is not installed. Installing Docker Desktop now...', mbInformation, MB_OK);
+    RunOtherInstaller;
+    Result := FileExists(DockerExecutable);
+    if not Result then
+    begin
+      MsgBox('Docker Desktop installation failed or was not detected.', mbError, MB_OK);
+      WizardForm.Close;
+    end;
+  end
+  else
+  begin
+    Result := True;
   end;
 end;
 
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+  begin
+    if not IsDockerInstalled() then
+    begin
+      MsgBox('Docker Desktop installation is required to continue with this setup.', mbError, MB_OK);
+    end;
+  end;
+end;
 
 [UninstallRun]
 ; Remove all services in DevAtServ
