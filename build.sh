@@ -50,6 +50,12 @@ function pre_build_debian() {
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Linux/opt/devatserv/share/GUI
     mv *.deb ./build/Linux/opt/devatserv/share/GUI
+    if [ $? -eq 0 ]; then
+        echo "Get DevAtServ's GUI completed successfully."
+    else
+        echo "Can't get DevAtServ's GUI."
+        exit 1
+    fi
 
     # Grant permission all asset
     chmod 777 ./build/Linux/opt/devatserv/share/storage/*
@@ -109,7 +115,13 @@ function pre_build_windows() {
     ######### Prepare DevAtServ's GUI for Inno Setup tools #########
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Windows/devatserv/applications/GUI
-    mv *.exe ./build/Windows/devatserv/applications/GUI
+    mv *.exe ./build/Windows/devatserv/applications/GUI/DevAtServGUISetup1.0.0.exe
+    if [ $? -eq 0 ]; then
+        echo "Get DevAtServ's GUI completed successfully."
+    else
+        echo "Can't get DevAtServ's GUI."
+        exit 1
+    fi
 
     # Prepare Docker Desktop for user
     local DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"

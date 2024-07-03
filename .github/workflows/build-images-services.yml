@@ -138,7 +138,6 @@ jobs:
       - name: Build DevAtServ
         shell: bash
         run: |
-          ls -la
           chmod +x ./build.sh
           ./build.sh
 
