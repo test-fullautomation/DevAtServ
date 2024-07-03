@@ -17,6 +17,7 @@ DAS_VERSION="0.1.0.0"
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
 DAS_PACK_SRC_DIR="./build/${PLATFORM}"
 DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
+DAS_IMAGES_SERVICES=devatserv-services.zip
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
@@ -35,19 +36,18 @@ function pre_build_debian() {
     echo "Source Directory: $DAS_PACK_SRC_DIR"
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Debian Package Name: $DAS_DEBIAN_NAME"
-
-
-    # Save Docker images
-    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-    docker image save --output rabbitmq.tar.gz rabbitmq
-
+    
+    # Prepare all images services for debian tools
     mkdir -p ./build/Linux/opt/devatserv/share/storage
-    mkdir -p ./build/Linux/opt/share/applications
-    mv *.deb ./build/Linux/opt/share/applications
-    mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
+    unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/storage
+
+    # Prepare DevAtServ's GUI for debian tools
+    mkdir -p ./build/Linux/opt/devatserv/share/GUI
+    mv *.deb ./build/Linux/opt/devatserv/share/GUI
+
+    # Grant permission all asset
     chmod 777 ./build/Linux/opt/devatserv/share/storage/*
-    chmod 777 ./build/Linux/opt/share/applications/*
+    chmod 777 ./build/Linux/opt/devatserv/share/GUI/*
 
 }
 
@@ -89,20 +89,17 @@ function pre_build_windows() {
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Windows Package Name: $DAS_WINDOW_NAME"
 
-
-    # Save Docker images
-    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-    docker image save --output rabbitmq.tar.gz rabbitmq
-    
-    # Insert images as dependency
+    # Prepare all images services for debian tools
     mkdir -p ./build/Windows/devatserv/share/storage
+    unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/storage
+
+    # Prepare DevAtServ's GUI for Inno Setup tools
     mkdir -p ./build/Windows/devatserv/applications/GUI
     mv *.exe ./build/Windows/devatserv/applications/GUI
-    mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Windows/devatserv/share/storage
+
+    # Grant permission all asset
     chmod 777 ./build/Windows/devatserv/share/storage/*
     chmod 777 ./build/Windows/share/applications/GUI/*
-
 }
 
 function build_windows() {
@@ -117,10 +114,8 @@ function build_windows() {
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
     cp -r util "$DAS_PACK_DEST_DIR"/devatserv/share/
 
-	# ./scripts/precompile.bat $ProjectConfigFile
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
-	# ./scripts/postcompile.bat
 }
 
 main() {
