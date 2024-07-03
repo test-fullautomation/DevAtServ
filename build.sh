@@ -2,7 +2,7 @@
 
 source ./util/format.sh
 
-
+set -e
 
 UNAME=$(uname)
 if [ "$UNAME" == "Linux" ] ; then
@@ -42,10 +42,12 @@ function pre_build_debian() {
     echo "Debian Package Name: $DAS_DEBIAN_NAME"
     
     # Prepare all images services for debian tools
+    echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Linux/opt/devatserv/share/storage
     unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/storage
 
     # Prepare DevAtServ's GUI for debian tools
+    echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Linux/opt/devatserv/share/GUI
     mv *.deb ./build/Linux/opt/devatserv/share/GUI
 
@@ -78,6 +80,7 @@ function build_debian() {
 	goodmsg "done."
 }
 
+
 function pre_build_windows() {
     echo 
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
@@ -85,6 +88,10 @@ function pre_build_windows() {
     echo -e "${COL_GREEN}#          Compiling DevAtServ setup on Windows...                                 #${COL_RESET}"
     echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+    # URL của Docker Desktop installer cho Windows
+    DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
+    INSTALLER_NAME="DockerDesktopInstaller.exe"
+    DOWNLOAD_DIR="/path/to/download/dir"
 
     # Display info for compiling
     echo "DAS Version: $DAS_VERSION"
@@ -94,16 +101,38 @@ function pre_build_windows() {
     echo "Windows Package Name: $DAS_WINDOW_NAME"
 
     # Prepare all images services for debian tools
+    echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Windows/devatserv/share/storage
     unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/storage
 
-    # Prepare DevAtServ's GUI for Inno Setup tools
+
+    ######### Prepare DevAtServ's GUI for Inno Setup tools #########
+    echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Windows/devatserv/applications/GUI
     mv *.exe ./build/Windows/devatserv/applications/GUI
+
+    # Prepare Docker Desktop for user
+    local DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
+    local INSTALLER_NAME="DockerDesktopInstaller.exe"
+    local DOWNLOAD_DIR="./build/Windows/devatserv/share/docker"
+
+    # Download Docker Desktop installer
+    echo -e "${MSG_INFO} Downloading Docker Desktop installer..."
+    
+    curl -L -o "$INSTALLER_NAME" "$DOCKER_DESKTOP_URL"
+    # Check error
+    if [ -f "$INSTALLER_NAME" ];then
+        mv $INSTALLER_NAME $DOWNLOAD_DIR
+        echo "Docker Desktop installer downloaded successfully to $DOWNLOAD_DIR/$INSTALLER_NAME"
+    else
+        echo "Failed to download Docker Desktop installer."
+        exit 1
+    fi
 
     # Grant permission all asset
     chmod 777 ./build/Windows/devatserv/share/storage/*
     chmod 777 ./build/Windows/share/applications/GUI/*
+    chmod 777 ./build/Windows/share/docker*
 }
 
 function build_windows() {
