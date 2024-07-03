@@ -44,19 +44,20 @@ jobs:
         run: |
           npm run dist
     
-      - name: Upload all image services
+      - name: Upload all DevAtServ's GUI Unbuntu artifacts.
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: das-gui-artifact-deb
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
 
-      - name: Upload Ubuntu artifact
-        if: matrix.os == 'ubuntu-latest'
+
+      - name: Upload all DevAtServ's GUI Windows artifacts.
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: das-gui-artifact-deb
-          path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
+          name: das-gui-artifact-exe
+          path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
   
   build-devatserv-services:
     name: DevAtServ Services
@@ -70,19 +71,16 @@ jobs:
           chmod +x ./install.sh
           ./install.sh
 
-      # Save Docker images as tar.gz files
       - name: Save Docker Images
         run: |
           docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
           docker image save --output devarserv-service-base.tar.gz devatserv-service-base
           docker image save --output rabbitmq.tar.gz rabbitmq
 
-      # Zip all Docker image tar.gz files
-      - name: Zip Docker Images
+      - name: Zip DevAtServ Images
         run: |
           zip devatserv_images.zip devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz
 
-      # Upload the zip file as an artifact
       - name: Upload Docker Images Zip
         uses: actions/upload-artifact@v4
         with:
