@@ -13,11 +13,15 @@ else
 	errormsg "Operation system '$UNAME' is not supported."
 fi
 
+# DevAtServ's GUI Info
+
+# DevAtServ services Info
+DAS_IMAGES_SERVICES=devatserv_images.zip
+# DevAtServ tool info
 DAS_VERSION="0.1.0.0"
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
 DAS_PACK_SRC_DIR="./build/${PLATFORM}"
 DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
-DAS_IMAGES_SERVICES=devatserv-services.zip
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
