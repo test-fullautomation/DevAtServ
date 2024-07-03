@@ -1,4 +1,4 @@
-name: Build Services
+name: Build DevAtServ
 
 on:
   push:
@@ -107,6 +107,7 @@ jobs:
 
       - name: Build DevAtServ
         run: |
+          ls -la
           chmod +x ./build.sh
           ./build.sh
 
