@@ -45,15 +45,21 @@ function pre_build_debian() {
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Linux/opt/devatserv/share/storage
     unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/storage
+    if [ $? -eq 0 ]; then
+        echo -e "${MSG_DONE} All services extracted successfully."
+    else
+        echo -e "${MSG_ERR} Failed to extract DevAtServ's services."
+        exit 1
+    fi
 
     # Prepare DevAtServ's GUI for debian tools
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Linux/opt/devatserv/share/GUI
     mv *.deb ./build/Linux/opt/devatserv/share/GUI
     if [ $? -eq 0 ]; then
-        echo "Get DevAtServ's GUI completed successfully."
+        echo -e "${MSG_DONE} Get DevAtServ's GUI completed successfully."
     else
-        echo "Can't get DevAtServ's GUI."
+        echo -e "${MSG_ERR} Failed to get DevAtServ's GUI."
         exit 1
     fi
 
@@ -110,16 +116,21 @@ function pre_build_windows() {
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Windows/devatserv/share/storage
     unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/storage
-
+    if [ $? -eq 0 ]; then
+        echo -e "${MSG_DONE} All services extracted successfully."
+    else
+        echo -e "${MSG_ERR} Failed to extract DevAtServ's services."
+        exit 1
+    fi
 
     ######### Prepare DevAtServ's GUI for Inno Setup tools #########
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/Windows/devatserv/applications/GUI
     mv *.exe ./build/Windows/devatserv/applications/GUI/DevAtServGUISetup1.0.0.exe
     if [ $? -eq 0 ]; then
-        echo "Get DevAtServ's GUI completed successfully."
+        echo -e "${MSG_DONE} Get DevAtServ's GUI completed successfully."
     else
-        echo "Can't get DevAtServ's GUI."
+        echo -e "${MSG_ERR} Failed to get DevAtServ's GUI."
         exit 1
     fi
 
@@ -135,16 +146,16 @@ function pre_build_windows() {
     # Check error
     if [ -f "$INSTALLER_NAME" ];then
         mv $INSTALLER_NAME $DOWNLOAD_DIR
-        echo "Docker Desktop installer downloaded successfully to $DOWNLOAD_DIR/$INSTALLER_NAME"
+        echo -e "${MSG_DONE} Docker Desktop installer downloaded successfully to $DOWNLOAD_DIR/$INSTALLER_NAME"
     else
-        echo "Failed to download Docker Desktop installer."
+        echo -e "${MSG_ERR} Failed to download Docker Desktop installer."
         exit 1
     fi
 
     # Grant permission all asset
     chmod 777 ./build/Windows/devatserv/share/storage/*
-    chmod 777 ./build/Windows/share/applications/GUI/*
-    chmod 777 ./build/Windows/share/docker*
+    chmod 777 ./build/Windows/devatserv/share/applications/GUI/*
+    chmod 777 ./build/Windows/devatserv/share/docker*
 }
 
 function build_windows() {

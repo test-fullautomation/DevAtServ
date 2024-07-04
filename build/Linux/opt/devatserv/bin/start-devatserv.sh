@@ -23,7 +23,7 @@ pre_check_installation() {
   
   if [ $err -eq 0 ]; then 
     if ! command -v docker &> /dev/null || ! docker compose >/dev/null 2>&1; then
-      echo "${MSG_ERR} Error occurred during Docker installation." 
+      echo -e "${MSG_ERR} Error occurred during Docker installation." 
       err=1
     else
       echo -e "${MSG_DONE} Pre-check-installation completed successfully"
