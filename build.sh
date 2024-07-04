@@ -125,8 +125,8 @@ function pre_build_windows() {
 
     ######### Prepare DevAtServ's GUI for Inno Setup tools #########
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
-    mkdir -p ./build/Windows/devatserv/applications/GUI
-    mv *.exe ./build/Windows/devatserv/applications/GUI/DevAtServGUISetup1.0.0.exe
+    mkdir -p ./build/Windows/devatserv/share/GUI
+    mv *.exe ./build/Windows/devatserv/share/GUI/DevAtServGUISetup1.0.0.exe
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} Get DevAtServ's GUI completed successfully."
     else
@@ -138,6 +138,8 @@ function pre_build_windows() {
     local DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
     local INSTALLER_NAME="DockerDesktopInstaller.exe"
     local DOWNLOAD_DIR="./build/Windows/devatserv/share/docker"
+
+    mkdir -p "$DOWNLOAD_DIR"
 
     # Download Docker Desktop installer
     echo -e "${MSG_INFO} Downloading Docker Desktop installer..."
@@ -154,8 +156,8 @@ function pre_build_windows() {
 
     # Grant permission all asset
     chmod 777 ./build/Windows/devatserv/share/storage/*
-    chmod 777 ./build/Windows/devatserv/share/applications/GUI/*
-    chmod 777 ./build/Windows/devatserv/share/docker*
+    chmod 777 ./build/Windows/devatserv/share/GUI/*
+    chmod 777 ./build/Windows/devatserv/share/docker/*
 }
 
 function build_windows() {
