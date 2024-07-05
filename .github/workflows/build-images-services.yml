@@ -1,4 +1,4 @@
-name: Device Automation Services
+name: Build DevAtServ
 
 on:
   push:
@@ -16,9 +16,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  devatserv-gui:
+  build-devatserv-GUI:
     name: DevAtServ's GUI
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI
@@ -41,49 +44,105 @@ jobs:
         run: |
           npm run dist
     
-      - uses: actions/upload-artifact@v4
+      - name: Upload all DevAtServ's GUI Unbuntu artifacts.
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
         with:
-          name: das-gui-artifact
+          name: das-gui-artifact-deb
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
 
-  build-devatserv:
-    runs-on: ubuntu-latest
-    name: DevAtServ tool
-    needs: [ devatserv-gui ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Download DevAtServ's GUI
-        uses: actions/download-artifact@v4
+      - name: Upload all DevAtServ's GUI Windows artifacts.
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
         with:
-          name: das-gui-artifact
-
+          name: das-gui-artifact-exe
+          path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
+  
+  build-devatserv-services:
+    name: DevAtServ Services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Starting all services
         run: |
           chmod +x ./install.sh
           ./install.sh
 
-      - name: Extract all services into images
+      - name: Save Docker Images
         run: |
-          docker images
           docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
           docker image save --output devarserv-service-base.tar.gz devatserv-service-base
           docker image save --output rabbitmq.tar.gz rabbitmq
-          mkdir -p ./build/Linux/opt/devatserv/share/storage
-          mkdir -p ./build/Linux/opt/share/applications/
-          mv *.deb ./build/Linux/opt/share/applications
-          mv devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz ./build/Linux/opt/devatserv/share/storage
-          chmod 777 ./build/Linux/opt/devatserv/share/storage/*
-          chmod 777 ./build/Linux/opt/share/applications/*
-  
+
+      - name: Zip DevAtServ Images
+        run: |
+          zip devatserv_images.zip devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz
+
+      - name: Upload Docker Images Zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-images
+          path: devatserv_images.zip
+
+  deploy-devatserv-linux:
+    name: DevAtServ tool Linux
+    runs-on: ubuntu-latest
+    needs: [ build-devatserv-GUI , build-devatserv-services ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download DevAtServ's GUI on Unbuntu
+        uses: actions/download-artifact@v4
+        with:
+          name: das-gui-artifact-deb
+      
+      - name: Download DevAtServ Services
+        uses: actions/download-artifact@v4
+        with:
+          name: devatserv-images   
+
       - name: Build DevAtServ
         run: |
           chmod +x ./build.sh
           ./build.sh
 
-      - name: Upload built package
+      - name: Upload Debian package
         uses: actions/upload-artifact@v4
         with:
           name: devatserv-linux-package
-          path: output_lx/*.deb
+          path: output_Linux/*.deb
+
+
+  deploy-devatserv-windows:
+    name: DevAtServ tool Windows
+    runs-on: windows-latest
+    needs: [ build-devatserv-GUI , build-devatserv-services ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download DevAtServ's GUI on Windows
+        uses: actions/download-artifact@v4
+        with:
+          name: das-gui-artifact-exe
+      
+      - name: Download DevAtServ Services
+        uses: actions/download-artifact@v4
+        with:
+          name: devatserv-images
+
+      - name: Build DevAtServ
+        shell: bash
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Upload Exe package
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-windows-package
+          path: output_Windows/*.exe

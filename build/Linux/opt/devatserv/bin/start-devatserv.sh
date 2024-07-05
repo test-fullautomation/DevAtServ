@@ -5,7 +5,7 @@ set -e
 source /opt/devatserv/share/util/format.sh
 
 DAS_GUI_NAME="dasgui"
-DAS_GUI_DIR="/opt/share/applications/DevAtServGUI_1.0.0_amd64.deb"
+DAS_GUI_DIR="/opt/devatserv/share/GUI/DevAtServGUI_1.0.0_amd64.deb"
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
@@ -23,7 +23,7 @@ pre_check_installation() {
   
   if [ $err -eq 0 ]; then 
     if ! command -v docker &> /dev/null || ! docker compose >/dev/null 2>&1; then
-      echo "${MSG_ERR} Error occurred during Docker installation." 
+      echo -e "${MSG_ERR} Error occurred during Docker installation." 
       err=1
     else
       echo -e "${MSG_DONE} Pre-check-installation completed successfully"
