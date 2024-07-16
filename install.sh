@@ -5,7 +5,7 @@ set -e
 source ./util/format.sh
 
 WORKSPACE="$(pwd)"
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories_gitlab.conf"
 
 
 create_repos_directory() {
@@ -23,7 +23,7 @@ create_repos_directory() {
 }
 
 # return github url bases on provided authentication or not
-function get_url () {
+get_url () {
 	repo_type=$1
 	repo_name=$3
 	if [[ $2 == http://* || $2 == https://* ]]; then
@@ -47,7 +47,7 @@ function get_url () {
 }
 
 
-function get_server_url()
+get_server_url()
 {
 	conf_file=$1
 	echo $(git config -f $conf_file --get supported-server.$2)
@@ -58,11 +58,11 @@ function get_server_url()
 # Arguments:
 #	$conf_file : repo configuration file
 #	$repo_type : repo type
-function parse_repo () {
+parse_repo () {
 	conf_file=$1
 	repo_type=$2
 
-	greenmsg "processing section $repo_type"
+	greenmsg "Processing section $repo_type"
 	list_repos=($(git config -f $conf_file --list --name-only | grep $repo_type.))
 	for repo in "${list_repos[@]}"
 	do
@@ -91,8 +91,10 @@ function parse_repo () {
 	fi
 }
 
-
-function parse_config () {
+# Parse the configuration files to detect all services in DevAtServ.
+# Arguments:
+#	$config_file : location to config file
+parse_config () {
 	#echo "git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq"
 	conf_section=($(git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq))
 	#echo $conf_section
@@ -132,7 +134,7 @@ function parse_config () {
 #	$repo_path : location to clone repo into
 #	$repo_url  : repo url
 #	$commit_branch_tag  : target commit, branch or tag to point to
-function clone_update_repo () {
+clone_update_repo () {
 	repo_path=$1
 	repo_url=$2
 	commit_branch_tag=$3
@@ -192,13 +194,12 @@ function clone_update_repo () {
 	fi
 }
 
-
-function install_services () {
+install_services () {
 
 	config_file=$1
 	
 	if [ -f "$config_file" ]; then
-		greenmsg "Found the configuration to clone all services at: '$config_file'"
+		greenmsg "Found the configuration file to clone all services at: '$config_file'"
 	else
 		errormsg "Repo configuration '$config_file' is not existing"
 	fi
