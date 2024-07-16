@@ -4,9 +4,8 @@ set -e
 
 source ./util/format.sh
 
-# URLs for the repositories
-BASE_SERVICE=https://github.com/test-fullautomation/python-microservice-base
-CLEWARE_SERVICE=https://github.com/test-fullautomation/python-microservice-cleware-switch
+WORKSPACE="$(pwd)"
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
 
 create_repos_directory() {
@@ -23,19 +22,109 @@ create_repos_directory() {
   cd "$repos_dir" || return 1
 }
 
+# return github url bases on provided authentication or not
+function get_url () {
+	repo_type=$1
+	repo_name=$3
+	if [[ $2 == http://* || $2 == https://* ]]; then
+		PROJECT_URL=`echo  "$2" | sed 's~http[s]*://~~g'`
 
-start_docker_compose() {
-  echo -e "${MSG_INFO} Starting the DevArtServ Docker containers"
+		var_usr=$(echo ${repo_type^^}_BOT_USERNAME)
+		var_pw=$(echo ${repo_type^^}_BOT_PASSWORD)
 
-  if ! docker compose >/dev/null 2>&1; then
-    echo "failed to find 'docker compose'"
-    exit 1
-  fi
+		bot_usr=${!var_usr}
+		bot_pw=${!var_pw}
 
-  if ! docker compose up --remove-orphans -d; then
-    echo "Could not start. Check for errors above."
-    exit 1
-  fi
+		repo_url="https://${PROJECT_URL}/${repo_name}.git"
+		if [ -n "${bot_usr}" ] && [ -n "${bot_pw}" ]; then
+			repo_url="https://${bot_usr}:${bot_pw}@${PROJECT_URL}/${repo_name}.git"
+		fi
+	else
+		repo_url="$2/${repo_name}.git"
+	fi
+
+	echo $repo_url
+}
+
+
+function get_server_url()
+{
+	conf_file=$1
+	echo $(git config -f $conf_file --get supported-server.$2)
+	return
+}
+
+# Parse repo information for cloning/updating
+# Arguments:
+#	$conf_file : repo configuration file
+#	$repo_type : repo type
+function parse_repo () {
+	conf_file=$1
+	repo_type=$2
+
+	greenmsg "processing section $repo_type"
+	list_repos=($(git config -f $conf_file --list --name-only | grep $repo_type.))
+	for repo in "${list_repos[@]}"
+	do
+		repo_name=${repo#${repo_type}.}
+		server_url=$(get_server_url "${conf_file}" "${repo_type}")
+		if [[ "$server_url" != "" ]]; then
+			repo_url=$(get_url ${repo_type} ${server_url} ${repo_name})
+		else
+			errormsg "not supported repo type '$repo_type'"
+		fi
+		echo -e "$COL_BLUE$BG_WHITE---- $repo$COL_RESET$COL_BLUE$BG_WHITE -----------------------------------------$COL_RESET"
+		
+
+		# switch repo to given released tag $TAG_NAME
+		if [[ "$TRIGGER_BY" =~ $TAG_REGEX || "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
+			clone_update_repo "$WORKSPACE/repos/$repo_name" "$repo_url" "$TAG_NAME"
+		else
+			# Allow to specify commit/branch of repos to be built 
+			commit_branch=$(git config -f $conf_file --get $repo)
+			clone_update_repo "$WORKSPACE/repos/$repo_name" "$repo_url" "$commit_branch"
+		fi
+
+	done
+	if [ "$?" -ne 0 ]; then
+		exit 1
+	fi
+}
+
+
+function parse_config () {
+	#echo "git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq"
+	conf_section=($(git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq))
+	#echo $conf_section
+	for section in "${conf_section[@]}"
+	do 
+		section_server=$(get_server_url "$1" "$section")
+		if [ "$section_server" != "" ]; then
+			parse_repo $1 $section
+		elif [ "$section" != "supported-server" ]; then
+			sec_name=$(git config -f "$1" --get ${section}.name)
+			if [ "$sec_name" == "" ]; then
+				sec_name=${section}
+			fi
+			
+			echo
+			greenmsg "processing section $sec_name"
+			echo -e "$COL_BLUE$BG_WHITE---- $sec_name$COL_RESET$COL_BLUE$BG_WHITE -----------------------------------------$COL_RESET"
+			
+			sec_path=$(git config -f $1 --get ${section}.path)
+			if [ "$sec_path" == "" ]; then
+				sec_path="$WORKSPACE/repos/${sec_name}"
+			fi
+			sec_url=$(eval echo $(git config -f $1 --get ${section}.url))
+			if [ "$sec_url" == "" ]; then
+				sec_url=$(get_url "github" ${sec_name})
+			fi
+			
+			clone_update_repo "$sec_path" "$sec_url"
+			echo
+			echo
+		fi
+	done
 }
 
 # Clone or update repository
@@ -104,8 +193,33 @@ function clone_update_repo () {
 }
 
 
+function install_services () {
 
-#
+	config_file=$1
+	
+	if [ -f "$config_file" ]; then
+		greenmsg "Found the configuration to clone all services at: '$config_file'"
+	else
+		errormsg "Repo configuration '$config_file' is not existing"
+	fi
+
+	parse_config $config_file
+}
+
+start_docker_compose() {
+  echo -e "${MSG_INFO} Starting the DevArtServ Docker containers"
+
+  if ! docker compose >/dev/null 2>&1; then
+    echo "failed to find 'docker compose'"
+    exit 1
+  fi
+
+  if ! docker compose up --remove-orphans -d; then
+    echo "Could not start. Check for errors above."
+    exit 1
+  fi
+}
+
 main() {
 	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
 	create_repos_directory || {
@@ -113,8 +227,7 @@ main() {
 		return 1
 	}
 
-	clone_update_repo ../repos/python-microservice-base $BASE_SERVICE
-	clone_update_repo ../repos/python-microservice-cleware-switch $CLEWARE_SERVICE
+	install_services $CONFIG_SERVICE_FILE
 
 	# Build and start the services
 	start_docker_compose || {

@@ -16,10 +16,13 @@ function errormsg(){
    exit 1
 }
 
-
 function goodmsg(){
    echo -e "${COL_GREEN}>>>> $1.${COL_RESET}"
    echo
+}
+
+function greenmsg(){
+   echo -e "${COL_GREEN}> $1.${COL_RESET}"   
 }
 
 function logresult(){
