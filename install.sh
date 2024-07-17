@@ -7,6 +7,20 @@ source ./util/format.sh
 WORKSPACE="$(pwd)"
 CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories_gitlab.conf"
 
+for i in "$@"
+do
+   case $i in
+          --config-file=*)
+			 CONFIG_SERVICE_FILE="${i#*=}"
+          ;;
+          *)
+              echo -e $COL_RED"Argument not allowed:"$COL_RESET $i
+              echo -e $COL_RED"build terminated."$COL_RESET
+              exit 1
+          ;;
+      esac
+done
+
 
 create_repos_directory() {
   local repos_dir='./repos'
@@ -14,12 +28,10 @@ create_repos_directory() {
   echo -e "${MSG_INFO} Creating repos directory for all DevAtServ service..."
 
   if [[ -e $repos_dir ]]; then
-    echo "     Directory $repos_dir already exists. Updating clone."
+    echo "Directory $repos_dir already exists."
   else
     mkdir -p "$repos_dir" || return
   fi
-
-  cd "$repos_dir" || return 1
 }
 
 # return github url bases on provided authentication or not
@@ -197,7 +209,8 @@ clone_update_repo () {
 install_services () {
 
 	config_file=$1
-	
+	echo -e "${MSG_INFO} Cloning all services to repos..."
+
 	if [ -f "$config_file" ]; then
 		greenmsg "Found the configuration file to clone all services at: '$config_file'"
 	else
