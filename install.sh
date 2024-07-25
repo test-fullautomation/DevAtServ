@@ -5,7 +5,8 @@ set -e
 source ./util/format.sh
 
 WORKSPACE="$(pwd)"
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories_gitlab.conf"
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
+SUPPORT_SERVER="None"
 
 for i in "$@"
 do
@@ -109,7 +110,7 @@ parse_repo () {
 parse_config () {
 	#echo "git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq"
 	conf_section=($(git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq))
-	#echo $conf_section
+	SUPPORT_SERVER=$conf_section
 	for section in "${conf_section[@]}"
 	do 
 		section_server=$(get_server_url "$1" "$section")
@@ -228,7 +229,14 @@ start_docker_compose() {
     exit 1
   fi
 
-  if ! docker compose up --remove-orphans -d; then
+  # Check for specific SUPPORT_SERVER value
+  if [ "$SUPPORT_SERVER" == "gitlab" ]; then
+    docker_compose_file="docker-compose.gitlab.yml"
+  elif [ "$SUPPORT_SERVER" == "github" ]; then
+    docker_compose_file="docker-compose.yml"
+  fi
+
+  if ! docker compose -f "$docker_compose_file" up --remove-orphans -d; then
     echo "Could not start. Check for errors above."
     exit 1
   fi
