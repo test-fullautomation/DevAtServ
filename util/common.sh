@@ -1,5 +1,22 @@
 #!/bin/bash
 
+WORKSPACE="$(pwd)"
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
+
+for i in "$@"
+do
+   case $i in
+          --config-file=*)
+			 CONFIG_SERVICE_FILE="${i#*=}"
+          ;;
+          *)
+              echo -e $COL_RED"Argument not allowed:"$COL_RESET $i
+              echo -e $COL_RED"build terminated."$COL_RESET
+              exit 1
+          ;;
+      esac
+done
+
 SUPPORT_SERVER="None"
 
 
@@ -72,13 +89,22 @@ parse_repo () {
 	fi
 }
 
+# Parse the configuration files to detect what server supported.
+# Arguments:
+#	$config_file : location to config file
+parse_supported_server () {
+    SUPPORT_SERVER=($(git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq))
+	echo "Server supported: $SUPPORT_SERVER"
+}
+
 # Parse the configuration files to detect all services in DevAtServ.
 # Arguments:
 #	$config_file : location to config file
 parse_config () {
 	#echo "git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq"
-	conf_section=($(git config -f $1 --list --name-only | sed "s/.[^.]*$//" | uniq))
-	SUPPORT_SERVER=$conf_section
+	parse_supported_server $1
+	conf_section=$SUPPORT_SERVER
+    
 	for section in "${conf_section[@]}"
 	do 
 		section_server=$(get_server_url "$1" "$section")

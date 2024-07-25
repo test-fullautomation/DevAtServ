@@ -5,24 +5,6 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
-WORKSPACE="$(pwd)"
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
-
-for i in "$@"
-do
-   case $i in
-          --config-file=*)
-			 CONFIG_SERVICE_FILE="${i#*=}"
-          ;;
-          *)
-              echo -e $COL_RED"Argument not allowed:"$COL_RESET $i
-              echo -e $COL_RED"build terminated."$COL_RESET
-              exit 1
-          ;;
-      esac
-done
-
-
 create_repos_directory() {
   local repos_dir='./repos'
 
@@ -64,7 +46,7 @@ start_docker_compose() {
   elif [ "$SUPPORT_SERVER" == "github" ]; then
     docker_compose_file="docker-compose.yml"
   else
-	errormsg "Docker compose file not found"
+	  errormsg "Docker compose file not found"
   fi
 
   if ! docker compose -f "$docker_compose_file" up --remove-orphans -d; then
