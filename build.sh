@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ./util/format.sh
+source ./util/common.sh
 
 set -e
 
@@ -25,6 +26,18 @@ DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
+
+function prepare_docker_compose_for_deployment() {
+
+    # Check for specific SUPPORT_SERVER value
+    if [ "$SUPPORT_SERVER" == "gitlab" ]; then
+        cp -rf ./build/Linux/opt/devatserv/share/start-services/docker-compose.gitlab.yml \
+                ./build/Linux/opt/devatserv/share/start-services/docker-compose.yml
+
+        cp -rf ./build/Windows/devatserv/share/start-services/docker-compose.gitlab.yml \
+                ./build/Windows/devatserv/share/start-services/docker-compose.yml
+    fi
+}
 
 function pre_build_debian() {
     echo 
@@ -175,6 +188,13 @@ function build_windows() {
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
+
+function exporting_all_services() {
+    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
+    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
+    docker image save --output rabbitmq.tar.gz rabbitmq
+}
+
 
 main() {
 
