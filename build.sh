@@ -1,8 +1,9 @@
 #!/bin/bash
 
-source ./util/format.sh
-
 set -e
+
+source ./util/format.sh
+source ./util/common.sh
 
 UNAME=$(uname)
 if [ "$UNAME" == "Linux" ] ; then
@@ -26,6 +27,29 @@ DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
 
+
+function prepare_docker_compose_for_deployment() {
+
+    echo -e "${MSG_INFO} Prepare docker compose file for deployment..."
+
+    parse_supported_server $CONFIG_SERVICE_FILE
+    # Check for specific SUPPORT_SERVER value
+    if [ "$SUPPORT_SERVER" == "gitlab" ]; then
+        cp -rf ./build/Linux/opt/devatserv/share/start-services/docker-compose.gitlab.yml \
+                ./build/Linux/opt/devatserv/share/start-services/docker-compose.yml
+
+        cp -rf ./build/Windows/devatserv/share/start-services/docker-compose.gitlab.yml \
+                ./build/Windows/devatserv/share/start-services/docker-compose.yml
+
+        echo "Replace docker-compose.gitlab.yml with docker-compose.yml for Docker Compose deployment."
+
+    elif [ "$SUPPORT_SERVER" == "github" ]; then
+        echo "Docker compose deployment: docker-compose.yml"
+    else
+        errormsg "Docker compose file not found"
+    fi
+}
+
 function pre_build_debian() {
     echo 
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
@@ -41,6 +65,9 @@ function pre_build_debian() {
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Debian Package Name: $DAS_DEBIAN_NAME"
     
+    # Prepare Docker compose for deployment
+    prepare_docker_compose_for_deployment
+
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Linux/opt/devatserv/share/storage
@@ -62,6 +89,7 @@ function pre_build_debian() {
         echo -e "${MSG_ERR} Failed to get DevAtServ's GUI."
         exit 1
     fi
+
 
     # Grant permission all asset
     chmod 777 ./build/Linux/opt/devatserv/share/storage/*
@@ -112,6 +140,9 @@ function pre_build_windows() {
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Windows Package Name: $DAS_WINDOW_NAME"
 
+    # Prepare Docker compose for deployment
+    prepare_docker_compose_for_deployment
+    
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
     mkdir -p ./build/Windows/devatserv/share/storage
@@ -175,6 +206,13 @@ function build_windows() {
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
+
+function exporting_all_services() {
+    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
+    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
+    docker image save --output rabbitmq.tar.gz rabbitmq
+}
+
 
 main() {
 

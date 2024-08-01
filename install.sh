@@ -3,11 +3,7 @@
 set -e
 
 source ./util/format.sh
-
-# URLs for the repositories
-BASE_SERVICE=https://github.com/test-fullautomation/python-microservice-base
-CLEWARE_SERVICE=https://github.com/test-fullautomation/python-microservice-cleware-switch
-
+source ./util/common.sh
 
 create_repos_directory() {
   local repos_dir='./repos'
@@ -15,14 +11,26 @@ create_repos_directory() {
   echo -e "${MSG_INFO} Creating repos directory for all DevAtServ service..."
 
   if [[ -e $repos_dir ]]; then
-    echo "     Directory $repos_dir already exists. Updating clone."
+    echo "Directory $repos_dir already exists."
   else
     mkdir -p "$repos_dir" || return
   fi
-
-  cd "$repos_dir" || return 1
 }
 
+install_services () {
+
+	config_file=$1
+	echo -e "${MSG_INFO} Cloning all services to repos..."
+
+	if [ -f "$config_file" ]; then
+		greenmsg "Found the configuration file to clone all services at: '$config_file'"
+	else
+		errormsg "Repo configuration '$config_file' is not existing"
+	fi
+	
+	# Parse and clone all services
+	parse_config $config_file
+}
 
 start_docker_compose() {
   echo -e "${MSG_INFO} Starting the DevArtServ Docker containers"
@@ -31,81 +39,22 @@ start_docker_compose() {
     echo "failed to find 'docker compose'"
     exit 1
   fi
+    
+  # Check for specific SUPPORT_SERVER value
+  if [ "$SUPPORT_SERVER" == "gitlab" ]; then
+    docker_compose_file="docker-compose.gitlab.yml"
+  elif [ "$SUPPORT_SERVER" == "github" ]; then
+    docker_compose_file="docker-compose.yml"
+  else
+	  errormsg "Docker compose file not found"
+  fi
 
-  if ! docker compose up --remove-orphans -d; then
+  if ! docker compose -f "$docker_compose_file" up --remove-orphans -d; then
     echo "Could not start. Check for errors above."
     exit 1
   fi
 }
 
-# Clone or update repository
-# Arguments:
-#	$repo_path : location to clone repo into
-#	$repo_url  : repo url
-#	$commit_branch_tag  : target commit, branch or tag to point to
-function clone_update_repo () {
-	repo_path=$1
-	repo_url=$2
-	commit_branch_tag=$3
-
-	# 1. Check is repo folder is existing or not
-	# 2. Ensure the repo url is correct
-	# 3. Fetch all from git server
-	# 4. Discard all user changes includes untracked files
-	# 5. Ensure the default branch change (from git server)
-	# 6. Checkout to target branch/commit/tag
-	# 7. Ensure branch/commit/tag is up-to-date with remote
-
-	if [ -d "$repo_path" ]; then
-		echo "Cleaning and updating repo $repo_path"
-
-		current_url=$(git -C "$repo_path" remote get-url origin)
-		if [ "$current_url" != "$repo_url" ]; then
-			echo "Repo URL has changed, update remote origin to ${repo_url}"
-			git -C "$repo_path" remote set-url origin "$repo_url"
-		fi
-
-		git -C "$repo_path" fetch --all
-		echo "Clean all local changes/commits"
-		git -C "$repo_path" reset --hard HEAD
-		git -C "$repo_path" clean -f -d -x
-
-		if [ -z "$commit_branch_tag" ]; then
-			default_branch=$(git -C "$repo_path" remote show origin | grep "HEAD branch" | cut -d " " -f 5)
-			echo "Default branch: $default_branch"
-			git -C "$repo_path" checkout $default_branch
-			git -C "$repo_path" reset --hard origin/$default_branch
-			logresult "$?" "switched to '$default_branch'" "checkout to '$default_branch' from '$repo_url'"
-		fi
-
-		# try to remove existing directory and clone repo again
-		if [ "$?" -ne 0 ]; then
-			echo "Cloning $repo_url again"
-			rm -rf "$repo_path"
-			git clone "$repo_url" "$repo_path"
-		fi
-	else
-		echo "Cloning $repo_url"
-		git clone "$repo_url" "$repo_path"
-	fi
-	if [ "$?" -ne 0 ]; then
-		exit 1
-	fi
-
-	if [ -n "$commit_branch_tag" ]; then
-		echo "Checking out to '$commit_branch_tag'"
-		git -C "$repo_path" checkout $commit_branch_tag
-		if [ "$?" -ne 0 ]; then
-			errormsg	"Given tag/branch '$commit_branch_tag' is not existing" 
-		fi
-		git -C "$repo_path" pull origin $commit_branch_tag
-		logresult "$?" "switched to '$commit_branch_tag'" "checkout to '$commit_branch_tag' from '$repo_url'"
-	fi
-}
-
-
-
-#
 main() {
 	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
 	create_repos_directory || {
@@ -113,8 +62,7 @@ main() {
 		return 1
 	}
 
-	clone_update_repo ../repos/python-microservice-base $BASE_SERVICE
-	clone_update_repo ../repos/python-microservice-cleware-switch $CLEWARE_SERVICE
+	install_services $CONFIG_SERVICE_FILE
 
 	# Build and start the services
 	start_docker_compose || {

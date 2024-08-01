@@ -1,0 +1,74 @@
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:3.13-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: dataqueue
+      RABBITMQ_ROUTING_KEY: dataqueue 
+      RABBITMQ_EXCHANGE: exchange_test
+    networks:
+      - devatserv-network
+
+  cleware-service:
+    image: "devatserv-cleware-service"
+    container_name: cleware-service
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_USERNAME: "guest"
+      RABBITMQ_PASSSWORD: "guest"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: dataqueue
+      RABBITMQ_ROUTING_KEY: dataqueue 
+      RABBITMQ_EXCHANGE: exchange_test
+    networks:
+      - devatserv-network
+    restart: always
+    healthcheck:
+      interval: 10s
+      timeout: 5s
+    devices:
+      - "/dev/usb/hiddev0:/dev/usb/hiddev0"
+    stdin_open: true
+    tty: true
+
+  service-base:
+    image: "devatserv-service-base"
+    container_name: base-service
+    restart: always
+    environment:
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSSWORD: guest
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: dataqueue
+      RABBITMQ_ROUTING_KEY: dataqueue 
+      RABBITMQ_EXCHANGE: exchange_test
+    networks:
+      - devatserv-network
+
+  debug-board-service:
+    image: "devatserv-debug-board-service"
+    container_name: debug-board-service
+    restart: always
+    environment:
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSSWORD: guest
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: dataqueue
+      RABBITMQ_ROUTING_KEY: dataqueue 
+      RABBITMQ_EXCHANGE: exchange_test
+    networks:
+      - devatserv-network
+
+networks:
+  devatserv-network:
+    driver: bridge
