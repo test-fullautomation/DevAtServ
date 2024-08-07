@@ -36,10 +36,6 @@ services:
     healthcheck:
       interval: 10s
       timeout: 5s
-    devices:
-      - "/dev/usb/hiddev0:/dev/usb/hiddev0"
-    stdin_open: true
-    tty: true
 
   service-base:
     image: "devatserv-service-base"

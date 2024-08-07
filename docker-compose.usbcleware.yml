@@ -1,0 +1,6 @@
+services:
+  cleware-service:
+    devices:
+      - "/dev/usb/hiddev0:/dev/usb/hiddev0"
+    stdin_open: true
+    tty: true

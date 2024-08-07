@@ -48,6 +48,10 @@ function prepare_docker_compose_for_deployment() {
     else
         errormsg "Docker compose file not found"
     fi
+
+    # prepare compose file configuration for USB Cleware
+    cp -rf docker-compose.usbcleware.yml \
+        ./build/Linux/opt/devatserv/share/start-services/
 }
 
 function pre_build_debian() {
