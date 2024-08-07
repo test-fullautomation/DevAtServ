@@ -1,0 +1,16 @@
+services:
+  debug-board-service:
+    container_name: debug-board-service
+    build:
+      context: ./repos/python-microservice-debugboard/MicroserviceDebugboard
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSSWORD: guest
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: dataqueue
+      RABBITMQ_ROUTING_KEY: dataqueue 
+      RABBITMQ_EXCHANGE: exchange_test
+    networks:
+      - devatserv-network
