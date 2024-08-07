@@ -75,7 +75,7 @@ start_devatserv() {
 
 	docker_compose_files=("docker-compose.yml")
 
-	# Check for specific SUPPORT_SERVER value
+	# Check if USB device exists
 	if [ -c /dev/usb/hiddev0 ]; then
   		docker_compose_files+=("docker-compose.usbcleware.yml")
 	fi
@@ -85,7 +85,7 @@ start_devatserv() {
 		compose_options="$compose_options -f $file"
 	done
 
-	if ! docker-compose $compose_options up --remove-orphans -d; then
+	if ! docker compose $compose_options up --remove-orphans -d; then
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
 	fi
