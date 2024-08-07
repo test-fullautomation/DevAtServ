@@ -52,7 +52,7 @@ start_docker_compose() {
 		compose_options="$compose_options -f $file"
 	done
 
-	if ! docker-compose $compose_options up --remove-orphans -d; then
+	if ! docker compose $compose_options up --remove-orphans -d; then
 		echo "Could not start. Check for errors above."
 		exit 1
 	fi

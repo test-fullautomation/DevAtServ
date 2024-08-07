@@ -72,13 +72,25 @@ cd /opt/devatserv/share/start-services
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
 
-  if ! docker compose up --remove-orphans -d; then
+
+	docker_compose_files=("docker-compose.yml")
+
+	# Check for specific SUPPORT_SERVER value
+	if [ -c /dev/usb/hiddev0 ]; then
+  		docker_compose_files+=("docker-compose.usbcleware.yml")
+	fi
+
+	compose_options=""
+	for file in "${docker_compose_files[@]}"; do
+		compose_options="$compose_options -f $file"
+	done
+
+	if ! docker-compose $compose_options up --remove-orphans -d; then
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
-  fi
+	fi
 
   show_success_message
-
 }
 
 show_success_message() {
@@ -106,8 +118,6 @@ main() {
 
   start_devatserv || handle_error 'Error starting Docker containers'
   
-  read -p "Press Enter to continue..."
-
   return 0
 }
 
