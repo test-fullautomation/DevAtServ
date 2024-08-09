@@ -20,7 +20,7 @@ services:
 
   cleware-service:
     build:
-      context: ./repos/python-microservice-cleware-switch/MicroserviceClewareSwitch
+      context: ../python-microservice-cleware-switch/MicroserviceClewareSwitch
       dockerfile: Dockerfile
     container_name: cleware-service
     depends_on:
@@ -42,7 +42,7 @@ services:
   service-base:
     container_name: base-service
     build:
-      context: ./repos/python-microservice-base/MicroserviceBase/ServiceRegistry
+      context: ../python-microservice-base/MicroserviceBase/ServiceRegistry
       dockerfile: Dockerfile
     restart: always
     environment:
