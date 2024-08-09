@@ -22,7 +22,9 @@ install_services () {
 	config_file=$1
 	echo -e "${MSG_INFO} Cloning all services to repos..."
 
-	if [ -f "$config_file" ]; then
+	resolved_config_file=$(realpath "$config_file")
+
+	if [ -f "$resolved_config_file" ]; then
 		greenmsg "Found the configuration file to clone all services at: '$config_file'"
 	else
 		errormsg "Repo configuration '$config_file' is not existing"
