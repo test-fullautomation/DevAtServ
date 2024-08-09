@@ -5,7 +5,7 @@ set -e
 source /opt/devatserv/share/util/format.sh
 
 if [ "$1" = "remove" ]; then
-  /opt/devatserv/bin/stop-devatserv.sh
+  /opt/devatserv/bin/remove-devatserv.sh
 fi
 
 rm -rf /opt/devatserv/

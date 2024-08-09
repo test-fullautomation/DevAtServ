@@ -50,4 +50,5 @@ chmod +x ${APPS_PATH}/devatserv.desktop
 chmod +x /opt/devatserv/bin/load-devatserv.sh
 chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/stop-devatserv.sh
+chmod +x /opt/devatserv/bin/remove-devatserv.sh
 chmod +x /opt/devatserv/share/util/install_docker_lx.sh
