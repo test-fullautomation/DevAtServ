@@ -76,11 +76,11 @@ parse_repo () {
 
 		# switch repo to given released tag $TAG_NAME
 		if [[ "$TRIGGER_BY" =~ $TAG_REGEX || "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
-			clone_update_repo "$WORKSPACE/repos/$repo_name" "$repo_url" "$TAG_NAME"
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$TAG_NAME"
 		else
 			# Allow to specify commit/branch of repos to be built 
 			commit_branch=$(git config -f $conf_file --get $repo)
-			clone_update_repo "$WORKSPACE/repos/$repo_name" "$repo_url" "$commit_branch"
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
 		fi
 
 	done
@@ -122,7 +122,7 @@ parse_config () {
 			
 			sec_path=$(git config -f $1 --get ${section}.path)
 			if [ "$sec_path" == "" ]; then
-				sec_path="$WORKSPACE/repos/${sec_name}"
+				sec_path="$WORKSPACE/../../${sec_name}"
 			fi
 			sec_url=$(eval echo $(git config -f $1 --get ${section}.url))
 			if [ "$sec_url" == "" ]; then
