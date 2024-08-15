@@ -91,7 +91,7 @@ parse_supported_server () {
 	echo "Server supported: $SUPPORT_SERVER"
 }
 
-# Parse the configuration files to detect all services in DevAtServ.
+# Parse the configuration files to detect all repositories in DevAtServ.
 # Arguments:
 #	$config_file : location to config file
 parse_config () {
@@ -129,6 +129,18 @@ parse_config () {
 	done
 }
 
+# Parse the configuration files to detect all services in DevAtServ.
+# Arguments:
+#	$config_file : location to config file
+parse_services () {
+	conf_file=$1
+	service_type=services
+
+	greenmsg "Processing section $service_type"
+	list_services=($(git config -f $conf_file --list --name-only | grep $service_type.))
+	
+	echo "${list_services[@]}"
+}
 # Clone or update repository
 # Arguments:
 #	$repo_path : location to clone repo into
