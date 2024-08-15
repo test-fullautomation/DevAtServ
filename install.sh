@@ -103,7 +103,10 @@ main() {
 		return 1
 	}
 
-	install_services $CONFIG_SERVICE_FILE
+	install_services $CONFIG_SERVICE_FILE || {
+		echo 'error installing service' 
+		return 1
+	}
 
 	# Build and start the services
 	start_docker_compose || {

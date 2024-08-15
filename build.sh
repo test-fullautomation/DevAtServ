@@ -71,8 +71,8 @@ function pre_build_debian() {
 
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
-    mkdir -p ./build/Linux/opt/devatserv/share/storage
-    unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/storage
+    # Extract storage/*.tar.gz to share folder
+    unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} All services extracted successfully."
     else
@@ -146,8 +146,9 @@ function pre_build_windows() {
     
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
-    mkdir -p ./build/Windows/devatserv/share/storage
-    unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/storage
+    # Extract storage/*.tar.gz to share folder
+    unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/
+
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} All services extracted successfully."
     else
