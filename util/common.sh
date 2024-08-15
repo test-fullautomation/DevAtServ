@@ -3,6 +3,9 @@
 WORKSPACE="$(pwd)"
 CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
+# DevAtServ services Info
+DAS_IMAGES_SERVICES=devatserv_images.zip
+
 for i in "$@"
 do
    case $i in
@@ -135,11 +138,7 @@ parse_config () {
 parse_services () {
 	conf_file=$1
 	service_type=services
-
-	greenmsg "Processing section $service_type"
 	list_services=($(git config -f $conf_file --list --name-only | grep $service_type.))
-	
-	echo "${list_services[@]}"
 }
 # Clone or update repository
 # Arguments:
