@@ -16,8 +16,6 @@ fi
 
 # DevAtServ's GUI Info
 
-# DevAtServ services Info
-DAS_IMAGES_SERVICES=devatserv_images.zip
 # DevAtServ tool info
 DAS_VERSION="0.1.0.0"
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
@@ -25,7 +23,6 @@ DAS_PACK_SRC_DIR="./build/${PLATFORM}"
 DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
-
 
 
 function prepare_docker_compose_for_deployment() {
@@ -74,8 +71,8 @@ function pre_build_debian() {
 
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
-    mkdir -p ./build/Linux/opt/devatserv/share/storage
-    unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/storage
+    # Extract storage/*.tar.gz to share folder
+    unzip $DAS_IMAGES_SERVICES -d ./build/Linux/opt/devatserv/share/
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} All services extracted successfully."
     else
@@ -149,8 +146,9 @@ function pre_build_windows() {
     
     # Prepare all images services for debian tools
     echo -e "${MSG_INFO} Extracting all DevAtServ services..."
-    mkdir -p ./build/Windows/devatserv/share/storage
-    unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/storage
+    # Extract storage/*.tar.gz to share folder
+    unzip $DAS_IMAGES_SERVICES -d ./build/Windows/devatserv/share/
+
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} All services extracted successfully."
     else
@@ -209,12 +207,6 @@ function build_windows() {
 
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
-}
-
-function exporting_all_services() {
-    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-    docker image save --output rabbitmq.tar.gz rabbitmq
 }
 
 

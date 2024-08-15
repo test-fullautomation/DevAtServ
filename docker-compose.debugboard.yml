@@ -2,7 +2,7 @@ services:
   debug-board-service:
     container_name: debug-board-service
     build:
-      context: ./repos/python-microservice-debugboard/MicroserviceDebugboard
+      context: ../python-microservice-debugboard/MicroserviceDebugboard
       dockerfile: Dockerfile
     restart: always
     environment:

@@ -3,6 +3,9 @@
 WORKSPACE="$(pwd)"
 CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
+# DevAtServ services Info
+DAS_IMAGES_SERVICES=devatserv_images.zip
+
 for i in "$@"
 do
    case $i in
@@ -73,15 +76,9 @@ parse_repo () {
 		fi
 		echo -e "$COL_BLUE$BG_WHITE---- $repo$COL_RESET$COL_BLUE$BG_WHITE -----------------------------------------$COL_RESET"
 		
-
-		# switch repo to given released tag $TAG_NAME
-		if [[ "$TRIGGER_BY" =~ $TAG_REGEX || "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
-			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$TAG_NAME"
-		else
-			# Allow to specify commit/branch of repos to be built 
-			commit_branch=$(git config -f $conf_file --get $repo)
-			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
-		fi
+		# Allow to specify commit/branch of repos to be built 
+		commit_branch=$(git config -f $conf_file --get $repo)
+		clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
 
 	done
 	if [ "$?" -ne 0 ]; then
@@ -97,7 +94,7 @@ parse_supported_server () {
 	echo "Server supported: $SUPPORT_SERVER"
 }
 
-# Parse the configuration files to detect all services in DevAtServ.
+# Parse the configuration files to detect all repositories in DevAtServ.
 # Arguments:
 #	$config_file : location to config file
 parse_config () {
@@ -128,7 +125,6 @@ parse_config () {
 			if [ "$sec_url" == "" ]; then
 				sec_url=$(get_url "github" ${sec_name})
 			fi
-			
 			clone_update_repo "$sec_path" "$sec_url"
 			echo
 			echo
@@ -136,6 +132,14 @@ parse_config () {
 	done
 }
 
+# Parse the configuration files to detect all services in DevAtServ.
+# Arguments:
+#	$config_file : location to config file
+parse_services () {
+	conf_file=$1
+	service_type=services
+	list_services=($(git config -f $conf_file --list --name-only | grep $service_type.))
+}
 # Clone or update repository
 # Arguments:
 #	$repo_path : location to clone repo into

@@ -71,16 +71,6 @@ jobs:
           chmod +x ./install.sh
           ./install.sh
 
-      - name: Save Docker Images
-        run: |
-          docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-          docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-          docker image save --output rabbitmq.tar.gz rabbitmq
-
-      - name: Zip DevAtServ Images
-        run: |
-          zip devatserv_images.zip devarserv-cleware-service.tar.gz devarserv-service-base.tar.gz rabbitmq.tar.gz
-
       - name: Upload Docker Images Zip
         uses: actions/upload-artifact@v4
         with:

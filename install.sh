@@ -5,17 +5,6 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
-create_repos_directory() {
-	local repos_dir='./repos'
-
-	echo -e "${MSG_INFO} Creating repos directory for all DevAtServ service..."
-
-	if [[ -e $repos_dir ]]; then
-		echo "Directory $repos_dir already exists."
-	else
-		mkdir -p "$repos_dir" || return
-	fi
-}
 
 install_services () {
 
@@ -37,6 +26,8 @@ install_services () {
 start_docker_compose() {
 	echo -e "${MSG_INFO} Starting the DevArtServ Docker containers"
 
+	parse_supported_server $CONFIG_SERVICE_FILE
+
 	if ! docker compose >/dev/null 2>&1; then
 		echo "failed to find 'docker compose'"
 		exit 1
@@ -46,13 +37,13 @@ start_docker_compose() {
 
 	# Check for specific SUPPORT_SERVER value
 	if [ "$SUPPORT_SERVER" == "gitlab" ]; then
-    docker_compose_files+=("docker-compose.debugboard.yml")
+    	docker_compose_files+=("docker-compose.debugboard.yml")
 	fi
 
-  # Check if USB device exists
-  if [ -c /dev/usb/hiddev0 ]; then
-    docker_compose_files+=("docker-compose.usbcleware.yml")
-  fi
+	# Check if USB device exists
+	if [ -c /dev/usb/hiddev0 ]; then
+		docker_compose_files+=("docker-compose.usbcleware.yml")
+	fi
 
 	compose_options=""
 	for file in "${docker_compose_files[@]}"; do
@@ -65,18 +56,66 @@ start_docker_compose() {
 	fi
 }
 
+function create_storage_directory() {
+	local repos_dir='./storage'
+
+	echo -e "${MSG_INFO} Creating storage for all DevAtServ images service..."
+
+	if [[ -e $repos_dir ]]; then
+		echo "Directory $repos_dir already exists."
+	else
+		mkdir -p "$repos_dir" || return
+	fi
+}
+
+function archive_all_services() {
+
+    echo -e "${MSG_INFO} Archiving all DevAtServ services..."
+
+    parse_services $CONFIG_SERVICE_FILE
+
+    for service in "${list_services[@]}"
+    do
+        service_name=${service#${service_type}.}
+        output_file="./storage/${service_name}.tar.gz"
+
+        docker image save --output "$output_file" "$service_name"
+        if [ "$?" -ne 0 ]; then
+		    exit 1
+	    fi
+    done
+    
+    # Archiving
+    zip $DAS_IMAGES_SERVICES ./storage/*
+    if [ $? -eq 0 ]; then
+        echo -e "${MSG_DONE} Got devatserv_images.zip successfully."
+    else
+        echo -e "${MSG_ERR} Failed to get DevAtServ archivement."
+        exit 1
+    fi
+}
+
 main() {
 	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
-	create_repos_directory || {
-		echo 'error creating repos directory' 
+
+	create_storage_directory || {
+		echo 'error creating storage directory' 
 		return 1
 	}
 
-	install_services $CONFIG_SERVICE_FILE
+	install_services $CONFIG_SERVICE_FILE || {
+		echo 'error installing service' 
+		return 1
+	}
 
 	# Build and start the services
 	start_docker_compose || {
 		echo 'error starting Docker' 
+		return 1
+	}
+
+	archive_all_services || {
+		echo 'error archiving services' 
 		return 1
 	}
 
