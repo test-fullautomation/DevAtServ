@@ -27,6 +27,18 @@ DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
 
+create_storage_directory() {
+	local repos_dir='./storage'
+
+	echo -e "${MSG_INFO} Creating storage for all DevAtServ images service..."
+
+	if [[ -e $repos_dir ]]; then
+		echo "Directory $repos_dir already exists."
+	else
+		mkdir -p "$repos_dir" || return
+	fi
+}
+
 
 function prepare_docker_compose_for_deployment() {
 
@@ -211,14 +223,43 @@ function build_windows() {
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
 
-function exporting_all_services() {
-    docker image save --output devarserv-cleware-service.tar.gz devatserv-cleware-service
-    docker image save --output devarserv-service-base.tar.gz devatserv-service-base
-    docker image save --output rabbitmq.tar.gz rabbitmq
+function archive_all_services() {
+
+    echo -e "${MSG_INFO} Archiving all DevAtServ services..."
+
+    parse_services $CONFIG_SERVICE_FILE
+
+    for service in "${list_services[@]}"
+    do
+        service_name=${service#${service_type}.}
+        output_file="./storage/${service_name}.tar.gz"
+
+        echo "Saving Docker image for service: $service_name"
+        docker image save --output "$output_file" "$service_name"
+    done
+    
+    # Archiving
+    zip $DAS_IMAGES_SERVICES ./storage/*
+    if [ $? -eq 0 ]; then
+        echo -e "${MSG_DONE} Got devatserv_images.zip successfully."
+    else
+        echo -e "${MSG_ERR} Failed to get DevAtServ archivement."
+        exit 1
+    fi
 }
 
 
 main() {
+
+    create_storage_directory || {
+		echo 'error creating storage directory' 
+		return 1
+	}
+
+    archive_all_services || {
+		echo 'error archiving services' 
+		return 1
+	}
 
     if [ "$UNAME" == "Linux" ] ; then
         pre_build_debian

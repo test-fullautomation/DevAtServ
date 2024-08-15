@@ -5,18 +5,6 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
-create_repos_directory() {
-	local repos_dir='./repos'
-
-	echo -e "${MSG_INFO} Creating repos directory for all DevAtServ service..."
-
-	if [[ -e $repos_dir ]]; then
-		echo "Directory $repos_dir already exists."
-	else
-		mkdir -p "$repos_dir" || return
-	fi
-}
-
 install_services () {
 
 	config_file=$1
@@ -67,10 +55,6 @@ start_docker_compose() {
 
 main() {
 	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
-	create_repos_directory || {
-		echo 'error creating repos directory' 
-		return 1
-	}
 
 	install_services $CONFIG_SERVICE_FILE
 
