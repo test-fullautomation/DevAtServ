@@ -22,6 +22,9 @@ services:
     build:
       context: ../python-microservice-cleware-switch/MicroserviceClewareSwitch
       dockerfile: Dockerfile
+      args:
+        USE_PROXY: ${ENABLE_PROXY}
+        PROXY: ${PIP_PROXY}
     container_name: cleware-service
     depends_on:
       - rabbitmq
@@ -44,6 +47,9 @@ services:
     build:
       context: ../python-microservice-base/MicroserviceBase/ServiceRegistry
       dockerfile: Dockerfile
+      args:
+        USE_PROXY: ${ENABLE_PROXY}
+        PROXY: ${PIP_PROXY}
     restart: always
     environment:
       RABBITMQ_USERNAME: guest
