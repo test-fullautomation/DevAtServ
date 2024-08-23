@@ -4,6 +4,9 @@ services:
     build:
       context: ../python-microservice-debugboard/MicroserviceDebugboard
       dockerfile: Dockerfile
+      args:
+        USE_PROXY: ${ENABLE_PROXY}
+        PROXY: ${PIP_PROXY}
     restart: always
     environment:
       RABBITMQ_USERNAME: guest
