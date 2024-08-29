@@ -15,7 +15,25 @@ on:
 
   workflow_dispatch:
 
+env:
+  TAG_NAME: ${{ github.ref_name }}
+  
+
 jobs:
+  tag-repos:
+    name: Tag all related repositories
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    steps:
+    - name: Checkout source   
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: python -m pip install -r ./tools/git-tag/requirements.txt
+
+    - name: Tag repositories
+      run: python ./tools/git-tag/git-tag.py "$TAG_NAME" ./config/repositories/tag_repos.json
+
   build-devatserv-GUI:
     name: DevAtServ's GUI
     strategy:
