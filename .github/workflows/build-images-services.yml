@@ -34,12 +34,15 @@ jobs:
     - name: Tag repositories
       run: python ./tools/git-tag/git-tag.py "$TAG_NAME" ./config/repositories/tag_repos.json
 
+
   build-devatserv-GUI:
     name: DevAtServ's GUI
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    needs: [ tag-repos ]
+    if: ${{ ! failure() && ! cancelled() }}
     defaults:
       run:
         working-directory: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI
@@ -69,7 +72,6 @@ jobs:
           name: das-gui-artifact-deb
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.deb
 
-
       - name: Upload all DevAtServ's GUI Windows artifacts.
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
@@ -77,9 +79,12 @@ jobs:
           name: das-gui-artifact-exe
           path: ./python-microservice-base/MicroserviceBase/MicroserviceManagerGUI/dist/*.exe
   
+          
   build-devatserv-services:
     name: DevAtServ Services
     runs-on: ubuntu-latest
+    needs: [ tag-repos ]
+    if: ${{ ! failure() && ! cancelled() }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -95,10 +100,12 @@ jobs:
           name: devatserv-images
           path: devatserv_images.zip
 
+
   deploy-devatserv-linux:
     name: DevAtServ tool Linux
     runs-on: ubuntu-latest
     needs: [ build-devatserv-GUI , build-devatserv-services ]
+    if: ${{ ! failure() && ! cancelled() }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -129,6 +136,7 @@ jobs:
     name: DevAtServ tool Windows
     runs-on: windows-latest
     needs: [ build-devatserv-GUI , build-devatserv-services ]
+    if: ${{ ! failure() && ! cancelled() }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
