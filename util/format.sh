@@ -11,6 +11,9 @@ MSG_INFO="${COL_YELLOW}[INFO]${COL_RESET}"
 MSG_WARN="${COL_YELLOW}[WARN]${COL_RESET}"
 MSG_ERR="${COL_RED}[ERR]${COL_RESET}"
 
+TAG_REGEX="^(rel|dev)(\/das)?\/[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$"
+VERSION_REGEX="^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$"
+
 function errormsg(){
    echo -e "${COL_RED}>>>> ERROR: $1!${COL_RESET}"
    echo
@@ -33,4 +36,3 @@ function logresult(){
 		errormsg "FATAL: Could not $3"
 	fi
 }
-

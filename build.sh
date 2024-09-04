@@ -18,14 +18,37 @@ fi
 
 # DevAtServ's GUI Info
 
+
+DeviceAutomationServiceVersion=""
+TypeOfBuild=""
+if [ "$DeviceAutomationServiceVersion" == "" ]; then
+	if [[ "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
+		TypeOfBuild="Triggered by a TAG"
+		DeviceAutomationServiceVersion=`echo $TAG_NAME | sed -E -e "s/(rel|dev)\///g" | sed -E -e "s/das\///g"`
+	elif [ -n "$REF_NAME" ]; then
+		if [ "$REF_NAME" == "$DEFAULT_REF" ]; then
+			TypeOfBuild="Triggered by a merged pull request branch"
+			DeviceAutomationServiceVersion=`echo merged_$REF_NAME | sed -e "s/\//-/g"`
+		elif [ -n "$REPOSITORY"  ] && [ -n "$PULL_REQUEST_BRANCH" ]; then 
+			TypeOfBuild="Triggered by other repository"
+			DeviceAutomationServiceVersion=`echo triggered_by_$REPOSITORY | sed -e "s/\//-/g"`
+		else
+			TypeOfBuild="Triggered by any branch manually"
+			DeviceAutomationServiceVersion=`echo dev_$REF_NAME | sed -e "s/\//-/g"`
+		fi
+	else
+		TypeOfBuild="Triggered on local"
+		DeviceAutomationServiceVersion=$CONTROL_FILE_VERSION
+	fi
+fi
+
 # DevAtServ tool info
-DAS_VERSION="0.1.0.0"
+DAS_VERSION=$DeviceAutomationServiceVersion
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
 DAS_PACK_SRC_DIR="./build/${PLATFORM}"
 DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
-
 
 function prepare_docker_compose_for_deployment() {
 
@@ -58,7 +81,6 @@ function prepare_docker_compose_for_deployment() {
 }
 
 function pre_build_debian() {
-    echo 
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
     echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
     echo -e "${COL_GREEN}#          Compiling DevAtServ setup on Unbuntu...                                 #${COL_RESET}"
@@ -66,6 +88,7 @@ function pre_build_debian() {
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 
     # Display info for compiling
+    echo -e "${MSG_INFO} DevAtServ tool info..."
     echo "DAS Version: $DAS_VERSION"
     echo "Package Name: $DAS_PACK_NAME"
     echo "Source Directory: $DAS_PACK_SRC_DIR"
@@ -129,7 +152,6 @@ function build_debian() {
 
 
 function pre_build_windows() {
-    echo 
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
     echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
     echo -e "${COL_GREEN}#          Compiling DevAtServ setup on Windows...                                 #${COL_RESET}"
@@ -138,9 +160,9 @@ function pre_build_windows() {
     # URL của Docker Desktop installer cho Windows
     DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
     INSTALLER_NAME="DockerDesktopInstaller.exe"
-    DOWNLOAD_DIR="/path/to/download/dir"
 
     # Display info for compiling
+    echo -e "${MSG_INFO} DevAtServ tool info..."
     echo "DAS Version: $DAS_VERSION"
     echo "Package Name: $DAS_PACK_NAME"
     echo "Source Directory: $DAS_PACK_SRC_DIR"
@@ -215,9 +237,16 @@ function build_windows() {
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
 
+function update_debian_control_file(){
+	if [[ "$DAS_VERSION" =~ $VERSION_REGEX ]] && [ "$DAS_VERSION" != "$VERSION" ]; then
+		echo "Update version info in control file to '$DAS_VERSION'"
+		sed -i "s/\(Version: \)[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}/\1$DAS_VERSION/" $CONTROL_FILE
+	fi
+}
 
 main() {
 
+    echo "Type of build: $TypeOfBuild"
     if [ "$UNAME" == "Linux" ] ; then
         pre_build_debian
         build_debian
