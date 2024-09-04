@@ -17,8 +17,9 @@ on:
 
 env:
   GITHUB_PAT: ${{ secrets.PAT_GITHUB }} 
-  TAG_NAME: ${{ github.ref_name }}
   TRIGGER_BY: ${{ github.ref_type }}
+  TAG_NAME: ${{ github.ref_name }}
+  REF_NAME: ${{ github.ref_name }}
 
 jobs:
   tag-repos:
@@ -123,6 +124,8 @@ jobs:
 
       - name: Build DevAtServ
         run: |
+          echo "DAS_VERSION_DATE=$(date +%m.%Y)" >> $GITHUB_ENV
+          echo "DAS_VERSION=${TAG_NAME#[rd]e[vl]/das/}" >> $GITHUB_ENV
           chmod +x ./build.sh
           ./build.sh
 
@@ -155,6 +158,8 @@ jobs:
       - name: Build DevAtServ
         shell: bash
         run: |
+          echo "DAS_VERSION_DATE=$(date +%m.%Y)" >> $GITHUB_ENV
+          echo "DAS_VERSION=${TAG_NAME#[rd]e[vl]/das/}" >> $GITHUB_ENV
           chmod +x ./build.sh
           ./build.sh
 

@@ -1,11 +1,18 @@
 #!/bin/bash
 
-WORKSPACE="$(pwd)"
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
-
 # DevAtServ services Info
 DAS_IMAGES_SERVICES=devatserv_images.zip
 
+# Common info
+SUPPORT_SERVER="None"
+WORKSPACE="$(pwd)"
+
+CONTROL_FILE="$WORKSPACE/build/Linux/DEBIAN/control"
+if [ -f $CONTROL_FILE ]; then
+	CONTROL_FILE_VERSION=`sed '2q;d' $CONTROL_FILE | cut -c 10-`
+fi
+
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories/repositories.conf"
 for i in "$@"
 do
    case $i in
@@ -19,9 +26,6 @@ do
           ;;
       esac
 done
-
-SUPPORT_SERVER="None"
-
 
 # return github url bases on provided authentication or not
 get_url () {
@@ -78,11 +82,11 @@ parse_repo () {
 		
 		# switch repo to given released tag $TAG_NAME
 		if [[ "$TRIGGER_BY" =~ $TAG_REGEX || "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
-			clone_update_repo "$SCRIPT_DIR/../$repo_name" "$repo_url" "$TAG_NAME"
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$TAG_NAME"
 		else
 			# Allow to specify commit/branch of repos to be built 
 			commit_branch=$(git config -f $conf_file --get $repo)
-			clone_update_repo "$SCRIPT_DIR/../$repo_name" "$repo_url" "$commit_branch"
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
 		fi
 
 	done
