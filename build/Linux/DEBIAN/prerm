@@ -4,7 +4,7 @@ set -e
 
 source /opt/devatserv/share/util/format.sh
 
-if [ "$1" = "remove" ]; then
+if [ "$1" = "remove" ] || [ "$1" = "upgrade" ];; then
   /opt/devatserv/bin/remove-devatserv.sh
 fi
 
