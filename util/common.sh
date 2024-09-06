@@ -32,7 +32,6 @@ get_url () {
 	echo $repo_url
 }
 
-
 get_server_url()
 {
 	conf_file=$1

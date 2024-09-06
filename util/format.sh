@@ -36,3 +36,20 @@ function logresult(){
 		errormsg "FATAL: Could not $3"
 	fi
 }
+
+# Get version information from control file of linux package
+# read 2. line, from there return after 10th character
+# relative path from build script (caller)
+function update_version_debian() {
+
+   new_version=$1
+   control_pathfile="./build/Linux/DEBIAN/control"
+   if [ -f $control_pathfile ]; then
+      VERSION=`sed '2q;d' $control_pathfile | cut -c 10-`
+   fi
+
+	if [[ "$new_version" =~ $VERSION_REGEX ]] && [ "$new_version" != "$VERSION" ]; then
+		echo "Update version info in control file to '$new_version'"
+		sed -i "s/\(Version: \)[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}/\1$new_version/" $control_pathfile
+	fi
+}
