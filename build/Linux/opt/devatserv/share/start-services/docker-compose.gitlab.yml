@@ -62,6 +62,7 @@ services:
       RABBITMQ_QUEUE: dataqueue
       RABBITMQ_ROUTING_KEY: dataqueue 
       RABBITMQ_EXCHANGE: exchange_test
+      DISPLAY: ${DISPLAY}
     networks:
       - devatserv-network
 

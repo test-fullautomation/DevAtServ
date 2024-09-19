@@ -15,6 +15,6 @@ services:
       RABBITMQ_QUEUE: dataqueue
       RABBITMQ_ROUTING_KEY: dataqueue 
       RABBITMQ_EXCHANGE: exchange_test
-      DISPLAY: :0  # Forward DISPLAY environment variable
+      DISPLAY: ${DISPLAY}  # Forward DISPLAY environment variable
     networks:
       - devatserv-network
