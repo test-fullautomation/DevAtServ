@@ -73,11 +73,17 @@ start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
 
 	docker_compose_files=("docker-compose.yml")
+
 	# Check if USB device exists
 	if [ -c /dev/usb/hiddev0 ]; then
   		docker_compose_files+=("docker-compose.usbcleware.yml")
 	fi
-
+.
+	# Check if ttyUSB device exists
+	if [ -c /dev/ttyUSB0 ]; then
+		docker_compose_files+=("docker-compose.ttyusb.yml")
+	fi
+  
 	compose_options=""
 	for file in "${docker_compose_files[@]}"; do
 		compose_options="$compose_options -f $file"
