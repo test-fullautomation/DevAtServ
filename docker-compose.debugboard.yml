@@ -15,5 +15,15 @@ services:
       RABBITMQ_QUEUE: dataqueue
       RABBITMQ_ROUTING_KEY: dataqueue 
       RABBITMQ_EXCHANGE: exchange_test
+      DISPLAY: :0  # Forward DISPLAY environment variable
     networks:
       - devatserv-network
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+      - "/dev/ttyUSB1:/dev/ttyUSB1"
+      - "/dev/ttyUSB2:/dev/ttyUSB2"
+      - "/dev/ttyUSB3:/dev/ttyUSB3"
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # Bind mount for X11 display forwarding
+    stdin_open: true  # Enable interaction with container (for `-it` in docker run)
+    tty: true  # Enable TTY for `-it` functionality
