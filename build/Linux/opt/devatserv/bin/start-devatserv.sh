@@ -100,7 +100,7 @@ start_devatserv() {
 	if [ -c /dev/usb/hiddev0 ]; then
   		docker_compose_files+=("docker-compose.usbcleware.yml")
 	fi
-.
+
 	# Check if ttyUSB device exists
 	if [ -c /dev/ttyUSB0 ]; then
 		docker_compose_files+=("docker-compose.ttyusb.yml")
