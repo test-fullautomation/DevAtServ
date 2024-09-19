@@ -45,6 +45,11 @@ start_docker_compose() {
 		docker_compose_files+=("docker-compose.usbcleware.yml")
 	fi
 
+	# Check if ttyUSB device exists
+	if [ -c /dev/ttyUSB0 ]; then
+		docker_compose_files+=("docker-compose.ttyusb.yml")
+	fi
+
 	compose_options=""
 	for file in "${docker_compose_files[@]}"; do
 		compose_options="$compose_options -f $file"
