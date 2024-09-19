@@ -30,6 +30,8 @@ pre_check_installation() {
     fi
   fi
 
+  enable_docker_x_access
+
   return $err
 }
 
@@ -67,15 +69,41 @@ load_devatserv() {
   echo -e "${MSG_DONE} All images are loaded successfully"
 }
 
+enable_docker_x_access() {
+    echo -e "${MSG_INFO} Starting pre-configuration for DevAtServ's containers ..." 
+    # Check if X server is running
+    if pgrep X > /dev/null || pgrep Xorg > /dev/null; then
+        echo "X server is running. Configuring access for Docker..."
+
+        # Grant access to Docker containers
+        xhost +local:docker
+
+        # Check if the command was successful
+        if [ $? -eq 0 ]; then
+            echo "Docker containers now have access to X server."
+        else
+            echo "Failed to configure access for Docker containers."
+        fi
+    else
+        echo "X server is not running. Please start X server before running this script."
+    fi
+}
+
 cd /opt/devatserv/share/start-services
 
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
 
 	docker_compose_files=("docker-compose.yml")
+
 	# Check if USB device exists
 	if [ -c /dev/usb/hiddev0 ]; then
   		docker_compose_files+=("docker-compose.usbcleware.yml")
+	fi
+.
+	# Check if ttyUSB device exists
+	if [ -c /dev/ttyUSB0 ]; then
+		docker_compose_files+=("docker-compose.ttyusb.yml")
 	fi
 
 	compose_options=""
@@ -145,8 +173,10 @@ main() {
 
   load_devatserv || handle_error 'Error loading Docker images'
 
+  enable_docker_x_access || handle_error 'Error enable X Server for Docker'
+
   start_devatserv || handle_error 'Error starting Docker containers'
-  
+
   exit_after_countdown || handle_error 'Error exiting'
 
   return 0

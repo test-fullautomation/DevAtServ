@@ -45,6 +45,19 @@ start_docker_compose() {
 		docker_compose_files+=("docker-compose.usbcleware.yml")
 	fi
 
+	# Check if ttyUSB device exists
+	if [ -c /dev/ttyUSB0 ]; then
+		docker_compose_files+=("docker-compose.ttyusb.yml")
+
+		xhost +local:docker
+        # Check if the command was successful
+        if [ $? -eq 0 ]; then
+            echo "Docker containers now have access to X server."
+        else
+            echo "Failed to configure access for Docker containers."
+        fi
+	fi
+
 	compose_options=""
 	for file in "${docker_compose_files[@]}"; do
 		compose_options="$compose_options -f $file"

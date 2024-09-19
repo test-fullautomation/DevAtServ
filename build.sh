@@ -49,6 +49,10 @@ function prepare_docker_compose_for_deployment() {
     # prepare compose file configuration for USB Cleware
     cp -rf docker-compose.usbcleware.yml \
         ./build/Linux/opt/devatserv/share/start-services/
+
+    # prepare compose file configuration for ttyUSB Debug Board
+    cp -rf docker-compose.ttyusb.yml \
+        ./build/Linux/opt/devatserv/share/start-services/
 }
 
 function pre_build_debian() {
