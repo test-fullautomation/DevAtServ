@@ -79,6 +79,11 @@ function archive_all_services() {
 
     echo -e "${MSG_INFO} Archiving all DevAtServ services..."
 
+	create_storage_directory || {
+		echo 'error creating storage directory' 
+		return 1
+	}
+
     parse_services $CONFIG_SERVICE_FILE
 
     for service in "${list_services[@]}"
@@ -104,11 +109,6 @@ function archive_all_services() {
 
 main() {
 	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
-
-	create_storage_directory || {
-		echo 'error creating storage directory' 
-		return 1
-	}
 
 	install_services $CONFIG_SERVICE_FILE || {
 		echo 'error installing service' 
