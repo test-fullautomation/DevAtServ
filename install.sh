@@ -5,6 +5,7 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
 install_services () {
 
@@ -129,9 +130,59 @@ main() {
 	return 0 
 }
 
+show_help() {
+    echo "Usage: $0 [options]"
+    echo
+    echo "Options:"
+    echo "  -i, --install <config_file>  Install services using specified config file"
+    echo "  -s, --start                  Build and start Docker Compose services"
+    echo "  -a, --archive                Archive all services"
+    echo "  -h, --help                   Show this help message"
+}
 
-main
-Exit=$?
-if [ $Exit != 0 ]; then
-	echo "Can't not install DevArtServ successfully..."
+# Parse command-line arguments
+if [[ "$#" -eq 0 ]]; then
+    # If no arguments
+    main
+else
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -i|--install) # Install services
+                CONFIG_SERVICE_FILE="$2"
+                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                    echo "Error: Missing config file for install option"
+                    show_help
+                    exit 1
+                fi
+                install_services "$CONFIG_SERVICE_FILE" || {
+                    echo 'Error installing service' 
+                    exit 1
+                }
+                shift 2
+                ;;
+            -s|--start) # Start Docker Compose services
+                start_docker_compose || {
+                    echo 'Error starting Docker' 
+                    exit 1
+                }
+                shift
+                ;;
+            -a|--archive) # Archive all services
+                archive_all_services || {
+                    echo 'Error archiving services' 
+                    exit 1
+                }
+                shift
+                ;;
+            -h|--help) # Show help
+                show_help
+                exit 0
+                ;;
+            *) # Unknown option
+                echo "Error: Invalid option $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
 fi

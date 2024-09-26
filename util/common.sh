@@ -1,24 +1,9 @@
 #!/bin/bash
 
 WORKSPACE="$(pwd)"
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
 # DevAtServ services Info
 DAS_IMAGES_SERVICES=devatserv_images.zip
-
-for i in "$@"
-do
-   case $i in
-          --config-file=*)
-			 CONFIG_SERVICE_FILE="${i#*=}"
-          ;;
-          *)
-              echo -e $COL_RED"Argument not allowed:"$COL_RESET $i
-              echo -e $COL_RED"build terminated."$COL_RESET
-              exit 1
-          ;;
-      esac
-done
 
 SUPPORT_SERVER="None"
 
