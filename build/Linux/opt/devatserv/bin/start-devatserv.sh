@@ -30,8 +30,6 @@ pre_check_installation() {
     fi
   fi
 
-  enable_docker_x_access
-
   return $err
 }
 
@@ -69,24 +67,37 @@ load_devatserv() {
   echo -e "${MSG_DONE} All images are loaded successfully"
 }
 
-enable_docker_x_access() {
-    echo -e "${MSG_INFO} Starting pre-configuration for DevAtServ's containers ..." 
-    # Check if X server is running
+# Function to remove a module if loaded
+remove_module() {
+    local module=$1
+    if lsmod | grep "$module" &> /dev/null; then
+        if sudo rmmod "$module"; then
+            echo "$module removed successfully."
+        else
+            echo -e "${MSG_ERR} Failed to remove $module."
+        fi
+    fi
+}
+
+pre_configuration_services() {
+    echo -e "${MSG_INFO} Starting pre-configuration for debug board containers ..." 
+
     if pgrep X > /dev/null || pgrep Xorg > /dev/null; then
         echo "X server is running. Configuring access for Docker..."
-
         # Grant access to Docker containers
         xhost +local:docker
-
-        # Check if the command was successful
         if [ $? -eq 0 ]; then
             echo "Docker containers now have access to X server."
         else
-            echo "Failed to configure access for Docker containers."
+            echo -e "${MSG_ERR} Failed to configure access for Docker containers."
         fi
     else
-        echo "X server is not running. Please start X server before running this script."
+        echo -e "${MSG_WARN} X server is not running. Please start X server before running debug board service."
     fi
+
+    # Remove module for transfer data debug board
+    remove_module "ftdi_sio"
+    remove_module "usbserial"
 }
 
 cd /opt/devatserv/share/start-services
@@ -173,7 +184,7 @@ main() {
 
   load_devatserv || handle_error 'Error loading Docker images'
 
-  enable_docker_x_access || handle_error 'Error enable X Server for Docker'
+  pre_configuration_services || handle_error 'Error pre configuration for microservices'
 
   start_devatserv || handle_error 'Error starting Docker containers'
 
