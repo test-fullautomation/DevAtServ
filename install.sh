@@ -42,37 +42,37 @@ start_docker_compose() {
 	fi
 
 	# Check if USB device exists
-	if [ -c /dev/usb/hiddev0 ]; then
-		docker_compose_files+=("docker-compose.usbcleware.yml")
-	fi
+    if [ -c /dev/usb/hiddev0 ]; then
+        docker_compose_files+=("docker-compose.usbcleware.yml")
+    fi
 
 	# Check if ttyUSB device exists
-	if [ -c /dev/ttyUSB0 ]; then
-		docker_compose_files+=("docker-compose.ttyusb.yml")
-	fi
+    if [ -c /dev/ttyUSB0 ]; then
+        docker_compose_files+=("docker-compose.ttyusb.yml")
+    fi
 
-	compose_options=""
-	for file in "${docker_compose_files[@]}"; do
-		compose_options="$compose_options -f $file"
-	done
+    compose_options=""
+    for file in "${docker_compose_files[@]}"; do
+        compose_options="$compose_options -f $file"
+    done
 
-	echo -e "${MSG_INFO} docker compose $compose_options up --remove-orphans -d"
-	if ! docker compose $compose_options up --remove-orphans -d; then
-		echo "Could not start. Check for errors above."
-		exit 1
-	fi
+    echo -e "${MSG_INFO} docker compose $compose_options up --remove-orphans -d"
+    if ! docker compose $compose_options up --remove-orphans -d; then
+        echo "Could not start. Check for errors above."
+        exit 1
+    fi
 }
 
 function create_storage_directory() {
-	local repos_dir='./storage'
+    local repos_dir='./storage'
 
-	echo -e "${MSG_INFO} Creating storage for all DevAtServ images service..."
+    echo -e "${MSG_INFO} Creating storage for all DevAtServ images service..."
 
-	if [[ -e $repos_dir ]]; then
-		echo "Directory $repos_dir already exists."
-	else
-		mkdir -p "$repos_dir" || return
-	fi
+    if [[ -e $repos_dir ]]; then
+        echo "Directory $repos_dir already exists."
+    else
+        mkdir -p "$repos_dir" || return
+    fi
 }
 
 function archive_all_services() {
@@ -80,8 +80,8 @@ function archive_all_services() {
     echo -e "${MSG_INFO} Archiving all DevAtServ services..."
 
 	create_storage_directory || {
-		echo 'error creating storage directory' 
-		return 1
+        echo 'error creating storage directory' 
+        return 1
 	}
 
     parse_services $CONFIG_SERVICE_FILE
@@ -93,8 +93,8 @@ function archive_all_services() {
 
         docker image save --output "$output_file" "$service_name"
         if [ "$?" -ne 0 ]; then
-		    exit 1
-	    fi
+            exit 1
+        fi
     done
     
     # Archiving
@@ -117,8 +117,8 @@ main() {
 
 	# Build and start the services
 	start_docker_compose || {
-		echo 'error starting Docker' 
-		return 1
+	re		echo 'error starting Docker' 
+	turn 1
 	}
 
 	archive_all_services || {
@@ -134,11 +134,12 @@ show_help() {
     echo "Usage: $0 [options]"
     echo
     echo "Options:"
-    echo "  -i, --install <config_file>  Install services using specified config file"
-	echo "  -c, --clone   <config_file>  Clone and update services"
-    echo "  -s, --start                  Build and start Docker Compose services"
-    echo "  -a, --archive                Archive all services"
-    echo "  -h, --help                   Show this help message"
+	echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -i, --install       <config_file>   Install services using specified config file"
+	echo "  -c, --clone                         Clone and update services"
+    echo "  -s, --start                         Build and start Docker Compose services"
+    echo "  -a, --archive                       Archive all services"
+    echo "  -h, --help                          Show this help message"
 }
 
 # Parse command-line arguments
@@ -148,6 +149,15 @@ if [[ "$#" -eq 0 ]]; then
 else
     while [[ "$#" -gt 0 ]]; do
         case $1 in
+            -f|--config-file) # Input config file
+                CONFIG_SERVICE_FILE="$2"
+                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                    echo "Error: Missing input config file"
+                    show_help
+                    exit 1
+                fi
+                shift
+                ;;
             -i|--install) # Install services
                 CONFIG_SERVICE_FILE="$2"
                 if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
@@ -156,19 +166,14 @@ else
                     exit 1
                 fi
                 main
-
+                shift
+                ;;
             -c|--clone) # Clone services
-                CONFIG_SERVICE_FILE="$2"
-                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
-                    echo "Error: Missing config file for install option"
-                    show_help
-                    exit 1
-                fi
                 install_services "$CONFIG_SERVICE_FILE" || {
-                    echo 'Error installing service' 
+                    echo 'Error cloning service' 
                     exit 1
                 }
-                shift 2
+                shift 
                 ;;
             -s|--start) # Start Docker Compose services
                 start_docker_compose || {
