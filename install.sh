@@ -135,6 +135,7 @@ show_help() {
     echo
     echo "Options:"
     echo "  -i, --install <config_file>  Install services using specified config file"
+	echo "  -c, --clone   <config_file>  Clone and update services"
     echo "  -s, --start                  Build and start Docker Compose services"
     echo "  -a, --archive                Archive all services"
     echo "  -h, --help                   Show this help message"
@@ -148,6 +149,15 @@ else
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -i|--install) # Install services
+                CONFIG_SERVICE_FILE="$2"
+                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                    echo "Error: Missing config file for install option"
+                    show_help
+                    exit 1
+                fi
+                main
+
+            -c|--clone) # Clone services
                 CONFIG_SERVICE_FILE="$2"
                 if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
                     echo "Error: Missing config file for install option"
