@@ -5,6 +5,8 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
+
 UNAME=$(uname)
 if [ "$UNAME" == "Linux" ] ; then
 	PLATFORM="Linux"
