@@ -5,23 +5,33 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
+get_config_file() {
+    local input_config_file=$1
+    local default_config_file="$WORKSPACE/config/repositories.conf"
+
+    if [[ -n "$input_config_file" ]]; then
+        CONFIG_SERVICE_FILE="$input_config_file"
+    else
+        CONFIG_SERVICE_FILE="$default_config_file"
+    fi
+
+    echo -e "${MSG_INFO} Using config file: $CONFIG_SERVICE_FILE"
+}
 
 install_services () {
 
-	config_file=$1
 	echo -e "${MSG_INFO} Cloning all services to repos..."
 
-	resolved_config_file=$(realpath "$config_file")
+	resolved_config_file=$(realpath "$CONFIG_SERVICE_FILE")
 
 	if [ -f "$resolved_config_file" ]; then
-		greenmsg "Found the configuration file to clone all services at: '$config_file'"
+		greenmsg "Found the configuration file to clone all services at: '$CONFIG_SERVICE_FILE'"
 	else
-		errormsg "Repo configuration '$config_file' is not existing"
+		errormsg "Repo configuration '$CONFIG_SERVICE_FILE' is not existing"
 	fi
 	
 	# Parse and clone all services
-	parse_config $config_file
+	parse_config $CONFIG_SERVICE_FILE
 }
 
 start_docker_compose() {
@@ -63,7 +73,7 @@ start_docker_compose() {
     fi
 }
 
-function create_storage_directory() {
+create_storage_directory() {
     local repos_dir='./storage'
 
     echo -e "${MSG_INFO} Creating storage for all DevAtServ images service..."
@@ -75,7 +85,7 @@ function create_storage_directory() {
     fi
 }
 
-function archive_all_services() {
+archive_all_services() {
 
     echo -e "${MSG_INFO} Archiving all DevAtServ services..."
 
@@ -108,35 +118,41 @@ function archive_all_services() {
 }
 
 main() {
-	echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
+    echo -e "${MSG_INFO} Starting DevArtServ inslallation..."
+    
+    local config_file=$1
+    get_config_file $config_file || {
+        echo 'error getting config file'
+        return 1
+    }
 
-	install_services $CONFIG_SERVICE_FILE || {
-		echo 'error installing service' 
-		return 1
-	}
+    install_services || {
+        echo 'error installing service' 
+        return 1
+    }
 
-	# Build and start the services
-	start_docker_compose || {
-	re		echo 'error starting Docker' 
-	turn 1
-	}
+    # Build and start the services
+    start_docker_compose || {
+        echo 'error starting Docker' 
+        return 1
+    }
 
 	archive_all_services || {
-		echo 'error archiving services' 
-		return 1
-	}
+        echo 'error archiving services' 
+        return 1
+    }
 
-	echo -e "${MSG_DONE} All services are running..."
-	return 0 
+    echo -e "${MSG_DONE} All services are running..."
+    return 0 
 }
 
 show_help() {
     echo "Usage: $0 [options]"
     echo
     echo "Options:"
-	echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -f, --config-file   <config_file>   Input a specified config file"
     echo "  -i, --install       <config_file>   Install services using specified config file"
-	echo "  -c, --clone                         Clone and update services"
+    echo "  -c, --clone                         Clone and update services"
     echo "  -s, --start                         Build and start Docker Compose services"
     echo "  -a, --archive                       Archive all services"
     echo "  -h, --help                          Show this help message"
@@ -150,26 +166,27 @@ else
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -f|--config-file) # Input config file
-                CONFIG_SERVICE_FILE="$2"
-                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                config_file="$2"
+                if [[ -z "$config_file" ]]; then
                     echo "Error: Missing input config file"
                     show_help
                     exit 1
                 fi
-                shift
+                get_config_file $config_file
+                shift 2
                 ;;
             -i|--install) # Install services
-                CONFIG_SERVICE_FILE="$2"
-                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                config_file="$2"
+                if [[ -z "$config_file" ]]; then
                     echo "Error: Missing config file for install option"
                     show_help
                     exit 1
                 fi
-                main
-                shift
+                main $config_file
+                shift 2
                 ;;
             -c|--clone) # Clone services
-                install_services "$CONFIG_SERVICE_FILE" || {
+                install_services || {
                     echo 'Error cloning service' 
                     exit 1
                 }
