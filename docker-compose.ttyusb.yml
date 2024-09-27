@@ -1,10 +1,8 @@
 services:
   debug-board-service:
     devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
-      - "/dev/ttyUSB1:/dev/ttyUSB1"
-      - "/dev/ttyUSB2:/dev/ttyUSB2"
-      - "/dev/ttyUSB3:/dev/ttyUSB3"
+      - /dev/bus/usb:/dev/bus/usb
+    privileged: true
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix  # Bind mount for X11 display forwarding
     stdin_open: true  # Enable interaction with container (for `-it` in docker run)
