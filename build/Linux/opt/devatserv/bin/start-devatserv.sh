@@ -83,7 +83,6 @@ pre_configuration_services() {
     echo -e "${MSG_INFO} Starting pre-configuration for debug board containers ..." 
 
     if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
-        echo "X server is running. Configuring access for Docker..."
         # Grant access to Docker containers
         xhost +local:docker
         if [ $? -eq 0 ]; then
