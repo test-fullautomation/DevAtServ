@@ -230,7 +230,43 @@ main() {
 
 }
 
+show_help() {
+    echo "Usage: $0 [options]"
+    echo
+    echo "Options:"
+    echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -h, --help                          Show this help message"
+}
+
 ############################
 # main execution
 ############################
-main
+# Parse command-line arguments
+if [[ "$#" -eq 0 ]]; then
+    # If no arguments
+    main
+else
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -f|--config-file) # Input config file
+                CONFIG_SERVICE_FILE="$2"
+                if [[ -z "$CONFIG_SERVICE_FILE" ]]; then
+                    echo "Error: Missing input config file"
+                    show_help
+                    exit 1
+                fi
+                main
+                shift 2
+                ;;
+            -h|--help) # Show help
+                show_help
+                exit 0
+                ;;
+            *) # Unknown option
+                echo "Error: Invalid option $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+fi

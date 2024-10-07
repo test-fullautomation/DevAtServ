@@ -82,17 +82,17 @@ remove_module() {
 pre_configuration_services() {
     echo -e "${MSG_INFO} Starting pre-configuration for debug board containers ..." 
 
-    if pgrep X > /dev/null || pgrep Xorg > /dev/null; then
+    if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
         echo "X server is running. Configuring access for Docker..."
         # Grant access to Docker containers
         xhost +local:docker
         if [ $? -eq 0 ]; then
-            echo "Docker containers now have access to X server."
+          echo "Docker containers now have access to Display server."
         else
-            echo -e "${MSG_ERR} Failed to configure access for Docker containers."
+          echo -e "${MSG_ERR} Failed to configure access for Docker containers."
         fi
     else
-        echo -e "${MSG_WARN} X server is not running. Please start X server before running debug board service."
+      echo -e "${MSG_WARN} Display server is not running. Start display server before running debug board service."
     fi
 
     # Remove module for transfer data debug board
@@ -108,12 +108,12 @@ start_devatserv() {
 	docker_compose_files=("docker-compose.yml")
 
 	# Check if USB device exists
-	if [ -c /dev/usb/hiddev0 ]; then
-  		docker_compose_files+=("docker-compose.usbcleware.yml")
-	fi
+  if [ -c /dev/usb/hiddev0 ]; then
+    docker_compose_files+=("docker-compose.usbcleware.yml")
+  fi
 
 	# Check if ttyUSB device exists
-	if [ -c /dev/ttyUSB0 ]; then
+	if [ -f /opt/devatserv/share/start-services/docker-compose.ttyusb.yml ]; then
 		docker_compose_files+=("docker-compose.ttyusb.yml")
 	fi
 
