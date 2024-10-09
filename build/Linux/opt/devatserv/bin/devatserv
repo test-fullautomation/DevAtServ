@@ -39,13 +39,16 @@ if [ $# -eq 0 ]; then
 else
   case $1 in
       start) 
+        shift # Skip from 'start'
         start_devatserv
         ;;
       stop) 
-        stop_devatserv
+        shift
+        stop_devatserv "$@"
         ;;
       restart)
-        restart_devatserv
+        shift # Skip from 'restart'
+        restart_devatserv "$@"
         ;;
       load)
         load_devatserv
