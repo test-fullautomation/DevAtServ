@@ -1,0 +1,166 @@
+#!/bin/bash
+
+source ./start-devatserv.sh
+source ./stop-devatserv.sh
+
+# Service name
+service="devatserv"
+
+
+proxy_help() {
+  if [[ $1 == "-h" ]]; then
+    echo "Lists all supported commands"
+    return
+  fi
+
+  echo -e "osd-proxy2-stop:\tStops proxy2 services and clears ${USER}'s proxy environment in this and new terminals."
+  echo -e "osd-proxy2-start:\tStart proxy2 services and sets ${USER}'s proxy environment in this and new terminals."
+  echo -e "osd-proxy2-clearEnvironment:\tClears ${USER}'s proxy environment in this and new terminals."
+  echo -e "osd-proxy2-setEnvironment:\tSets ${USER}'s proxy environment in this and new terminals."
+  echo -e "osd-proxy2-disable:\tPermanently disables the proxy2 service, command would ask for sudo password.."
+  echo -e "osd-proxy2-enable:\tEnables the proxy2 service if it was disabled, command would ask for sudo password."
+  for cmd in ${h_cmds//|/" "};  do
+    echo -e "osd-proxy2-${cmd}:\t$(eval proxy_${cmd} -h)"
+  done
+}
+
+proxy_commands() {
+  if [[ $1 == "-h" ]]; then
+    echo "Lists all supported commands"
+    return
+  fi
+
+  echo "${c_cmds//|/" "}"
+}
+
+devatserv_start() {
+  if [[ $1 == "-h" ]]; then
+    echo "Start."
+    return
+  fi
+  echo "Test ."
+  # sudo systemctl restart "${service}"
+}
+
+devatserv_stop() {
+  if [[ $1 == "-h" ]]; then
+    echo "Start."
+    return
+  fi
+  echo "Test ."
+  # sudo systemctl restart "${service}"
+}
+
+proxy_restart() {
+  if [[ $1 == "-h" ]]; then
+    echo "Stops and then starts proxy service, command would ask for sudo password."
+    return
+  fi
+  sudo systemctl restart "${service}"
+}
+
+proxy_status() {
+  if [[ $1 == "-h" ]]; then
+    echo "Shows terse runtime status information about proxy service"
+    return
+  fi
+
+  systemctl status "${service}"
+}
+
+proxy_logs() {
+  if [[ $1 == "-h" ]]; then
+    echo "Shows the logs of proxy service since bootup"
+    return
+  fi
+
+  sudo journalctl -b -e -u "${service}"
+}
+
+proxy_config() {
+  if [[ $1 == "-h" ]]; then
+    echo "Shows file configuration"
+    return
+  fi
+}
+
+display_commands() {
+    echo "Commands:"
+    echo "  start       Attach local standard input, output, and error streams to a running container"
+    echo "  stop        Create a new image from a container's changes"
+    echo "  enable      Copy files/folders between a container and the local filesystem"
+    echo "  disable     Create a new container"
+}
+
+display_options() {
+    echo "Options:"
+    echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -i, --install       <config_file>   Install services using specified config file"
+    echo "  -c, --clone                         Clone and update services"
+    echo "  -s, --start                         Build and start Docker Compose services"
+    echo "  -a, --archive                       Archive all services"
+    echo "  -h, --help                          Show this help message"
+}
+
+# Function to show help with both commands and global options
+show_help() {
+  echo "Usage: $0 [command]"
+  echo
+  display_commands
+  echo
+  display_options
+}
+
+# Parse command-line arguments
+if [ $# -eq 0 ]; then
+  show_help
+else
+  case $1 in
+      start) 
+        start_devatserv
+        ;;
+      stop) 
+        devatserv_stop
+        ;;
+      -i|--install) # Install services
+          config_file="$2"
+          if [[ -z "$config_file" ]]; then
+              echo "Error: Missing config file for install option"
+              show_help
+              exit 1
+          fi
+          main $config_file
+          shift 2
+          ;;
+      -c|--clone) # Clone services
+          install_services || {
+              echo 'Error cloning service' 
+              exit 1
+          }
+          shift 
+          ;;
+      -s|--start) # Start Docker Compose services
+          start_docker_compose || {
+              echo 'Error starting Docker' 
+              exit 1
+          }
+          shift
+          ;;
+      -a|--archive) # Archive all services
+          archive_all_services || {
+              echo 'Error archiving services' 
+              exit 1
+          }
+          shift
+          ;;
+      -h|--help) # Show help
+          show_help
+          exit 0
+          ;;
+      *) # Unknown option
+          echo "Error: Invalid option $1"
+          show_help
+          exit 1
+          ;;
+  esac
+fi
