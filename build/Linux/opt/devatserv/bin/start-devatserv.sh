@@ -100,10 +100,10 @@ pre_configuration_services() {
     remove_module "usbserial"
 }
 
-cd /opt/devatserv/share/start-services
 
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
 
 	docker_compose_files=("docker-compose.yml")
 
@@ -131,73 +131,9 @@ start_devatserv() {
   show_success_message
 }
 
-show_success_message() {
-  cat <<EOF
-Device Automation Services App successfully deployed!
-You can access the website at http://localhost:15672 to access RabbitMQ Management
----------------------------------------------------
-EOF
+stop_devatserv() {
+  echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+  # Stop all containers
+  docker compose down
 }
-
-exit_after_countdown() {
-
-  exit_after_time=10
-  elapsed_time=0
-  interval=1
-
-  # Hide cursor
-  tput civis
-
-  while [ $elapsed_time -lt $exit_after_time ]; do
-      # Wait for an interval
-      read -t $interval -n 1 input
-      if [ $? -eq 0 ]; then
-          echo -e "\nKey pressed. Exiting."
-          # Show the cursor
-          tput cnorm
-          exit 0
-      fi
-
-      elapsed_time=$((elapsed_time + interval))
-      remaining_time=$((exit_after_time - elapsed_time))
-      
-      # Update the remain time
-      printf "\rPress any key to exit early in %ds" $remaining_time
-  done
-
-  tput cnorm
-  exit 0
-}
-
-handle_error() {
-  echo -e "${MSG_ERR} $1"
-  read -p "Press Enter to continue..."
-  exit -1
-}
-
-main() {
-  echo "Starting DevAtServ installation..."
-
-  pre_check_installation || handle_error 'Error pre-check installation'
-
-  install_gui_devatserv || handle_error 'Error installing DevAtServ GUI'
-
-  load_devatserv || handle_error 'Error loading Docker images'
-
-  pre_configuration_services || handle_error 'Error pre configuration for microservices'
-
-  start_devatserv || handle_error 'Error starting Docker containers'
-
-  exit_after_countdown || handle_error 'Error exiting'
-
-  return 0
-}
-
-############################
-# main execution
-############################
-main
-res=$?
-if [ $res != 0 ]; then 
-  echo "DevAtServ occurs error, please check and install it later."
-fi

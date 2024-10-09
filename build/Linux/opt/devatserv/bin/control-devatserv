@@ -1,28 +1,10 @@
 #!/bin/bash
 
 source ./start-devatserv.sh
-source ./stop-devatserv.sh
 
 # Service name
 service="devatserv"
 
-
-proxy_help() {
-  if [[ $1 == "-h" ]]; then
-    echo "Lists all supported commands"
-    return
-  fi
-
-  echo -e "osd-proxy2-stop:\tStops proxy2 services and clears ${USER}'s proxy environment in this and new terminals."
-  echo -e "osd-proxy2-start:\tStart proxy2 services and sets ${USER}'s proxy environment in this and new terminals."
-  echo -e "osd-proxy2-clearEnvironment:\tClears ${USER}'s proxy environment in this and new terminals."
-  echo -e "osd-proxy2-setEnvironment:\tSets ${USER}'s proxy environment in this and new terminals."
-  echo -e "osd-proxy2-disable:\tPermanently disables the proxy2 service, command would ask for sudo password.."
-  echo -e "osd-proxy2-enable:\tEnables the proxy2 service if it was disabled, command would ask for sudo password."
-  for cmd in ${h_cmds//|/" "};  do
-    echo -e "osd-proxy2-${cmd}:\t$(eval proxy_${cmd} -h)"
-  done
-}
 
 proxy_commands() {
   if [[ $1 == "-h" ]]; then
@@ -120,7 +102,7 @@ else
         start_devatserv
         ;;
       stop) 
-        devatserv_stop
+        stop_devatserv
         ;;
       -i|--install) # Install services
           config_file="$2"
