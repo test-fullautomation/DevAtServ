@@ -40,14 +40,14 @@ else
   case $1 in
       start) 
         shift # Skip from 'start'
-        start_devatserv
+        start_devatserv "$@"
         ;;
       stop) 
         shift
         stop_devatserv "$@"
         ;;
       restart)
-        shift # Skip from 'restart'
+        shift 
         restart_devatserv "$@"
         ;;
       load)

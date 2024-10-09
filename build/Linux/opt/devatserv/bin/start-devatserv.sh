@@ -116,7 +116,7 @@ start_devatserv() {
 		compose_options="$compose_options -f $file"
 	done
 
-  echo -e "${MSG_INFO} docker compose$compose_options up --remove-orphans -d"
+  echo -e "${MSG_INFO} docker compose$compose_options up "$@" --remove-orphans -d"
 	if ! docker compose $compose_options up "$@" --remove-orphans -d; then
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
@@ -128,28 +128,17 @@ stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
 
-  if [ "$#" -gt 0 ]; then
-    echo -e "${MSG_INFO} Stopping specific services: $*"
-    # Stop specific service
-    docker compose down "$@"
-  else
-    # Stop all containers
-    docker compose down
-  fi
+  # Stop all containers or specific service
+  docker compose down  "$@"
 }
 
 # Restart DevAtServ
 restart_devatserv() {
   echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
-  if [ "$#" -gt 0 ]; then
-    echo -e "${MSG_INFO} Restarting specific services: $*"
-    # Restart specific service
-    docker compose restart "$@"
-  else
-    # Restart all containers
-    docker compose restart
-  fi
+
+  # Restart all containers or specific service
+  docker compose restart "$@"
 }
 
 # Load images of DevAtServ
