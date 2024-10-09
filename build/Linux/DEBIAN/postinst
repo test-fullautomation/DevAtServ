@@ -42,13 +42,17 @@ else
    mkdir "${APPS_PATH}"
 fi
 
+# For scrip excution
+cp /opt/devatserv/bin/devatserv /usr/local/bin/devatserv
+chmod +x /usr/local/bin/devatserv
 
-echo -e "${MSG_DONE} Device Automation Services App has been successfully created/updated."
 cp /opt/devatserv/share/applications/devatserv.desktop ${APPS_PATH}/devatserv.desktop
 chown -R "${CURRENT_USER}:${sGROUP}" ${APPS_PATH}/devatserv.desktop
 chmod +x ${APPS_PATH}/devatserv.desktop
-chmod +x /opt/devatserv/bin/load-devatserv.sh
+chmod +x /opt/devatserv/bin/devatserv
 chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/startup-devatserv.sh
 chmod +x /opt/devatserv/bin/remove-devatserv.sh
 chmod +x /opt/devatserv/share/util/install_docker_lx.sh
+
+echo -e "${MSG_DONE} Device Automation Services App has been successfully created/updated."

@@ -100,7 +100,7 @@ pre_configuration_services() {
     remove_module "usbserial"
 }
 
-
+# Start DevAtServ
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
@@ -127,13 +127,35 @@ start_devatserv() {
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
 	fi
-
-  show_success_message
 }
 
+# Stop DevAtServ
 stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
   # Stop all containers
   docker compose down
+}
+
+# Restart DevAtServ
+restart_devatserv() {
+  echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+  # Restart all containers
+  docker compose restart
+}
+
+# Load images of DevAtServ
+load_devatserv() {
+  # Directory to store all images
+  STORAGE_DIR=/opt/devatserv/share/storage
+
+  # Move to images storage
+  cd "$STORAGE_DIR"
+
+  # Load all Docker images from storage
+  for IMAGE_FILE in "$STORAGE_DIR"/*.tar.gz; do
+    echo "Loading Docker image from $IMAGE_FILE..."
+    docker load -i "$IMAGE_FILE"
+  done
 }

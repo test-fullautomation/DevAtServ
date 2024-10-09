@@ -61,6 +61,8 @@ main() {
 
   start_devatserv || handle_error 'Error starting Docker containers'
 
+  show_success_message
+  
   exit_after_countdown || handle_error 'Error exiting'
 
   return 0

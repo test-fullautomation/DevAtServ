@@ -1,77 +1,17 @@
 #!/bin/bash
 
-source ./start-devatserv.sh
+source /opt/devatserv/bin/start-devatserv.sh
 
 # Service name
 service="devatserv"
 
-
-proxy_commands() {
-  if [[ $1 == "-h" ]]; then
-    echo "Lists all supported commands"
-    return
-  fi
-
-  echo "${c_cmds//|/" "}"
-}
-
-devatserv_start() {
-  if [[ $1 == "-h" ]]; then
-    echo "Start."
-    return
-  fi
-  echo "Test ."
-  # sudo systemctl restart "${service}"
-}
-
-devatserv_stop() {
-  if [[ $1 == "-h" ]]; then
-    echo "Start."
-    return
-  fi
-  echo "Test ."
-  # sudo systemctl restart "${service}"
-}
-
-proxy_restart() {
-  if [[ $1 == "-h" ]]; then
-    echo "Stops and then starts proxy service, command would ask for sudo password."
-    return
-  fi
-  sudo systemctl restart "${service}"
-}
-
-proxy_status() {
-  if [[ $1 == "-h" ]]; then
-    echo "Shows terse runtime status information about proxy service"
-    return
-  fi
-
-  systemctl status "${service}"
-}
-
-proxy_logs() {
-  if [[ $1 == "-h" ]]; then
-    echo "Shows the logs of proxy service since bootup"
-    return
-  fi
-
-  sudo journalctl -b -e -u "${service}"
-}
-
-proxy_config() {
-  if [[ $1 == "-h" ]]; then
-    echo "Shows file configuration"
-    return
-  fi
-}
-
 display_commands() {
     echo "Commands:"
-    echo "  start       Attach local standard input, output, and error streams to a running container"
-    echo "  stop        Create a new image from a container's changes"
-    echo "  enable      Copy files/folders between a container and the local filesystem"
-    echo "  disable     Create a new container"
+    echo "  start       Starting all "
+    echo "  stop        Stop all containers of DevAtServ"
+    echo "  restart     Restart all containers of DevAtServ"
+    echo "  load        Load all images of DevAtSev"
+    echo "  remove        Remove all containers, volumns of DevAtSev"
 }
 
 display_options() {
@@ -103,6 +43,12 @@ else
         ;;
       stop) 
         stop_devatserv
+        ;;
+      restart)
+        restart_devatserv
+        ;;
+      load)
+        load_devatserv
         ;;
       -i|--install) # Install services
           config_file="$2"
