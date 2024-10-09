@@ -61,12 +61,6 @@ install_gui_devatserv() {
   fi
 }
 
-load_devatserv() {
-  echo -e "${MSG_INFO} Loading DevAtServ's docker images"
-  /opt/devatserv/bin/load-devatserv.sh
-  echo -e "${MSG_DONE} All images are loaded successfully"
-}
-
 # Function to remove a module if loaded
 remove_module() {
     local module=$1
@@ -147,15 +141,16 @@ restart_devatserv() {
 
 # Load images of DevAtServ
 load_devatserv() {
+  echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   # Directory to store all images
   STORAGE_DIR=/opt/devatserv/share/storage
-
   # Move to images storage
   cd "$STORAGE_DIR"
-
   # Load all Docker images from storage
   for IMAGE_FILE in "$STORAGE_DIR"/*.tar.gz; do
     echo "Loading Docker image from $IMAGE_FILE..."
     docker load -i "$IMAGE_FILE"
   done
+
+  echo -e "${MSG_DONE} All images are loaded successfully"
 }

@@ -7,11 +7,11 @@ service="devatserv"
 
 display_commands() {
     echo "Commands:"
-    echo "  start       Starting all "
+    echo "  start       Starting all service of DevAtServ"
     echo "  stop        Stop all containers of DevAtServ"
     echo "  restart     Restart all containers of DevAtServ"
     echo "  load        Load all images of DevAtSev"
-    echo "  remove        Remove all containers, volumns of DevAtSev"
+    echo "  remove      Remove all containers, volumns of DevAtSev"
 }
 
 display_options() {
@@ -29,8 +29,8 @@ show_help() {
   echo "Usage: $0 [command]"
   echo
   display_commands
-  echo
-  display_options
+  #echo
+  #display_options
 }
 
 # Parse command-line arguments
@@ -50,45 +50,14 @@ else
       load)
         load_devatserv
         ;;
-      -i|--install) # Install services
-          config_file="$2"
-          if [[ -z "$config_file" ]]; then
-              echo "Error: Missing config file for install option"
-              show_help
-              exit 1
-          fi
-          main $config_file
-          shift 2
-          ;;
-      -c|--clone) # Clone services
-          install_services || {
-              echo 'Error cloning service' 
-              exit 1
-          }
-          shift 
-          ;;
-      -s|--start) # Start Docker Compose services
-          start_docker_compose || {
-              echo 'Error starting Docker' 
-              exit 1
-          }
-          shift
-          ;;
-      -a|--archive) # Archive all services
-          archive_all_services || {
-              echo 'Error archiving services' 
-              exit 1
-          }
-          shift
-          ;;
-      -h|--help) # Show help
-          show_help
-          exit 0
-          ;;
-      *) # Unknown option
-          echo "Error: Invalid option $1"
-          show_help
-          exit 1
-          ;;
+      -h|--help)
+        show_help
+        exit 0
+        ;;
+      *)
+        echo "Error: Invalid option $1"
+        show_help
+        exit 1
+        ;;
   esac
 fi
