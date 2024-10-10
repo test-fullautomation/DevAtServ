@@ -93,6 +93,11 @@ pre_configuration_services() {
     remove_module "ftdi_sio"
     remove_module "usbserial"
 }
+# Start up the entire DevAtServ
+startup_devatserv() {
+  source /opt/devatserv/bin/startup-devatserv.sh
+}
+
 
 # Start DevAtServ
 start_devatserv() {
