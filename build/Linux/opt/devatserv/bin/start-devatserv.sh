@@ -123,22 +123,36 @@ start_devatserv() {
 	fi
 }
 
-# Stop DevAtServ
 stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
 
   # Stop all containers or specific service
-  docker compose down  "$@"
+  docker compose stop "$@"
 }
 
-# Restart DevAtServ
 restart_devatserv() {
   echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
 
   # Restart all containers or specific service
   docker compose restart "$@"
+}
+
+rm_devatserv() {
+  echo -e "${MSG_INFO} Removing DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+
+  # Stop all containers or specific service
+  docker compose rm  "$@"
+}
+
+down_devatserv() {
+  echo -e "${MSG_INFO} Downing DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+
+  # Stop all containers or specific service
+  docker compose down  "$@"
 }
 
 # Load images of DevAtServ

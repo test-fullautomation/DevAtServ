@@ -7,11 +7,12 @@ service="devatserv"
 
 display_commands() {
     echo "Commands:"
-    echo "  start       Starting all service of DevAtServ"
-    echo "  stop        Stop all containers of DevAtServ"
-    echo "  restart     Restart all containers of DevAtServ"
-    echo "  load        Load all images of DevAtSev"
-    echo "  remove      Remove all containers, volumns of DevAtSev"
+    echo "  start       Start one or all service of DevAtServ"
+    echo "  stop        Stop one or all services of DevAtServ"
+    echo "  restart     Restart one or all services of DevAtServ"
+    echo "  rm          Remove stopped service containers of DevAtSev"
+    echo "  down        Stop and remove one/all services of DevAtServ, networks"
+    echo "  load        Load one all images of DevAtSev"
 }
 
 display_options() {
@@ -49,6 +50,14 @@ else
       restart)
         shift 
         restart_devatserv "$@"
+        ;;
+      rm)
+        shift 
+        rm_devatserv "$@"
+        ;;
+      down)
+        shift 
+        down_devatserv "$@"
         ;;
       load)
         load_devatserv

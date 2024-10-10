@@ -42,7 +42,7 @@ services:
       interval: 10s
       timeout: 5s
 
-  service-base:
+  base-service:
     container_name: base-service
     build:
       context: ../python-microservice-base/MicroserviceBase/ServiceRegistry
