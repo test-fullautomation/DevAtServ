@@ -180,10 +180,10 @@ load_devatserv() {
 startup_devatservGUI() {
 
   if [ -f "/opt/DevAtServGUI/dasgui" ]; then
-      echo "Running the DevAtServ GUI application..."
-      /opt/DevAtServGUI/dasgui
+      echo -e "${MSG_INFO} Running the DevAtServ GUI application..."
+      /opt/DevAtServGUI/dasgui > /dev/null 2>&1 &
   else
-      echo "DevAtServ does not exist. Please install it and run later.."
+      echo -e "${MSG_ERR} DevAtServ GUI does not exist. Please run "devatserv startup" to install it"
       exit 1
   fi
 }

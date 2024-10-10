@@ -14,7 +14,7 @@ display_commands() {
     echo "  restart     Restart one or all services of DevAtServ"
     echo "  rm          Remove stopped service containers of DevAtSev"
     echo "  down        Stop and remove one/all services of DevAtServ, networks"
-    echo "  load        Load one all images of DevAtSev"
+    echo "  load        Load one or all images of DevAtSev"
 }
 
 display_devatserv_gui() {
@@ -24,8 +24,8 @@ display_devatserv_gui() {
 
 display_options() {
     echo "Options:"
-    echo "  -v, --version                       Print version information and quit"
-    echo "  -h, --help                          Show this help message"
+    echo "  -v, --version       Print version information and quit"
+    echo "  -h, --help          Show this help message"
 }
 
 # Function to show help with both commands and global options
