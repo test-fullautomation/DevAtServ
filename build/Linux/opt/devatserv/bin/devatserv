@@ -3,7 +3,8 @@
 source /opt/devatserv/bin/start-devatserv.sh
 
 # Service name
-service="devatserv"
+SERVICE="DevAtServ"
+PACKAGE_VERSION="1.0.0"
 
 display_commands() {
     echo "Commands:"
@@ -17,11 +18,7 @@ display_commands() {
 
 display_options() {
     echo "Options:"
-    echo "  -f, --config-file   <config_file>   Input a specified config file"
-    echo "  -i, --install       <config_file>   Install services using specified config file"
-    echo "  -c, --clone                         Clone and update services"
-    echo "  -s, --start                         Build and start Docker Compose services"
-    echo "  -a, --archive                       Archive all services"
+    echo "  -v, --version                       Print version information and quit"
     echo "  -h, --help                          Show this help message"
 }
 
@@ -30,8 +27,8 @@ show_help() {
   echo "Usage: $0 [command]"
   echo
   display_commands
-  #echo
-  #display_options
+  echo
+  display_options
 }
 
 # Parse command-line arguments
@@ -62,6 +59,10 @@ else
       load)
         load_devatserv
         ;;
+      -v|--version)
+        echo "$SERVICE version: $PACKAGE_VERSION"
+        exit 0
+        ;; 
       -h|--help)
         show_help
         exit 0
