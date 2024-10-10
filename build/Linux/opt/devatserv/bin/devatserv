@@ -17,6 +17,11 @@ display_commands() {
     echo "  load        Load one all images of DevAtSev"
 }
 
+display_devatserv_gui() {
+    echo "DevAtServ GUI:"
+    echo "  gui         Start up DevAtServ GUI"
+}
+
 display_options() {
     echo "Options:"
     echo "  -v, --version                       Print version information and quit"
@@ -29,6 +34,8 @@ show_help() {
   echo
   display_commands
   echo
+  display_devatserv_gui
+  echo
   display_options
 }
 
@@ -37,6 +44,9 @@ if [ $# -eq 0 ]; then
   show_help
 else
   case $1 in
+      startup) 
+        startup_devatserv
+        ;;
       start) 
         shift # Skip from 'start'
         start_devatserv "$@"
@@ -59,6 +69,9 @@ else
         ;;
       load)
         load_devatserv
+        ;;
+      gui)
+        startup_devatservGUI
         ;;
       -v|--version)
         echo "$SERVICE version: $PACKAGE_VERSION"

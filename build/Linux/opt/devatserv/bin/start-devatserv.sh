@@ -175,3 +175,15 @@ load_devatserv() {
 
   echo -e "${MSG_DONE} All images are loaded successfully"
 }
+
+############## DevAtServ GUI ##################
+startup_devatservGUI() {
+
+  if [ -f "/opt/DevAtServGUI/dasgui" ]; then
+      echo "Running the DevAtServ GUI application..."
+      /opt/DevAtServGUI/dasgui
+  else
+      echo "DevAtServ does not exist. Please install it and run later.."
+      exit 1
+  fi
+}
