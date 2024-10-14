@@ -129,6 +129,8 @@ start_devatserv() {
 }
 
 status_devatserv() {
+  echo -e "${MSG_INFO} Status all DevAtServ's services"
+  cd /opt/devatserv/share/start-services
   # Get the list of containers and their statuses
   output=$(docker compose ps -a --format "table {{.Name}}\t{{.State}}")
 
