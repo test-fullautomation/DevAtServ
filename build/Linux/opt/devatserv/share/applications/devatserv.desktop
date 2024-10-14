@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=DevAtServ
-Exec=/opt/devatserv/bin/start-devatserv.sh
+Exec=/opt/devatserv/bin/startup-devatserv.sh
 Icon=/opt/devatserv/share/applications/devatserv.png
 Terminal=true
 Type=Application

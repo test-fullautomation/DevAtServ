@@ -12,5 +12,7 @@ rm -rf /opt/devatserv/
 
 rm -rf ${HOME}/.local/share/applications/devatserv.desktop
 
+rm -rf /usr/local/bin/devatserv
+
 echo -e "${MSG_DONE} DevAtServ has been successfully removed."
 

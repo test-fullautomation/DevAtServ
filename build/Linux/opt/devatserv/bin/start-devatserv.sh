@@ -61,12 +61,6 @@ install_gui_devatserv() {
   fi
 }
 
-load_devatserv() {
-  echo -e "${MSG_INFO} Loading DevAtServ's docker images"
-  /opt/devatserv/bin/load-devatserv.sh
-  echo -e "${MSG_DONE} All images are loaded successfully"
-}
-
 # Function to remove a module if loaded
 remove_module() {
     local module=$1
@@ -98,11 +92,16 @@ pre_configuration_services() {
     remove_module "ftdi_sio"
     remove_module "usbserial"
 }
+# Start up the entire DevAtServ
+startup_devatserv() {
+  source /opt/devatserv/bin/startup-devatserv.sh
+}
 
-cd /opt/devatserv/share/start-services
 
+# Start DevAtServ
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
 
 	docker_compose_files=("docker-compose.yml")
 
@@ -121,82 +120,97 @@ start_devatserv() {
 		compose_options="$compose_options -f $file"
 	done
 
-  echo -e "${MSG_INFO} docker compose $compose_options up --remove-orphans -d"
-	if ! docker compose $compose_options up --remove-orphans -d; then
+  echo -e "${MSG_INFO} docker compose$compose_options up "$@" --remove-orphans -d"
+	if ! docker compose $compose_options up "$@" --remove-orphans -d; then
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
 	fi
-
-  show_success_message
 }
 
-show_success_message() {
-  cat <<EOF
-Device Automation Services App successfully deployed!
-You can access the website at http://localhost:15672 to access RabbitMQ Management
----------------------------------------------------
-EOF
+status_devatserv() {
+  echo -e "${MSG_INFO} Status all DevAtServ's services"
+  cd /opt/devatserv/share/start-services
+  # Get the list of containers and their statuses
+  output=$(docker compose ps "$@" -a --format "table {{.Name}}\t{{.State}}")
+
+  total_containers=$(echo "$output" | tail -n +2 | wc -l)
+  running_containers=$(echo "$output" | grep -c "running" || true)
+  stopped_containers=$(echo "$output" | grep -c "exited" || true)
+
+  # Print the summary
+  echo -e "${COL_BLUE}[+] Running $running_containers/$total_containers:${COL_RESET}"
+
+  # Print status
+  echo "$output" | tail -n +2 | while read -r line; do
+    container_name=$(echo "$line" | awk '{print $1}')
+    container_status=$(echo "$line" | awk '{print $2}')
+    
+    if [[ "$container_status" == "running" ]]; then
+      printf "Container %-20s ${COL_GREEN}%s${COL_RESET}\n" "$container_name" "$container_status"
+    elif [[ "$container_status" == "exited" ]]; then
+      printf "Container %-20s ${COL_RED}%s${COL_RESET}\n" "$container_name" "$container_status"
+    else
+      printf "Container %-20s %s\n" "$container_name" "$container_status"
+    fi
+  done
 }
 
-exit_after_countdown() {
+stop_devatserv() {
+  echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
 
-  exit_after_time=10
-  elapsed_time=0
-  interval=1
+  # Stop all containers or specific service
+  docker compose stop "$@"
+}
 
-  # Hide cursor
-  tput civis
+restart_devatserv() {
+  echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
 
-  while [ $elapsed_time -lt $exit_after_time ]; do
-      # Wait for an interval
-      read -t $interval -n 1 input
-      if [ $? -eq 0 ]; then
-          echo -e "\nKey pressed. Exiting."
-          # Show the cursor
-          tput cnorm
-          exit 0
-      fi
+  # Restart all containers or specific service
+  docker compose restart "$@"
+}
 
-      elapsed_time=$((elapsed_time + interval))
-      remaining_time=$((exit_after_time - elapsed_time))
-      
-      # Update the remain time
-      printf "\rPress any key to exit early in %ds" $remaining_time
+rm_devatserv() {
+  echo -e "${MSG_INFO} Removing DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+
+  # Stop all containers or specific service
+  docker compose rm  "$@"
+}
+
+down_devatserv() {
+  echo -e "${MSG_INFO} Downing DevAtServ's docker containers"
+  cd /opt/devatserv/share/start-services
+
+  # Stop all containers or specific service
+  docker compose down  "$@"
+}
+
+# Load images of DevAtServ
+load_devatserv() {
+  echo -e "${MSG_INFO} Loading DevAtServ's docker images"
+  # Directory to store all images
+  STORAGE_DIR=/opt/devatserv/share/storage
+  # Move to images storage
+  cd "$STORAGE_DIR"
+  # Load all Docker images from storage
+  for IMAGE_FILE in "$STORAGE_DIR"/*.tar.gz; do
+    echo "Loading Docker image from $IMAGE_FILE..."
+    docker load -i "$IMAGE_FILE"
   done
 
-  tput cnorm
-  exit 0
+  echo -e "${MSG_DONE} All images are loaded successfully"
 }
 
-handle_error() {
-  echo -e "${MSG_ERR} $1"
-  read -p "Press Enter to continue..."
-  exit -1
+############## DevAtServ GUI ##################
+startup_devatservGUI() {
+
+  if [ -f "/opt/DevAtServGUI/dasgui" ]; then
+      echo -e "${MSG_INFO} Running the DevAtServ GUI application..."
+      /opt/DevAtServGUI/dasgui > /dev/null 2>&1 &
+  else
+      echo -e "${MSG_ERR} DevAtServ GUI does not exist. Please run "devatserv startup" to install it"
+      exit 1
+  fi
 }
-
-main() {
-  echo "Starting DevAtServ installation..."
-
-  pre_check_installation || handle_error 'Error pre-check installation'
-
-  install_gui_devatserv || handle_error 'Error installing DevAtServ GUI'
-
-  load_devatserv || handle_error 'Error loading Docker images'
-
-  pre_configuration_services || handle_error 'Error pre configuration for microservices'
-
-  start_devatserv || handle_error 'Error starting Docker containers'
-
-  exit_after_countdown || handle_error 'Error exiting'
-
-  return 0
-}
-
-############################
-# main execution
-############################
-main
-res=$?
-if [ $res != 0 ]; then 
-  echo "DevAtServ occurs error, please check and install it later."
-fi

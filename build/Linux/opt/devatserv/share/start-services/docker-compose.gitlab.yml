@@ -37,8 +37,8 @@ services:
       interval: 10s
       timeout: 5s
 
-  service-base:
-    image: "devatserv-service-base"
+  base-service:
+    image: "devatserv-base-service"
     container_name: base-service
     restart: always
     environment:
