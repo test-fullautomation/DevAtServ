@@ -133,8 +133,8 @@ status_devatserv() {
   output=$(docker compose ps -a --format "table {{.Name}}\t{{.State}}")
 
   total_containers=$(echo "$output" | tail -n +2 | wc -l)
-  running_containers=$(echo "$output" | grep -c "Running")
-  stopped_containers=$(echo "$output" | grep -c "Exited")
+  running_containers=$(echo "$output" | grep -c "running" || true)
+  stopped_containers=$(echo "$output" | grep -c "exited" || true)
 
   # Print the summary
   echo "[+] Running $running_containers/$total_containers:"
@@ -145,9 +145,9 @@ status_devatserv() {
     container_status=$(echo "$line" | awk '{print $2}')
     
     if [[ "$container_status" == "running" ]]; then
-      printf "Container %-20s ${COL_GREEN}%s${NC}\n" "$container_name" "$container_status"
+      printf "Container %-20s ${COL_GREEN}%s${COL_RESET}\n" "$container_name" "$container_status"
     elif [[ "$container_status" == "exited" ]]; then
-      printf "Container %-20s ${COL_RED}%s${NC}\n" "$container_name" "$container_status"
+      printf "Container %-20s ${COL_RED}%s${COL_RESET}\n" "$container_name" "$container_status"
     else
       printf "Container %-20s %s\n" "$container_name" "$container_status"
     fi
