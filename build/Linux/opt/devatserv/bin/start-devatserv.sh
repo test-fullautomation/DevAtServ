@@ -130,7 +130,7 @@ start_devatserv() {
 
 status_devatserv() {
   # Get the list of containers and their statuses
-  output=$(docker compose ps --format "table {{.Name}}\t{{.State}}")
+  output=$(docker compose ps -a --format "table {{.Name}}\t{{.State}}")
 
   total_containers=$(echo "$output" | tail -n +2 | wc -l)
   running_containers=$(echo "$output" | grep -c "Running")
