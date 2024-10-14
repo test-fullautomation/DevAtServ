@@ -139,7 +139,7 @@ status_devatserv() {
   stopped_containers=$(echo "$output" | grep -c "exited" || true)
 
   # Print the summary
-  echo "[+] Running $running_containers/$total_containers:"
+  echo -e "${COL_BLUE}[+] Running $running_containers/$total_containers:${COL_RESET}"
 
   # Print status
   echo "$output" | tail -n +2 | while read -r line; do
