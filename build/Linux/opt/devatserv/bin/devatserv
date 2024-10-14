@@ -8,7 +8,7 @@ PACKAGE_VERSION="0.1.0.0"
 
 display_commands() {
     echo "Commands:"
-    echo "  startup     Start up DevAtServ"
+    echo "  startup     Start up DevAtServ. NOTE: Run this command for the first-time setup."
     echo "  start       Start one or all service of DevAtServ"
     echo "  stop        Stop one or all services of DevAtServ"
     echo "  status      Print one or all services status of DevAtServ"
