@@ -132,7 +132,7 @@ status_devatserv() {
   echo -e "${MSG_INFO} Status all DevAtServ's services"
   cd /opt/devatserv/share/start-services
   # Get the list of containers and their statuses
-  output=$(docker compose ps -a --format "table {{.Name}}\t{{.State}}")
+  output=$(docker compose ps "$@" -a --format "table {{.Name}}\t{{.State}}")
 
   total_containers=$(echo "$output" | tail -n +2 | wc -l)
   running_containers=$(echo "$output" | grep -c "running" || true)
