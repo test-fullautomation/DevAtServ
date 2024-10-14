@@ -21,7 +21,7 @@ install_docker() {
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 }
 
-# Install docker 
+# Install docker compose
 install_docker_compose() {
     sudo apt-get install -y docker-compose-plugin
 }
