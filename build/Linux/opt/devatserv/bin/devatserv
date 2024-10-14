@@ -11,6 +11,7 @@ display_commands() {
     echo "  startup     Start up DevAtServ"
     echo "  start       Start one or all service of DevAtServ"
     echo "  stop        Stop one or all services of DevAtServ"
+    echo "  status      Print one or all services status of DevAtServ"
     echo "  restart     Restart one or all services of DevAtServ"
     echo "  rm          Remove stopped service containers of DevAtSev"
     echo "  down        Stop and remove one/all services of DevAtServ, networks"
@@ -54,6 +55,10 @@ else
       stop) 
         shift
         stop_devatserv "$@"
+        ;;
+      status) 
+        shift # Skip from 'start'
+        status_devatserv "$@"
         ;;
       restart)
         shift 

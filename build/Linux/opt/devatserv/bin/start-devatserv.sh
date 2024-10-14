@@ -128,6 +128,32 @@ start_devatserv() {
 	fi
 }
 
+status_devatserv() {
+  # Get the list of containers and their statuses
+  output=$(docker compose ps --format "table {{.Name}}\t{{.State}}")
+
+  total_containers=$(echo "$output" | tail -n +2 | wc -l)
+  running_containers=$(echo "$output" | grep -c "Running")
+  stopped_containers=$(echo "$output" | grep -c "Exited")
+
+  # Print the summary
+  echo "[+] Running $running_containers/$total_containers:"
+
+  # Print status
+  echo "$output" | tail -n +2 | while read -r line; do
+    container_name=$(echo "$line" | awk '{print $1}')
+    container_status=$(echo "$line" | awk '{print $2}')
+    
+    if [[ "$container_status" == "running" ]]; then
+      printf "Container %-20s ${COL_GREEN}%s${NC}\n" "$container_name" "$container_status"
+    elif [[ "$container_status" == "exited" ]]; then
+      printf "Container %-20s ${COL_RED}%s${NC}\n" "$container_name" "$container_status"
+    else
+      printf "Container %-20s %s\n" "$container_name" "$container_status"
+    fi
+  done
+}
+
 stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
   cd /opt/devatserv/share/start-services
