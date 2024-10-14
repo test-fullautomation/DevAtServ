@@ -4,7 +4,7 @@ source /opt/devatserv/bin/start-devatserv.sh
 
 # Service name
 SERVICE="DevAtServ"
-PACKAGE_VERSION="1.0.0"
+PACKAGE_VERSION="0.1.0.0"
 
 display_commands() {
     echo "Commands:"
