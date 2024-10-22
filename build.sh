@@ -54,9 +54,10 @@ fi
 ######################## DevAtServ tool info ########################
 ###### DevAtServ info
 DAS_VERSION=$DASVersion
-DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
+DAS_NAME=DevAtServ
+DAS_PACK_NAME=${DAS_NAME}_${DAS_VERSION}
 DAS_PACK_SRC_DIR="./build/${PLATFORM}"
-DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
+DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
 
