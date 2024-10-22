@@ -5,50 +5,75 @@ set -e
 source ./util/format.sh
 source ./util/common.sh
 
-CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories.conf"
 
+
+######################## Environments ########################
+###### Platforms
 UNAME=$(uname)
 if [ "$UNAME" == "Linux" ] ; then
-	PLATFORM="Linux"
+    PLATFORM="Linux"
 elif [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]] ; then
-	PLATFORM="Windows"
+    PLATFORM="Windows"
 else
-	errormsg "Operation system '$UNAME' is not supported."
+    errormsg "Operation system '$UNAME' is not supported."
 fi
 
-# DevAtServ's GUI Info
+###### Project env
+CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories/repositories.conf"
+CONFIG_DEBIAN_FILE="$WORKSPACE/build/Linux/DEBIAN/control"
 
+if [ -f $CONFIG_DEBIAN_FILE ]; then
+    VERSION=`sed '2q;d' $CONFIG_DEBIAN_FILE | cut -c 10-`
+else
+    echo -e "${MSG_ERR} DEBIAN control file not found."
+    exit 1
+fi
 
-DeviceAutomationServiceVersion=""
+###### Pipeline
+DASVersion=""
 TypeOfBuild=""
-if [ "$DeviceAutomationServiceVersion" == "" ]; then
-	if [[ "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
-		TypeOfBuild="Triggered by a TAG"
-		DeviceAutomationServiceVersion=`echo $TAG_NAME | sed -E -e "s/(rel|dev)\///g" | sed -E -e "s/das\///g"`
-	elif [ -n "$REF_NAME" ]; then
-		if [ "$REF_NAME" == "$DEFAULT_REF" ]; then
-			TypeOfBuild="Triggered by a merged pull request branch"
-			DeviceAutomationServiceVersion=`echo merged_$REF_NAME | sed -e "s/\//-/g"`
-		elif [ -n "$REPOSITORY"  ] && [ -n "$PULL_REQUEST_BRANCH" ]; then 
-			TypeOfBuild="Triggered by other repository"
-			DeviceAutomationServiceVersion=`echo triggered_by_$REPOSITORY | sed -e "s/\//-/g"`
-		else
-			TypeOfBuild="Triggered by any branch manually"
-			DeviceAutomationServiceVersion=`echo dev_$REF_NAME | sed -e "s/\//-/g"`
-		fi
-	else
-		TypeOfBuild="Triggered on local"
-		DeviceAutomationServiceVersion=$CONTROL_FILE_VERSION
-	fi
+if [[ "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
+    TypeOfBuild="Triggered by a TAG"
+    DASVersion=`echo $TAG_NAME | sed -E -e "s/(rel|dev)\///g" | sed -E -e "s/das\///g"`
+elif [ -n "$REF_NAME" ]; then
+    if [ "$REF_NAME" == "$DEFAULT_REF" ]; then
+        TypeOfBuild="Triggered by a merged pull request branch"
+        DASVersion=`echo merged_$REF_NAME | sed -e "s/\//-/g"`
+    elif [ -n "$REPOSITORY"  ] && [ -n "$PULL_REQUEST_BRANCH" ]; then 
+        TypeOfBuild="Triggered by other repository"
+        DASVersion=`echo triggered_by_$REPOSITORY | sed -e "s/\//-/g"`
+    else
+        TypeOfBuild="Triggered by any branch manually"
+        DASVersion=`echo dev_$REF_NAME | sed -e "s/\//-/g"`
+    fi
+else
+    TypeOfBuild="Triggered on local"
+    DASVersion=$VERSION
 fi
 
-# DevAtServ tool info
-DAS_VERSION=$DeviceAutomationServiceVersion
+######################## DevAtServ tool info ########################
+###### DevAtServ info
+DAS_VERSION=$DASVersion
 DAS_PACK_NAME=DevAtServ_${DAS_VERSION}
 DAS_PACK_SRC_DIR="./build/${PLATFORM}"
 DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_PACK_NAME}"
 DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
 DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
+
+###### DevAtServ's GUI info
+
+
+
+#################### functionality ########################
+function update_version_debian() {
+    echo -e "${MSG_INFO} Updating a new version..."
+
+    new_version=$1
+    if [[ "$new_version" =~ $VERSION_REGEX ]] && [ "$new_version" != "$VERSION" ]; then
+        echo -e "${MSG_INFO} A new version: '$new_version'. Updating to $CONFIG_DEBIAN_FILE "
+        sed -i "s/\(Version: \)[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}/\1$new_version/" $CONFIG_DEBIAN_FILE
+    fi
+}
 
 function prepare_docker_compose_for_deployment() {
 
@@ -95,6 +120,9 @@ function pre_build_debian() {
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Debian Package Name: $DAS_DEBIAN_NAME"
     
+    # Update a new version to control file
+    update_version_debian $DAS_VERSION
+
     # Prepare Docker compose for deployment
     prepare_docker_compose_for_deployment
 
@@ -169,6 +197,9 @@ function pre_build_windows() {
     echo "Destination Directory: $DAS_PACK_DEST_DIR"
     echo "Windows Package Name: $DAS_WINDOW_NAME"
 
+   # Update a new version to control file
+    update_version_debian $DAS_VERSION
+
     # Prepare Docker compose for deployment
     prepare_docker_compose_for_deployment
     
@@ -237,16 +268,9 @@ function build_windows() {
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
 
-function update_debian_control_file(){
-	if [[ "$DAS_VERSION" =~ $VERSION_REGEX ]] && [ "$DAS_VERSION" != "$VERSION" ]; then
-		echo "Update version info in control file to '$DAS_VERSION'"
-		sed -i "s/\(Version: \)[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}.[0-9]\{1,\}/\1$DAS_VERSION/" $CONTROL_FILE
-	fi
-}
-
 main() {
 
-    echo "Type of build: $TypeOfBuild"
+    echo -e "${MSG_INFO} Type of build: $TypeOfBuild"
     if [ "$UNAME" == "Linux" ] ; then
         pre_build_debian
         build_debian

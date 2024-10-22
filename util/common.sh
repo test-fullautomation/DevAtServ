@@ -121,6 +121,15 @@ parse_config () {
 	done
 }
 
+# Parse the configuration files to detect all services in DevAtServ.
+# Arguments:
+#	$config_file : location to config file
+parse_services () {
+	conf_file=$1
+	service_type=services
+	list_services=($(git config -f $conf_file --list --name-only | grep $service_type.))
+}
+
 # Clone or update repository
 # Arguments:
 #	$repo_path : location to clone repo into
