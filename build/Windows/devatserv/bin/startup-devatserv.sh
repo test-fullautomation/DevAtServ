@@ -53,11 +53,7 @@ main() {
 
   pre_check_installation || handle_error 'Error pre-check installation'
 
-  install_gui_devatserv || handle_error 'Error installing DevAtServ GUI'
-
-  # load_devatserv || handle_error 'Error loading Docker images'
-
-  pre_configuration_services || handle_error 'Error pre configuration for microservices'
+  load_devatserv || handle_error 'Error loading Docker images'
 
   start_devatserv || handle_error 'Error starting Docker containers'
 

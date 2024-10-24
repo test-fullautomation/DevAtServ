@@ -67,7 +67,7 @@ Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversi
 
 [Icons]
 ; Start Menu
-Name: "{group}\DevAtServ"; Filename: "{app}\bin\start-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
+Name: "{group}\DevAtServ"; Filename: "{app}\bin\startup-devatserv.sh"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
 Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.0.exe;
 
 [Run]
