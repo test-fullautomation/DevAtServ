@@ -100,10 +100,16 @@ function prepare_docker_compose_for_deployment() {
     # prepare compose file configuration for USB Cleware
     cp -rf docker-compose.usbcleware.yml \
         ./build/Linux/opt/devatserv/share/start-services/
+    
+    cp -rf docker-compose.usbcleware.yml \
+    ./build/Windows/devatserv/share/start-services/
 
     # prepare compose file configuration for ttyUSB Debug Board
     cp -rf docker-compose.ttyusb.yml \
         ./build/Linux/opt/devatserv/share/start-services/
+
+    cp -rf docker-compose.ttyusb.yml \
+    ./build/Windows/devatserv/share/start-services/
 }
 
 function pre_build_debian() {
@@ -227,6 +233,16 @@ function pre_build_windows() {
         exit 1
     fi
 
+    prepare_docker_installer
+
+    # Grant permission all asset
+    chmod 777 ./build/Windows/devatserv/share/storage/*
+    chmod 777 ./build/Windows/devatserv/share/GUI/*
+    chmod 777 ./build/Windows/devatserv/share/docker/*
+}
+
+function prepare_docker_installer() {
+
     # Prepare Docker Desktop for user
     local DOCKER_DESKTOP_URL="https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
     local INSTALLER_NAME="DockerDesktopInstaller.exe"
@@ -246,11 +262,6 @@ function pre_build_windows() {
         echo -e "${MSG_ERR} Failed to download Docker Desktop installer."
         exit 1
     fi
-
-    # Grant permission all asset
-    chmod 777 ./build/Windows/devatserv/share/storage/*
-    chmod 777 ./build/Windows/devatserv/share/GUI/*
-    chmod 777 ./build/Windows/devatserv/share/docker/*
 }
 
 function build_windows() {
