@@ -4,8 +4,10 @@ set -e
 
 source /opt/devatserv/share/util/format.sh
 
+PROJECT_DIR="/opt/devatserv/"
+
 DAS_GUI_NAME="dasgui"
-DAS_GUI_DIR="/opt/devatserv/share/GUI/DevAtServGUI_1.0.0_amd64.deb"
+DAS_GUI_DIR="$PROJECT_DIR/share/GUI/DevAtServGUI_1.0.0_amd64.deb"
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
@@ -13,12 +15,12 @@ pre_check_installation() {
 
   if ! command -v docker &> /dev/null; then
     echo -e "${MSG_INFO} Installing 'docker'..."
-    /opt/devatserv/share/util/install_docker_lx.sh
+    "$PROJECT_DIR"/share/util/install_docker_lx.sh
   fi
   
   if ! docker compose >/dev/null 2>&1; then
     echo -e "${MSG_INFO} Installing 'docker compose'..."
-    /opt/devatserv/share/util/install_docker_lx.sh
+    "$PROJECT_DIR"/share/util/install_docker_lx.sh
   fi
   
   if [ $err -eq 0 ]; then 
@@ -94,14 +96,14 @@ pre_configuration_services() {
 }
 # Start up the entire DevAtServ
 startup_devatserv() {
-  source /opt/devatserv/bin/startup-devatserv.sh
+  source "$PROJECT_DIR"/bin/startup-devatserv.sh
 }
 
 
 # Start DevAtServ
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
 
 	docker_compose_files=("docker-compose.yml")
 
@@ -111,7 +113,7 @@ start_devatserv() {
   fi
 
 	# Check if ttyUSB device exists
-	if [ -f /opt/devatserv/share/start-services/docker-compose.ttyusb.yml ]; then
+	if [ -f "$PROJECT_DIR"/share/start-services/docker-compose.ttyusb.yml ]; then
 		docker_compose_files+=("docker-compose.ttyusb.yml")
 	fi
 
@@ -129,7 +131,7 @@ start_devatserv() {
 
 status_devatserv() {
   echo -e "${MSG_INFO} Status all DevAtServ's services"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
   # Get the list of containers and their statuses
   output=$(docker compose ps "$@" -a --format "table {{.Name}}\t{{.State}}")
 
@@ -157,7 +159,7 @@ status_devatserv() {
 
 stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
 
   # Stop all containers or specific service
   docker compose stop "$@"
@@ -165,7 +167,7 @@ stop_devatserv() {
 
 restart_devatserv() {
   echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
 
   # Restart all containers or specific service
   docker compose restart "$@"
@@ -173,7 +175,7 @@ restart_devatserv() {
 
 rm_devatserv() {
   echo -e "${MSG_INFO} Removing DevAtServ's docker containers"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
 
   # Stop all containers or specific service
   docker compose rm  "$@"
@@ -181,7 +183,7 @@ rm_devatserv() {
 
 down_devatserv() {
   echo -e "${MSG_INFO} Downing DevAtServ's docker containers"
-  cd /opt/devatserv/share/start-services
+  cd "$PROJECT_DIR"/share/start-services
 
   # Stop all containers or specific service
   docker compose down  "$@"
@@ -191,7 +193,7 @@ down_devatserv() {
 load_devatserv() {
   echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   # Directory to store all images
-  STORAGE_DIR=/opt/devatserv/share/storage
+  STORAGE_DIR="$PROJECT_DIR"/share/storage
   # Move to images storage
   cd "$STORAGE_DIR"
   # Load all Docker images from storage
