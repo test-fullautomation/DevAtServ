@@ -130,11 +130,12 @@ down_devatserv() {
 load_devatserv() {
   echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   # Directory to store all images
-  STORAGE_DIR=/opt/devatserv/share/storage
+  STORAGE_DIR="../share/storage"
   # Move to images storage
   cd "$STORAGE_DIR"
+  STORAGE_PATH=$(realpath "$PWD")
   # Load all Docker images from storage
-  for IMAGE_FILE in "$STORAGE_DIR"/*.tar.gz; do
+  for IMAGE_FILE in "$STORAGE_PATH"/*.tar.gz; do
     echo "Loading Docker image from $IMAGE_FILE..."
     docker load -i "$IMAGE_FILE"
   done
