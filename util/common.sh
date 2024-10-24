@@ -32,7 +32,6 @@ get_url () {
 	echo $repo_url
 }
 
-
 get_server_url()
 {
 	conf_file=$1
@@ -61,9 +60,14 @@ parse_repo () {
 		fi
 		echo -e "$COL_BLUE$BG_WHITE---- $repo$COL_RESET$COL_BLUE$BG_WHITE -----------------------------------------$COL_RESET"
 		
-		# Allow to specify commit/branch of repos to be built 
-		commit_branch=$(git config -f $conf_file --get $repo)
-		clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
+		# switch repo to given released tag $TAG_NAME
+		if [[ "$TRIGGER_BY" =~ $TAG_REGEX || "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$TAG_NAME"
+		else
+			# Allow to specify commit/branch of repos to be built 
+			commit_branch=$(git config -f $conf_file --get $repo)
+			clone_update_repo "$WORKSPACE/../$repo_name" "$repo_url" "$commit_branch"
+		fi
 
 	done
 	if [ "$?" -ne 0 ]; then
@@ -125,6 +129,7 @@ parse_services () {
 	service_type=services
 	list_services=($(git config -f $conf_file --list --name-only | grep $service_type.))
 }
+
 # Clone or update repository
 # Arguments:
 #	$repo_path : location to clone repo into

@@ -7,7 +7,7 @@ source ./util/common.sh
 
 get_config_file() {
     local input_config_file=$1
-    local default_config_file="$WORKSPACE/config/repositories.conf"
+    local default_config_file="$WORKSPACE/config/repositories/repositories.conf"
 
     if [[ -n "$input_config_file" ]]; then
         CONFIG_SERVICE_FILE="$input_config_file"

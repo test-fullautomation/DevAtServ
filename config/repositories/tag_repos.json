@@ -1,0 +1,9 @@
+{
+   "github" : {
+      "project" : "test-fullautomation",
+      "repos"   : {
+         "python-microservice-base": "",
+         "python-microservice-cleware-switch": ""
+      }
+   }
+}
