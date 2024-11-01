@@ -2,12 +2,9 @@
 
 set -e
 
-source /opt/devatserv/share/util/format.sh
+source format.sh
 
-PROJECT_DIR="/opt/devatserv/"
-
-DAS_GUI_NAME="dasgui"
-DAS_GUI_DIR="$PROJECT_DIR/share/GUI/DevAtServGUI_1.0.0_amd64.deb"
+PROJECT_DIR="/c/Program Files (x86)/DevAtServ"
 
 pre_check_installation() {
   echo -e "${MSG_INFO} Starting pre-check-installation"
@@ -15,12 +12,12 @@ pre_check_installation() {
 
   if ! command -v docker &> /dev/null; then
     echo -e "${MSG_INFO} Installing 'docker'..."
-    "$PROJECT_DIR"/share/util/install_docker_lx.sh
+    /opt/devatserv/share/util/install_docker_lx.sh
   fi
   
   if ! docker compose >/dev/null 2>&1; then
     echo -e "${MSG_INFO} Installing 'docker compose'..."
-    "$PROJECT_DIR"/share/util/install_docker_lx.sh
+    /opt/devatserv/share/util/install_docker_lx.sh
   fi
   
   if [ $err -eq 0 ]; then 
@@ -35,75 +32,16 @@ pre_check_installation() {
   return $err
 }
 
-install_gui_devatserv() {
-  echo -e "${MSG_INFO} Starting DevAtServ's GUI"
-
-  package_status=$(dpkg-query -W -f='${db:Status-Status}\n' $DAS_GUI_NAME 2>/dev/null)
-  cur_version=$(dpkg-query -W -f='${Version}' $DAS_GUI_NAME 2>/dev/null || echo "$DAS_GUI_NAME not installed" )
-  new_version=$(dpkg-deb -I "$DAS_GUI_DIR" | grep '^ Version:' | awk '{print $2}')
-
-  if [ "$cur_version" = "$new_version" ] && [ "$package_status" = "installed" ]; then
-    echo -e "${MSG_DONE} DevAtServ's GUI is already installed with version $cur_version."
-  else
-
-    read -p "There are new version $new_version, Do you want to install it? (y/n)" choice
-    if [ "$choice" = "Y" ]  || [ "$choice" == "y" ]; then
-
-      echo -e "${MSG_INFO} Installing version $new_version..."
-
-      if sudo dpkg -i $DAS_GUI_DIR; then
-        echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
-      else
-        echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
-        return 1
-      fi
-    else
-      echo -e "${MSG_INFO} Skip to install the newest DevAtServ's GUI version."
-    fi
-  fi
-}
-
-# Function to remove a module if loaded
-remove_module() {
-    local module=$1
-    if lsmod | grep "$module" &> /dev/null; then
-        if sudo rmmod "$module"; then
-            echo "$module removed successfully."
-        else
-            echo -e "${MSG_ERR} Failed to remove $module."
-        fi
-    fi
-}
-
-pre_configuration_services() {
-    echo -e "${MSG_INFO} Starting pre-configuration for debug board containers ..." 
-
-    if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
-        # Grant access to Docker containers
-        xhost +local:docker
-        if [ $? -eq 0 ]; then
-          echo "Docker containers now have access to Display server."
-        else
-          echo -e "${MSG_ERR} Failed to configure access for Docker containers."
-        fi
-    else
-      echo -e "${MSG_WARN} Display server is not running. Start display server before running debug board service."
-    fi
-
-    # Remove module for transfer data debug board
-    remove_module "ftdi_sio"
-    remove_module "usbserial"
-}
 # Start up the entire DevAtServ
 startup_devatserv() {
-  source "$PROJECT_DIR"/bin/startup-devatserv.sh
+  source "$PROJECT_DIR/bin/startup-devatserv.sh"
 }
 
 
 # Start DevAtServ
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
 
 	docker_compose_files=("docker-compose.yml")
 
@@ -131,7 +69,8 @@ start_devatserv() {
 
 status_devatserv() {
   echo -e "${MSG_INFO} Status all DevAtServ's services"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
+  
   # Get the list of containers and their statuses
   output=$(docker compose ps "$@" -a --format "table {{.Name}}\t{{.State}}")
 
@@ -159,7 +98,7 @@ status_devatserv() {
 
 stop_devatserv() {
   echo -e "${MSG_INFO} Stopping DevAtServ's docker containers"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
 
   # Stop all containers or specific service
   docker compose stop "$@"
@@ -167,7 +106,7 @@ stop_devatserv() {
 
 restart_devatserv() {
   echo -e "${MSG_INFO} Restarting DevAtServ's docker containers"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
 
   # Restart all containers or specific service
   docker compose restart "$@"
@@ -175,7 +114,7 @@ restart_devatserv() {
 
 rm_devatserv() {
   echo -e "${MSG_INFO} Removing DevAtServ's docker containers"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
 
   # Stop all containers or specific service
   docker compose rm  "$@"
@@ -183,7 +122,7 @@ rm_devatserv() {
 
 down_devatserv() {
   echo -e "${MSG_INFO} Downing DevAtServ's docker containers"
-  cd "$PROJECT_DIR"/share/start-services
+  cd "$PROJECT_DIR/share/start-services"
 
   # Stop all containers or specific service
   docker compose down  "$@"
@@ -193,7 +132,7 @@ down_devatserv() {
 load_devatserv() {
   echo -e "${MSG_INFO} Loading DevAtServ's docker images"
   # Directory to store all images
-  STORAGE_DIR="$PROJECT_DIR"/share/storage
+  STORAGE_DIR="$PROJECT_DIR/share/storage"
   # Move to images storage
   cd "$STORAGE_DIR"
   # Load all Docker images from storage
@@ -203,16 +142,4 @@ load_devatserv() {
   done
 
   echo -e "${MSG_DONE} All images are loaded successfully"
-}
-
-############## DevAtServ GUI ##################
-startup_devatservGUI() {
-
-  if [ -f "/opt/DevAtServGUI/dasgui" ]; then
-      echo -e "${MSG_INFO} Running the DevAtServ GUI application..."
-      /opt/DevAtServGUI/dasgui > /dev/null 2>&1 &
-  else
-      echo -e "${MSG_ERR} DevAtServ GUI does not exist. Please run "devatserv startup" to install it"
-      exit 1
-  fi
 }
