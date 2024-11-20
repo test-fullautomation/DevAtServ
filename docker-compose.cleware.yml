@@ -1,0 +1,5 @@
+services:
+  cleware-service:
+    devices:
+    stdin_open: true
+    tty: true

@@ -76,7 +76,7 @@ remove_module() {
 }
 
 pre_configuration_services() {
-    echo -e "${MSG_INFO} Starting pre-configuration for debug board containers ..." 
+    echo -e "${MSG_INFO} Starting pre-configuration..." 
 
     if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
         # Grant access to Docker containers
@@ -94,11 +94,38 @@ pre_configuration_services() {
     remove_module "ftdi_sio"
     remove_module "usbserial"
 }
+
+####################################################################################################################
+####################################################################################################################
+####################################################################################################################
 # Start up the entire DevAtServ
 startup_devatserv() {
   source "$PROJECT_DIR"/bin/startup-devatserv.sh
 }
 
+update_cleware_yml() {
+    # Replace 
+    COMPOSE_FILE="docker-compose.cleware.yml"
+
+    # Check all avaiable HID
+    DEVICES=($(ls /dev/usb/hiddev* 2>/dev/null))
+
+    # Generate structure YAML
+    echo "services:" > $COMPOSE_FILE
+    echo "  cleware-service:" >> $COMPOSE_FILE
+    echo "    devices:" >> $COMPOSE_FILE
+
+    # Extend HID devices to YAML
+    for DEVICE in "${DEVICES[@]}"; do
+      echo "      - \"$DEVICE:$DEVICE\"" >> $COMPOSE_FILE
+    done
+
+# Update configuration
+cat <<EOL >> $COMPOSE_FILE
+    stdin_open: true
+    tty: true
+EOL
+}
 
 # Start DevAtServ
 start_devatserv() {
@@ -106,15 +133,18 @@ start_devatserv() {
   cd "$PROJECT_DIR"/share/start-services
 
 	docker_compose_files=("docker-compose.yml")
+  cleware_file=("docker-compose.cleware.yml")
+  debugboard_file=("docker-compose.debugboard.yml")
 
 	# Check if USB device exists
   if [ -c /dev/usb/hiddev0 ]; then
-    docker_compose_files+=("docker-compose.usbcleware.yml")
+    update_cleware_yml $cleware_file
+    docker_compose_files+=("$cleware_file")
   fi
 
 	# Check if ttyUSB device exists
-	if [ -f "$PROJECT_DIR"/share/start-services/docker-compose.ttyusb.yml ]; then
-		docker_compose_files+=("docker-compose.ttyusb.yml")
+	if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ]; then
+		docker_compose_files+=("$debugboard_file")
 	fi
 
 	compose_options=""
