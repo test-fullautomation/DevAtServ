@@ -65,34 +65,34 @@ install_gui_devatserv() {
 
 # Function to remove a module if loaded
 remove_module() {
-    local module=$1
-    if lsmod | grep "$module" &> /dev/null; then
-        if sudo rmmod "$module"; then
-            echo "$module removed successfully."
-        else
-            echo -e "${MSG_ERR} Failed to remove $module."
-        fi
-    fi
+  local module=$1
+  if lsmod | grep "$module" &> /dev/null; then
+      if sudo rmmod "$module"; then
+          echo "$module removed successfully."
+      else
+          echo -e "${MSG_ERR} Failed to remove $module."
+      fi
+  fi
 }
 
 pre_configuration_services() {
-    echo -e "${MSG_INFO} Starting pre-configuration..." 
+  echo -e "${MSG_INFO} Starting pre-configuration..." 
 
-    if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
-        # Grant access to Docker containers
-        xhost +local:docker
-        if [ $? -eq 0 ]; then
-          echo "Docker containers now have access to Display server."
-        else
-          echo -e "${MSG_ERR} Failed to configure access for Docker containers."
-        fi
-    else
-      echo -e "${MSG_WARN} Display server is not running. Start display server before running debug board service."
-    fi
+  if [ "$XDG_SESSION_TYPE" = "wayland" ] || [ "$XDG_SESSION_TYPE" = "x11" ]; then
+      # Grant access to Docker containers
+      xhost +local:docker
+      if [ $? -eq 0 ]; then
+        echo "Docker containers now have access to Display server."
+      else
+        echo -e "${MSG_ERR} Failed to configure access for Docker containers."
+      fi
+  else
+    echo -e "${MSG_WARN} Display server is not running. Start display server before running debug board service."
+  fi
 
-    # Remove module for transfer data debug board
-    remove_module "ftdi_sio"
-    remove_module "usbserial"
+  # Remove module for transfer data debug board
+  remove_module "ftdi_sio"
+  remove_module "usbserial"
 }
 
 ####################################################################################################################
@@ -130,31 +130,31 @@ start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
   cd "$PROJECT_DIR"/share/start-services
 
-	docker_compose_files=("docker-compose.yml")
+  docker_compose_files=("docker-compose.yml")
   cleware_file=("docker-compose.cleware.yml")
   debugboard_file=("docker-compose.debugboard.yml")
 
-	# Check if USB device exists
+  # Check if USB device exists
   if [ -c /dev/usb/hiddev0 ]; then
     update_cleware_yml $cleware_file
     docker_compose_files+=("$cleware_file")
   fi
 
-	# Check if ttyUSB device exists
-	if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ]; then
-		docker_compose_files+=("$debugboard_file")
-	fi
+  # Check if ttyUSB device exists
+  if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ] && [ -c /dev/ttyUSB0 ]; then
+    docker_compose_files+=("$debugboard_file")
+  fi
 
-	compose_options=""
-	for file in "${docker_compose_files[@]}"; do
-		compose_options="$compose_options -f $file"
-	done
+  compose_options=""
+  for file in "${docker_compose_files[@]}"; do
+    compose_options="$compose_options -f $file"
+  done
 
   echo -e "${MSG_INFO} docker compose$compose_options up "$@" --remove-orphans -d"
-	if ! docker compose $compose_options up "$@" --remove-orphans -d; then
+  if ! docker compose $compose_options up "$@" --remove-orphans -d; then
     echo -e "${MSG_ERR} Could not start. Check for errors above."
     return 1
-	fi
+  fi
 }
 
 status_devatserv() {
