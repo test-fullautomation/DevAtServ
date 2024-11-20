@@ -48,17 +48,17 @@ start_docker_compose() {
 
 	# Check for specific SUPPORT_SERVER value
 	if [ "$SUPPORT_SERVER" == "gitlab" ]; then
-    	docker_compose_files+=("docker-compose.debugboard.yml")
+    	docker_compose_files=("docker-compose.gitlab.yml")
 	fi
 
 	# Check if USB device exists
     if [ -c /dev/usb/hiddev0 ]; then
-        docker_compose_files+=("docker-compose.usbcleware.yml")
+        docker_compose_files+=("docker-compose.cleware.yml")
     fi
 
 	# Check if ttyUSB device exists
     if [ -c /dev/ttyUSB0 ]; then
-        docker_compose_files+=("docker-compose.ttyusb.yml")
+        docker_compose_files+=("docker-compose.debugboard.yml")
     fi
 
     compose_options=""

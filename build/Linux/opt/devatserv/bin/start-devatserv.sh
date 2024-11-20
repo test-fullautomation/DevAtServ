@@ -104,27 +104,25 @@ startup_devatserv() {
 }
 
 update_cleware_yml() {
-    # Replace 
-    COMPOSE_FILE="docker-compose.cleware.yml"
+  # Replace 
+  local cleware_yml="docker-compose.cleware.yml"
 
-    # Check all avaiable HID
-    DEVICES=($(ls /dev/usb/hiddev* 2>/dev/null))
+  # Check all avaiable HID
+  local devices=($(ls /dev/usb/hiddev* 2>/dev/null))
 
-    # Generate structure YAML
-    echo "services:" > $COMPOSE_FILE
-    echo "  cleware-service:" >> $COMPOSE_FILE
-    echo "    devices:" >> $COMPOSE_FILE
+  # Generate structure YAML
+  echo "services:" > $cleware_yml
+  echo "  cleware-service:" >> $cleware_yml
+  echo "    devices:" >> $cleware_yml
 
-    # Extend HID devices to YAML
-    for DEVICE in "${DEVICES[@]}"; do
-      echo "      - \"$DEVICE:$DEVICE\"" >> $COMPOSE_FILE
-    done
+  # Extend HID devices to YAML
+  for device in "${devices[@]}"; do
+    echo "      - \"$devices:$devices\"" >> $cleware_yml
+  done
 
-# Update configuration
-cat <<EOL >> $COMPOSE_FILE
-    stdin_open: true
-    tty: true
-EOL
+  # Update configuration
+  echo "    stdin_open: true" >> $cleware_yml
+  echo "    tty: true" >> $cleware_yml
 }
 
 # Start DevAtServ
