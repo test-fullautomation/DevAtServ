@@ -14,19 +14,8 @@ if [ ${CURRENT_USER} != 'root' ]; then
    HOME=/home/${CURRENT_USER}
 fi
 
-#in osd4 group name is the user name.
-#in osd5 group name is "domain users". Therefore
-#look if a group wi th the user name exists, if not
-#then we assume that we are on OSD5
-sGROUP=$(id -G)
-if ! getent group "${sGROUP}" | grep "${sGROUP}" ; then
-   sGROUP='domain users'
-   echo -e "Assuming OSD7 and using group 'domain users' as user group for private files"
-else
-   echo -e "Assuming OSD4 and using group ${sGROUP} as user group for private files"
-fi
-
-
+# Introduce group `robot-aio` which allow access for group of multiple users
+sGROUP=robot-aio
 
 # Configure Unitiy Launchers folder
 APPS_PATH=${HOME}/.local/share/applications
@@ -42,11 +31,14 @@ else
    mkdir "${APPS_PATH}"
 fi
 
-# For scrip excution
 cp /opt/devatserv/bin/devatserv /usr/local/bin/devatserv
 chmod +x /usr/local/bin/devatserv
 
 cp /opt/devatserv/share/applications/devatserv.desktop ${APPS_PATH}/devatserv.desktop
+
+
+# For scrip excution
+# Adding execute permissions for the owner, group, and others
 chown -R "${CURRENT_USER}:${sGROUP}" ${APPS_PATH}/devatserv.desktop
 chmod +x ${APPS_PATH}/devatserv.desktop
 chmod +x /opt/devatserv/bin/devatserv
@@ -54,5 +46,14 @@ chmod +x /opt/devatserv/bin/start-devatserv.sh
 chmod +x /opt/devatserv/bin/startup-devatserv.sh
 chmod +x /opt/devatserv/bin/remove-devatserv.sh
 chmod +x /opt/devatserv/share/util/install_docker_lx.sh
+
+# For share configuration yaml
+# (U)ser / owner can read, can write and can't execute. 
+# (G)roup can read, can write and can't execute.
+# (O)thers can read, can't write and can't execute.
+chown -R "${CURRENT_USER}:${sGROUP}" /opt/devatserv/share/start-services/docker-compose.cleware.yml
+chown -R "${CURRENT_USER}:${sGROUP}" /opt/devatserv/share/start-services/docker-compose.debugboard.yml
+chmod 664 /opt/devatserv/share/start-services/docker-compose.cleware.yml
+chmod 664 /opt/devatserv/share/start-services/docker-compose.debugboard.yml
 
 echo -e "${MSG_DONE} Device Automation Services App has been successfully created/updated."

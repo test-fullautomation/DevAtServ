@@ -117,7 +117,7 @@ update_cleware_yml() {
 
   # Extend HID devices to YAML
   for device in "${devices[@]}"; do
-    echo "      - \"$devices:$devices\"" >> $cleware_yml
+    echo "      - \"$device:$device\"" >> $cleware_yml
   done
 
   # Update configuration
