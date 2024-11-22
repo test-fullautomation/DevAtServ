@@ -103,28 +103,6 @@ startup_devatserv() {
   source "$PROJECT_DIR"/bin/startup-devatserv.sh
 }
 
-update_cleware_yml() {
-  # Replace 
-  local cleware_yml="docker-compose.cleware.yml"
-
-  # Check all avaiable HID
-  local devices=($(ls /dev/usb/hiddev* 2>/dev/null))
-
-  # Generate structure YAML
-  echo "services:" > $cleware_yml
-  echo "  cleware-service:" >> $cleware_yml
-  echo "    devices:" >> $cleware_yml
-
-  # Extend HID devices to YAML
-  for device in "${devices[@]}"; do
-    echo "      - \"$device:$device\"" >> $cleware_yml
-  done
-
-  # Update configuration
-  echo "    stdin_open: true" >> $cleware_yml
-  echo "    tty: true" >> $cleware_yml
-}
-
 # Start DevAtServ
 start_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's docker containers"
@@ -135,13 +113,13 @@ start_devatserv() {
   debugboard_file=("docker-compose.debugboard.yml")
 
   # Check if USB device exists
-  if [ -c /dev/usb/hiddev0 ]; then
+  if [ -c /dev/usb ]; then
     update_cleware_yml $cleware_file
     docker_compose_files+=("$cleware_file")
   fi
 
   # Check if ttyUSB device exists
-  if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ] && [ -c /dev/ttyUSB0 ]; then
+  if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ] && [ -c /dev/ttyUSB0 ];
     docker_compose_files+=("$debugboard_file")
   fi
 
