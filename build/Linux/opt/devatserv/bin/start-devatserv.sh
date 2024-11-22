@@ -119,7 +119,7 @@ start_devatserv() {
   fi
 
   # Check if ttyUSB device exists
-  if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ] && [ -c /dev/ttyUSB0 ];
+  if [ -c /dev/ttyUSB0 ]; then
     docker_compose_files+=("$debugboard_file")
   fi
 

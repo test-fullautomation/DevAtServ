@@ -52,7 +52,7 @@ start_docker_compose() {
 	fi
 
 	# Check if USB device exists
-    if [ -c /dev/usb/hiddev0 ]; then
+    if [ -c /dev/usb ]; then
         docker_compose_files+=("docker-compose.cleware.yml")
     fi
 

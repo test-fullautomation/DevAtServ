@@ -74,13 +74,13 @@ start_devatserv() {
   debugboard_file=("docker-compose.debugboard.yml")
 
 	# Check if USB device exists
-  if [ -c /dev/usb/hiddev0 ]; then
+  if [ -c /dev/usb ]; then
     update_cleware_yml $cleware_file
     docker_compose_files+=("$cleware_file")
   fi
 
 	# Check if ttyUSB device exists
-	if [ -f "$PROJECT_DIR"/share/start-services/$debugboard_file ]; then
+	if [ -c /dev/ttyUSB0 ]; then
 		docker_compose_files+=("$debugboard_file")
 	fi
 
