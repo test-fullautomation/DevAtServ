@@ -118,7 +118,7 @@ install_packaging_python_windows() {
 	# This would create a conflict with an already existing python version. RobotFramework's python should be
 	# fully transparent for the existing system.
 	# 
-	$destDir/python39/python.exe -m pip install -r "$mypath/python_requirements.txt" $proxy_args
+	$destDir/python39/python.exe -m pip install -r "$mypath/WindowsNative/devatserv/resource/python_requirements.txt" $proxy_args
 	# Workaround for pyfranca
 	$destDir/python39/python.exe -m pip install pyfranca
 
