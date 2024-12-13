@@ -127,29 +127,49 @@ install_packaging_python_windows() {
     echo -e "${MSG_DONE} Installed python package successfully."
 }
 
+install_packaging_erlang() {
+    
+    echo -e "${MSG_INFO} Installing Erlang package..."
+    # Erlang package resource
+    erlang_download_url=https://github.com/erlang/otp/releases/download/OTP-27.2/otp_win64_27.2.exe
+	erlang_exe=otp_win64_27.2.exe
+	erlang_package_name="Erlang OTP"
+	erlang_installer_srcpath=${sourceDir}/${erlang_exe}
+	erlang_installer_despath=${destDir}/${erlang_package_name}
+
+    # Download erlang package
+    download_package "Erlang package" "${erlang_download_url}" "${erlang_installer_srcpath}"
+
+	# Clean up Erlang workspace
+	rm -rf $erlang_installer_despath
+
+	# Extract erlang package for building
+	"$erlang_installer_srcpath" /D="$erlang_installer_despath"
+
+    echo -e "${MSG_DONE} Installed Erlang successfully."
+}
+
 install_packaging_rabbitmq_server() {
     
     echo -e "${MSG_INFO} Installing RabbitMQ package..."
-
-    # Erlang package resource
-    download_erlang_url=https://github.com/erlang/otp/releases/download/OTP-27.2/otp_win64_27.2.exe
-    archived_erlang_exe=otp_win64_27.2.exe
-
     # RabbitMQ Server resource
-    download_rabbitmq_url=https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.0.4/rabbitmq-server-4.0.4.exe
-    archived_rabbitmq_exe=rabbitmq-server-4.0.4.exe
+    rabitmq_download_url=https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.0.4/rabbitmq-server-4.0.4.exe
+	rabitmq_exe=rabbitmq-server-4.0.4.exe
+	rabitmq_package_name="${rabbitmq_exe%.exe}"
+	rabitmq_installer_srcpath=${sourceDir}/${rabitmq_exe}
+	rabitmq_installer_despath=${destDir}/${rabitmq_package_name}
 
     rm -rf "$destDir/rabbitmq"
-	mv "$sourceDir/rabbitmq" "$destDir/rabbitmq"
-
-    # Download erlang package
-    download_package "Erlang package" ${download_erlang_url} ${sourceDir}/${archived_erlang_exe}
-    mv "$sourceDir/${archived_erlang_exe}" "$destDir/rabbitmq"
 
     # Download rabbitmq package
-	download_package "RabbitMQ package" "$download_rabbitmq_url" ${sourceDir}/"${archived_rabbitmq_exe}"
-    mv "$sourceDir/${archived_rabbitmq_exe}" "$destDir/rabbitmq"
+	download_package "RabbitMQ package" "$rabitmq_download_url" "${rabitmq_installer_srcpath}"
    
+	# Clean up Erlang workspace
+	rm -rf $rabitmq_installer_despath
+
+	# Extract erlang package for building
+	"$rabitmq_installer_srcpath" /D="$rabitmq_installer_despath"
+
     echo -e "${MSG_DONE} Installed RabbitMQ Server successfully."
 }
 
@@ -169,6 +189,11 @@ main() {
 
     install_packaging_python_windows || {
         echo 'error installing python package' 
+        return 1
+    }
+
+    install_packaging_erlang || {
+        echo 'error installing erlang' 
         return 1
     }
 

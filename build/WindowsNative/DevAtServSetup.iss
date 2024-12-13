@@ -56,6 +56,7 @@ OutputDir=..\..\
 [Files]
 ; Add any files your application needs here.
 ; ############### DevAtServ Services ###############
+Source: ..\Resources\otp_win64_27.2.exe; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: ..\devatserv\bin\*; DestDir: "{app}\bin"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\applications\*; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\storage\*; DestDir: "{app}\share\storage"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
@@ -72,7 +73,7 @@ Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.
 
 [Run]
 ; Check if Docker is installed and run a script to load and run Docker images
-Filename: "{app}\share\docker\DockerDesktopInstaller.exe"; WorkingDir: {app}; Description: "Install Docker Desktop"; Flags: postinstall skipifsilent runminimized
+Filename: "{tmp}\otp_win64_27.2.exe"; Parameters: "/S /D={app}\Erlang"; Flags: waituntilterminated
 
 [Code]
 const

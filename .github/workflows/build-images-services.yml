@@ -135,6 +135,31 @@ jobs:
           name: devatserv-linux-package
           path: output_Linux/*.deb
 
+  devatserv-windows:
+    name: DevAtServ Windows
+    runs-on: windows-latest
+    if: ${{ ! failure() && ! cancelled() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install DevAtServ
+        shell: bash
+        run: |
+          chmod +x ./install_native.sh
+          ./install_native.sh
+
+      - name: Build DevAtServ
+        shell: bash
+        run: |
+          chmod +x ./build_native.sh
+          ./build_native.sh
+
+      - name: Upload Exe package
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-windows-package
+          path: output_Windows/*.exe
 
   deploy-devatserv-windows:
     name: DevAtServ tool Windows
