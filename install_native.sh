@@ -129,7 +129,7 @@ install_packaging_python_windows() {
 
 install_packaging_erlang() {
     
-    echo -e "${MSG_INFO} Installing Erlang package..."
+    echo -e "${MSG_INFO} Erlang packaging ..."
     # Erlang package resource
     erlang_download_url=https://github.com/erlang/otp/releases/download/OTP-27.2/otp_win64_27.2.exe
 	erlang_exe=otp_win64_27.2.exe
@@ -144,6 +144,7 @@ install_packaging_erlang() {
 	rm -rf $erlang_installer_despath
 
 	# Extract erlang package for building
+	echo -e "${MSG_INFO} Installing Erlang package..."
 	"$erlang_installer_srcpath" /D="$erlang_installer_despath"
 
     echo -e "${MSG_DONE} Installed Erlang successfully."
@@ -165,7 +166,9 @@ install_packaging_rabbitmq_server() {
 	download_package "RabbitMQ package" "$rabitmq_download_url" "${rabitmq_installer_srcpath}"
    
 	# Clean up Erlang workspace
-	rm -rf $rabitmq_installer_despath
+	if [ -f "$rabitmq_installer_despath" ]
+		rm -rf $rabitmq_installer_despath
+	fi
 
 	# Extract erlang package for building
 	"$rabitmq_installer_srcpath" /D="$rabitmq_installer_despath"
