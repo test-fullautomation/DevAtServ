@@ -132,12 +132,10 @@ Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.
 Name: {app}\bin\*; Type: filesandordirs;
 Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;
-Name: {app}\share\applications\*; Type: filesandordirs;
-Name: {app}\share\GUI\*; Type: filesandordirs;
+Name: {app}\share\*; Type: filesandordirs;
 
 [InstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
-Name: {app}\share\applications\*; Type: filesandordirs;
-Name: {app}\share\GUI\*; Type: filesandordirs;
 Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;
+Name: {app}\share\*; Type: filesandordirs;

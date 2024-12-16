@@ -158,13 +158,8 @@ jobs:
       - name: Build DevAtServ
         shell: bash
         run: |
-          chmod +x ./build_native.sh
-          ls -la 
-          pwd
-          ls -la /
-          ls -la /d/
-          ls -la /d/a/
-          ./build_native.sh
+          chmod +x ./build.sh
+          ./build.sh --build-native
 
       - name: Upload Exe package
         uses: actions/upload-artifact@v4
@@ -196,7 +191,7 @@ jobs:
         run: |
           echo "DAS_VERSION_DATE=$(date +%m.%Y)" >> $GITHUB_ENV
           echo "DAS_VERSION=${TAG_NAME#[rd]e[vl]/das/}" >> $GITHUB_ENV
-          chmod +x ./build.sh
+          chmod +x ./build.sh 
           ./build.sh
 
       - name: Upload Exe package
