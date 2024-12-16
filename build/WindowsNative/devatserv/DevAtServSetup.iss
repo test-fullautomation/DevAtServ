@@ -82,23 +82,23 @@ Name: "{group}\Erlang"; Filename: {app}\ErlangOTP\bin\erl.exe; Components: "Erla
 Name: "{group}\DevAtServ\Erlang Documentation"; Filename: {app}\ErlangOTP\doc\readme.html;
 
 ; RabbitMQ Server
-Name: "{group}\RabbitMQ Server"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.4; Components: "RabbitMQServer";
+Name: "{group}\RabbitMQ Server"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.5; Components: "RabbitMQServer";
 ; RabbitMQ Command Prompt (sbin dir)
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Command Prompt (sbin dir)"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"""; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Command Prompt (sbin dir)"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"""; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; Components: "RabbitMQServer";
 ; RabbitMQ Database Directory
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Database Directory"; Filename: "explorer.exe"; Parameters: """{app}\RabbitMQ\rabbitmq_server-4.0.4\db"""; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Database Directory"; Filename: "explorer.exe"; Parameters: """{app}\RabbitMQ\rabbitmq_server-4.0.5\db"""; Components: "RabbitMQServer";
 ; RabbitMQ Logs
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Logs"; Filename: "explorer.exe"; Parameters: """{app}\RabbitMQ\rabbitmq_server-4.0.4\log"""; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Logs"; Filename: "explorer.exe"; Parameters: """{app}\RabbitMQ\rabbitmq_server-4.0.5\log"""; Components: "RabbitMQServer";
 ; RabbitMQ Plugins
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Plugins"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.4\plugins; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Plugins"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.5\plugins; Components: "RabbitMQServer";
 ; RabbitMQ Service - (re)install
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - (re)install"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat install"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"; IconFilename: "{app}\RabbitMQ\rabbitmq.ico"; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - (re)install"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat install"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
 ; RabbitMQ Service - remove
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - remove"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat remove"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"; IconFilename: "{app}\RabbitMQ\rabbitmq.ico"; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - remove"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat remove"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
 ; RabbitMQ Service - start
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - start"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat start"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"; IconFilename: "{app}\RabbitMQ\rabbitmq.ico"; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - start"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat start"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
 ; RabbitMQ Service - stop
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - stop"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat stop"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin"; IconFilename: "{app}\RabbitMQ\rabbitmq.ico"; Components: "RabbitMQServer";
+Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - stop"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat stop"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
 
 [Types]
 Name: Standard; Description: "Standard Installation"; Flags: iscustom
@@ -115,12 +115,12 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
-Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
 Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\ErlangOTP\bin;%PATH%"""; Components: "Erlang"; Flags: runhidden
 
 ; Optional: Set environment variables for RabbitMQ
-Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.4"""; Components: "RabbitMQServer"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.0.4\sbin;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
 
 [Code]
 
