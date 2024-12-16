@@ -149,6 +149,15 @@ jobs:
         with:
           name: das-gui-artifact-exe
           
+      - name: Download Erlang Installer
+        run: |
+          curl -L -o otp_win64_27.2.exe https://erlang.org/download/otp_win64_27.2.exe
+  
+      - name: Install Erlang
+        run: |
+          start /wait otp_win64_27.2.exe /S /D=C:\Erlang
+          echo "Erlang installed successfully."
+          
       - name: Install DevAtServ
         shell: bash
         run: |
@@ -159,6 +168,11 @@ jobs:
         shell: bash
         run: |
           chmod +x ./build_native.sh
+          ls -la 
+          pwd
+          ls -la /
+          ls -la /d/
+          ls -la /d/a/
           ./build_native.sh
 
       - name: Upload Exe package
