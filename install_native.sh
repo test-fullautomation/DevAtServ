@@ -83,14 +83,13 @@ install_packaging_python_windows() {
     echo -e "${MSG_INFO} Installing python package..."
 
     # Python package resource
-    download_python_url=https://github.com/indygreg/python-build-standalone/releases/download/20221220/cpython-3.9.16+20221220-x86_64-pc-windows-msvc-shared-install_only.tar.gz
-    archived_python_file=$sourceDir/cpython-3.9.16+20221220-x86_64-pc-windows-msvc-shared-install_only.tar.gz
+    python_download_url=https://github.com/indygreg/python-build-standalone/releases/download/20221220/cpython-3.9.16+20221220-x86_64-pc-windows-msvc-shared-install_only.tar.gz
+    python_archived_file=$sourceDir/cpython-3.9.16+20221220-x86_64-pc-windows-msvc-shared-install_only.tar.gz
 
     # Download python package
-	download_package "Python" "$download_python_url" "$archived_python_file"
+	download_package "Python" "$python_download_url" "$python_archived_file"
 
-
-	tar -xzf "$archived_python_file" -C "$sourceDir"
+	tar -xzf "$python_archived_file" -C "$sourceDir"
 	rm -rf "$destDir/python39"
 	mv "$sourceDir/python" "$destDir/python39"
 
@@ -131,23 +130,22 @@ install_packaging_erlang() {
     
     echo -e "${MSG_INFO} Erlang packaging ..."
     # Erlang package resource
-    erlang_download_url=https://github.com/erlang/otp/releases/download/OTP-27.2/otp_win64_27.2.exe
-	erlang_exe=otp_win64_27.2.exe
+    erlang_download_url=https://github.com/erlang/otp/releases/download/OTP-27.2/otp_win64_27.2.zip
+	erlang_archived_file=otp_win64_27.2.zip
 	erlang_package_name="ErlangOTP"
-	erlang_installer_srcpath=${sourceDir}/${erlang_exe}
+	erlang_installer_srcpath=${sourceDir}/${erlang_package_name}
 	erlang_installer_despath=${destDir}/${erlang_package_name}
 
     # Download erlang package
-    download_package "Erlang package" "$erlang_download_url" "$erlang_installer_srcpath"
+    download_package "Erlang package" "$erlang_download_url" "$erlang_archived_file"
 
-	# Clean up Erlang workspace
-	if [ -f "$erlang_installer_despath" ]; then 
-		rm -rf $erlang_installer_despath
-	fi
+	unzip $erlang_archived_file -d $erlang_installer_srcpath
+	rm -rf "$erlang_installer_despath"
+	mv $erlang_installer_srcpath $erlang_installer_despath
 
 	# Extract erlang package for building
-	echo -e "${MSG_INFO} Installing Erlang by batch script..."
-	./util/install-app.bat $erlang_package_name $erlang_installer_srcpath $erlang_installer_despath
+	# echo -e "${MSG_INFO} Installing Erlang by batch script..."
+	# ./util/install-app.bat $erlang_package_name $erlang_installer_srcpath $erlang_installer_despath
     echo -e "${MSG_DONE} Installed Erlang successfully"
 }
 
@@ -155,25 +153,22 @@ install_packaging_rabbitmq_server() {
     
     echo -e "${MSG_INFO} Installing RabbitMQ package..."
     # RabbitMQ Server resource
-    rabbitmq_download_url=https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.0.4/rabbitmq-server-4.0.4.exe
-	rabbitmq_exe=rabbitmq-server-4.0.4.exe
+    rabbitmq_download_url=https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.0.5/rabbitmq-server-windows-4.0.5.zip
+	rabbitmq_archived_file=rabbitmq-server-windows-4.0.5.zip
 	rabbitmq_package_name="RabbitMQ"
-	rabbitmq_installer_srcpath=${sourceDir}/${rabbitmq_exe}
+	rabbitmq_installer_srcpath=${sourceDir}/${rabbitmq_package_name}
 	rabbitmq_installer_despath=${destDir}/${rabbitmq_package_name}
 
-    rm -rf "$destDir/rabbitmq"
-
     # Download Rabbitmq package
-	download_package "RabbitMQ package" "$rabbitmq_download_url" "$rabbitmq_installer_srcpath"
+	download_package "RabbitMQ package" "$rabbitmq_download_url" "$rabbitmq_archived_file"
    
-	# Clean up Rabbitmq workspace
-	if [ -f "$rabbitmq_installer_despath" ]; then 
-		rm -rf $rabbitmq_installer_despath
-	fi
+   	unzip $rabbitmq_archived_file -d $rabbitmq_installer_srcpath
+	rm -rf "$rabbitmq_installer_despath"
+	mv $rabbitmq_installer_srcpath $rabbitmq_installer_despath
 
 	# Extract Rabbitmq package for building
-	echo -e "${MSG_INFO} Installing RabbitMQ Server by batch script..."
-	./util/install-app.bat $rabbitmq_package_name $rabbitmq_installer_srcpath $rabbitmq_installer_despath
+	# echo -e "${MSG_INFO} Installing RabbitMQ Server by batch script..."
+	# ./util/install-app.bat $rabbitmq_package_name $rabbitmq_installer_srcpath $rabbitmq_installer_despath
     echo -e "${MSG_DONE} Installed RabbitMQ Server successfully."
 }
 

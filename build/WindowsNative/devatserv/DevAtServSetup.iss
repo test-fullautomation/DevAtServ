@@ -54,12 +54,12 @@ OutputDir=..\..\
 
 
 [Files]
-;python 3.9 with RobotFramework and all installed packages delivered with Robot Framework AIO
-Source: "R:\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
+;python 3.9 for DevAtServ and all installed packages delivered with DevAtServ
+Source: "D:\a\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
 ; Erlang installation
-Source: "R:\Erlang OTP\*"; DestDir: "{app}\Erlang OTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
+Source: "D:\a\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
 ; RabbitMQ installation
-Source: "R:\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
+Source: "D:\a\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
 ; Resource on DevAtServ
 Source: ..\devatserv\share\applications\*; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
@@ -78,8 +78,8 @@ Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.
 ;  !! Attention !! space after \ is intended. win10 sorts entries alphabetically and this bring the corresponding entries up
 ;                 
 ; Erlang
-Name: "{group}\Erlang"; Filename: {app}\Erlang OTP\bin\erl.exe; Components: "Erlang";
-Name: "{group}\DevAtServ\Erlang Documentation"; Filename: {app}\Erlang OTP\doc\readme.html;
+Name: "{group}\Erlang"; Filename: {app}\ErlangOTP\bin\erl.exe; Components: "Erlang";
+Name: "{group}\DevAtServ\Erlang Documentation"; Filename: {app}\ErlangOTP\doc\readme.html;
 
 ; RabbitMQ Server
 Name: "{group}\RabbitMQ Server"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.4; Components: "RabbitMQServer";
@@ -110,13 +110,13 @@ Name: "RabbitMQServer"; Description: "RabbitMQ Server"; Types: Standard Full;
 
 [Registry]
 ; Set ERLANG_HOME as a system-wide environment variable
-Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "ERLANG_HOME"; ValueData: "{app}\Erlang OTP"; Flags: preservestringtype
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "ERLANG_HOME"; ValueData: "{app}\ErlangOTP"; Flags: preservestringtype
 
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
-Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\\Erlang OTP"""; Components: "Erlang"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\Erlang OTP\bin;%PATH%"""; Components: "Erlang"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\ErlangOTP\bin;%PATH%"""; Components: "Erlang"; Flags: runhidden
 
 ; Optional: Set environment variables for RabbitMQ
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.4"""; Components: "RabbitMQServer"; Flags: runhidden
@@ -130,7 +130,7 @@ Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.
 
 [UninstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
-Name: {app}\Erlang OTP\*; Type: filesandordirs;
+Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;
 Name: {app}\share\applications\*; Type: filesandordirs;
 Name: {app}\share\GUI\*; Type: filesandordirs;
@@ -139,5 +139,5 @@ Name: {app}\share\GUI\*; Type: filesandordirs;
 Name: {app}\bin\*; Type: filesandordirs;
 Name: {app}\share\applications\*; Type: filesandordirs;
 Name: {app}\share\GUI\*; Type: filesandordirs;
-Name: {app}\Erlang OTP\*; Type: filesandordirs;
+Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;

@@ -80,8 +80,8 @@ function pre_build_windows() {
 
     ######### Prepare DevAtServ's GUI for Inno Setup tools #########
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
-    mkdir -p ./build/Windows/devatserv/share/GUI
-    mv *.exe ./build/Windows/devatserv/share/GUI/DevAtServGUISetup1.0.0.exe
+    mkdir -p ./build/WindowsNative/devatserv/share/GUI
+    mv *.exe ./build/WindowsNative/devatserv/share/GUI/DevAtServGUISetup1.0.0.exe
     if [ $? -eq 0 ]; then
         echo -e "${MSG_DONE} Get DevAtServ's GUI completed successfully."
     else
