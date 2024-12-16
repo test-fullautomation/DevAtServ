@@ -3,4 +3,4 @@ set InstallerName=%1
 set InstallTargetPath=%2
 
 echo Installing package name %InstallerName%...
-"%InstallerName%" /S /D=%InstallTargetPath%
+"%InstallerName%" /D=%InstallTargetPath%

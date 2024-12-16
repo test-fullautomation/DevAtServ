@@ -54,9 +54,13 @@ OutputDir=..\..\
 
 
 [Files]
-; Add any files your application needs here.
-Source: ..\devatserv\Erlang OTP\*; DestDir: "{app}\Erlang OTP"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
-Source: ..\devatserv\RabbitMQ\*; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
+;python 3.9 with RobotFramework and all installed packages delivered with Robot Framework AIO
+Source: "R:\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
+; Erlang installation
+Source: "R:\Erlang OTP\*"; DestDir: "{app}\Erlang OTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
+; RabbitMQ installation
+Source: "R:\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
+; Resource on DevAtServ
 Source: ..\devatserv\share\applications\*; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 
