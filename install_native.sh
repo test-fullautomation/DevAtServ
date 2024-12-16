@@ -148,7 +148,7 @@ install_packaging_erlang() {
 	# Extract erlang package for building
 	echo -e "${MSG_INFO} Installing Erlang by batch script..."
 	./util/install-app.bat $erlang_installer_srcpath $erlang_installer_despath
-    echo -e "${MSG_DONE} Installed Erlang successfully."
+    echo -e "${MSG_DONE} Installed Erlang successfully"
 }
 
 install_packaging_rabbitmq_server() {
