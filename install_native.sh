@@ -118,7 +118,7 @@ install_packaging_python_windows() {
 	# This would create a conflict with an already existing python version. RobotFramework's python should be
 	# fully transparent for the existing system.
 	# 
-	$destDir/python39/python.exe -m pip install -r "$mypath/WindowsNative/devatserv/resource/python_requirements.txt" $proxy_args
+	$destDir/python39/python.exe -m pip install -r "$mypath/WindowsNative/devatserv/share/python_requirements.txt" $proxy_args
 	# Workaround for pyfranca
 	$destDir/python39/python.exe -m pip install pyfranca
 
@@ -138,15 +138,16 @@ install_packaging_erlang() {
 	erlang_installer_despath=${destDir}/${erlang_package_name}
 
     # Download erlang package
-    download_package "Erlang package" "${erlang_download_url}" "${erlang_installer_srcpath}"
+    download_package "Erlang package" "$erlang_download_url" "$erlang_installer_srcpath"
 
 	# Clean up Erlang workspace
-	rm -rf $erlang_installer_despath
+	if [ -f "$erlang_installer_despath" ]; then 
+		rm -rf $erlang_installer_despath
+	fi
 
 	# Extract erlang package for building
-	echo -e "${MSG_INFO} Installing Erlang package..."
-	"$erlang_installer_srcpath" /D="$erlang_installer_despath"
-
+	echo -e "${MSG_INFO} Installing Erlang by batch script..."
+	./util/install-app.bat $erlang_installer_srcpath $erlang_installer_despath
     echo -e "${MSG_DONE} Installed Erlang successfully."
 }
 
@@ -162,17 +163,17 @@ install_packaging_rabbitmq_server() {
 
     rm -rf "$destDir/rabbitmq"
 
-    # Download rabbitmq package
-	download_package "RabbitMQ package" "$rabitmq_download_url" "${rabitmq_installer_srcpath}"
+    # Download Rabbitmq package
+	download_package "RabbitMQ package" "$rabitmq_download_url" "$rabitmq_installer_srcpath"
    
-	# Clean up Erlang workspace
-	if [ -f "$rabitmq_installer_despath" ]
+	# Clean up Rabbitmq workspace
+	if [ -f "$rabitmq_installer_despath" ]; then 
 		rm -rf $rabitmq_installer_despath
 	fi
 
-	# Extract erlang package for building
-	"$rabitmq_installer_srcpath" /D="$rabitmq_installer_despath"
-
+	# Extract Rabbitmq package for building
+	echo -e "${MSG_INFO} Installing RabbitMQ Server by batch script..."
+	./util/install-app.bat $rabitmq_installer_srcpath $rabitmq_installer_despath
     echo -e "${MSG_DONE} Installed RabbitMQ Server successfully."
 }
 
