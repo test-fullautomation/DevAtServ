@@ -77,6 +77,27 @@ install_microservices () {
     echo -e "${MSG_DONE} All services are cloned successfully."
 }
 
+install_genpackage_pandoc() {
+
+	echo -e "${MSG_INFO} Pandoc packaging ..."
+    # Pandoc package resource
+    pandoc_download_url=https://github.com/jgm/pandoc/releases/download/2.18/pandoc-2.18-windows-x86_64.zip
+	pandoc_archived_file=pandoc-2.18-windows-x86_64.zip
+	pandoc_package_name="pandoc"
+	pandoc_installer_srcpath=${sourceDir}/${pandoc_package_name}
+	pandoc_installer_despath=${destDir}/${pandoc_package_name}
+
+    # Download python package
+	download_package "Python" "$pandoc_download_url" "$pandoc_archived_file"
+
+	/usr/bin/yes A | unzip "$pandoc_archived_file" -d "$pandoc_installer_despath"
+	logresult "$?" "unzipped Pandoc" "unzip Pandoc"
+
+	# Add pandoc to PATH env
+	export PATH=$PATH:$pandoc_installer_despath/pandoc-2.18
+	
+    echo -e "${MSG_DONE} Installed Pandoc successfully"
+}
 
 install_packaging_python_windows() {
     
@@ -122,6 +143,33 @@ install_packaging_python_windows() {
 	$destDir/python39/python.exe -m pip install pyfranca
 
 	logresult "$?" "installed required packges for Python" "install required packges for Python"
+
+	echo -e "${MSG_INFO} Integrate all microservices to python package..."
+	repo_type=$SUPPORT_SERVER
+	list_repos=($(git config -f $CONFIG_SERVICE_FILE --list --name-only | grep $SUPPORT_SERVER.))
+
+	for repo in "${list_repos[@]}"
+	do
+		reponame=${repo#${repo_type}.}
+		echo -e "$COL_BLUE$BG_WHITE---- $repo$COL_RESET$COL_BLUE$BG_WHITE -----------------------------------------$COL_RESET"
+		cd "../$reponame" 
+		
+			if [ -f "./setup.py" ]; then
+			PACKNAME=""
+			if grep -w setuptools ./setup.py | grep -w import; then
+				PACKNAME=$($destDir/python39/python.exe ./setup.py --name | tail -n 1)
+				if [[ -n "$PACKNAME" ]]; then
+					/usr/bin/yes | $destDir/python39/python.exe -m pip uninstall ${PACKNAME}
+					logresult "$?" "uninstalled ${PACKNAME}" "uninstall ${PACKNAME}"
+				fi
+			fi
+			
+			$destDir/python39/python.exe ./setup.py clean --all install
+			logresult "$?" "installed ${reponame}" "install ${reponame}"
+		fi
+	done
+
+	logresult "$?" "all microservices are intergrated into Python" "require to intergrate microservices for Python"
 
     echo -e "${MSG_DONE} Installed python package successfully."
 }
@@ -185,6 +233,11 @@ main() {
         echo 'error installing service' 
         return 1
     }
+
+	install_genpackage_pandoc || {
+		echo 'error installing pandoc package' 
+        return 1
+	}
 
     install_packaging_python_windows || {
         echo 'error installing python package' 

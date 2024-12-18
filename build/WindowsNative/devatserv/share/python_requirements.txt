@@ -1,3 +1,6 @@
 pika
 pywin32
 colorama
+pypandoc
+PythonExtensionsCollection
+GenPackageDoc

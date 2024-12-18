@@ -292,6 +292,11 @@ function pre_build_windows_native() {
 }
 
 function build_windows_native() {
+
+    # Add pandoc to PATH env
+	mypath=$(realpath $(dirname $0))
+	export PATH=$PATH:$mypath/../pandoc/pandoc-2.18
+
 	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 	echo -e "${COL_GREEN}#          Executing InnoSetup to create installer...                              #${COL_RESET}"
 	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
@@ -302,10 +307,10 @@ function build_windows_native() {
     # Copy source & util
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
 
-    ./util/precompile.bat $ProjectConfigFile
+    #./util/precompile.bat $ProjectConfigFile
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
-    ./util/postcompile.bat
+    # ./util/postcompile.bat
 }
 
 show_help() {
@@ -375,7 +380,7 @@ else
             -b|--build-native)
                 BUILD_TYPE="Native"
                 main
-                shift 2
+                shift
                 ;;
             -h|--help) # Show help
                 show_help
