@@ -55,14 +55,15 @@ OutputDir=..\..\
 
 [Files]
 ;python 3.9 for DevAtServ and all installed packages delivered with DevAtServ
-Source: "D:\a\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
+Source: "..\devatserv\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
 ; Erlang installation
-Source: "D:\a\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
+Source: "..\devatserv\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
 ; RabbitMQ installation
-Source: "D:\a\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
+Source: "..\devatserv\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
 ; Resource on DevAtServ
-Source: ..\devatserv\share\applications\*; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
-Source: ..\devatserv\share\GUI\*; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "..\devatserv\share\applications\*"; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "..\devatserv\share\config\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 
 
 [Icons]

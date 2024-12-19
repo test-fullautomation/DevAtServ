@@ -279,6 +279,10 @@ function pre_build_windows_native() {
     # Display info for compiling
     dump_project_info
 
+    # Update Erlang configuration to avoid error start up RabbitMQ
+    cp -rf ./build/WindowsNative/devatserv/share/config/erl.ini ./build/WindowsNative/devatserv/ErlangOTP/bin/
+    cp -rf ./build/WindowsNative/devatserv/share/config/erl.ini ./build/WindowsNative/devatserv/ErlangOTP/erts-15.2/bin/
+
     ######### Prepare DevAtServ's GUI for Inno Setup tools #########
     echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
     mkdir -p ./build/WindowsNative/devatserv/share/GUI

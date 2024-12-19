@@ -9,7 +9,10 @@ source ./util/common.sh
 #setlocal enabledelayedexpansion
 mypath=$(realpath $(dirname $0))
 sourceDir=$mypath/../download
-destDir=$(realpath $mypath/../..)
+destDir=$(realpath $mypath/build/WindowsNative/devatserv)
+tempDir=$(realpath $mypath/../..)
+
+
 
 function download_package(){
 	proxy_args=""
@@ -85,7 +88,7 @@ install_genpackage_pandoc() {
 	pandoc_archived_file=pandoc-2.18-windows-x86_64.zip
 	pandoc_package_name="pandoc"
 	pandoc_installer_srcpath=${sourceDir}/${pandoc_package_name}
-	pandoc_installer_despath=${destDir}/${pandoc_package_name}
+	pandoc_installer_despath=${tempDir}/${pandoc_package_name}
 
     # Download python package
 	download_package "Python" "$pandoc_download_url" "$pandoc_archived_file"
@@ -144,6 +147,7 @@ install_packaging_python_windows() {
 
 	logresult "$?" "installed required packges for Python" "install required packges for Python"
 
+	###################################################################################################################################
 	echo -e "${MSG_INFO} Integrate all microservices to python package..."
 	repo_type=$SUPPORT_SERVER
 	list_repos=($(git config -f $CONFIG_SERVICE_FILE --list --name-only | grep $SUPPORT_SERVER.))
