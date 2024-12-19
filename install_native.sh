@@ -59,7 +59,7 @@ get_config_file() {
     echo -e "${MSG_INFO} Using config file: $CONFIG_SERVICE_FILE"
 }
 
-install_microservices () {
+clone_microservices () {
 
 	echo -e "${MSG_INFO} Cloning all services to repos..."
 
@@ -229,7 +229,7 @@ main() {
         return 1
     }
 
-    install_microservices || {
+    clone_microservices || {
         echo 'error installing service' 
         return 1
     }

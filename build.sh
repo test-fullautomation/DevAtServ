@@ -307,10 +307,10 @@ function build_windows_native() {
     # Copy source & util
     cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
 
-    #./util/precompile.bat $ProjectConfigFile
+    ./util/precompile.bat $ProjectConfigFile
 	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
-    # ./util/postcompile.bat
+    ./util/postcompile.bat
 }
 
 show_help() {

@@ -116,11 +116,10 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
 Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\ErlangOTP\bin;%PATH%"""; Components: "Erlang"; Flags: runhidden
-
 ; Optional: Set environment variables for RabbitMQ
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
+; Set PATH for all componenst
+Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin;{app}\ErlangOTP\bin;%PATH%;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
 
 [Code]
 
