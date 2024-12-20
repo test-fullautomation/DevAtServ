@@ -180,12 +180,15 @@ end;
 
 [UninstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
+Name: {app}\python39\*; Type: filesandordirs;
 Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;
 Name: {app}\share\*; Type: filesandordirs;
 
+
 [InstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
+Name: {app}\python39\*; Type: filesandordirs;
 Name: {app}\ErlangOTP\*; Type: filesandordirs;
 Name: {app}\RabbitMQ\*; Type: filesandordirs;
 Name: {app}\share\*; Type: filesandordirs;
