@@ -62,7 +62,6 @@ Source: "..\devatserv\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignorever
 Source: "..\devatserv\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
 ; Resource on DevAtServ
 Source: "..\devatserv\share\applications\*"; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
-Source: "..\devatserv\share\config\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 
 
@@ -123,6 +122,57 @@ Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_
 Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin;{app}\ErlangOTP\bin;%PATH%;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
 
 [Code]
+function EscapeBackslashes(const Input: String): String;
+var
+  i: Integer;
+  ResultStr: String;
+begin
+  ResultStr := '';
+  for i := 1 to Length(Input) do
+  begin
+    if Input[i] = '\' then
+      ResultStr := ResultStr + '\\'
+    else
+      ResultStr := ResultStr + Input[i];
+  end;
+  Result := ResultStr;
+end;
+
+procedure UpdateErlIni(const ErlangPath: String);
+var
+  ErlIniFile: String;
+  IniContent: TStringList;
+  ErlangEscapedPath: String;
+begin
+  ErlIniFile := ErlangPath + '\erts-15.2\bin\erl.ini';
+  IniContent := TStringList.Create;
+  try
+     // Escape backslashes for the Erlang path
+    ErlangEscapedPath := EscapeBackslashes(ErlangPath);
+    // Prepare the updated content for erl.ini
+    IniContent.Add('[erlang]');
+    IniContent.Add('Bindir=' + ErlangEscapedPath + '\\erts-15.2\\bin');
+    IniContent.Add('Progname=erl');
+    IniContent.Add('Rootdir=' + ErlangEscapedPath);
+    
+    // Write content to erl.ini
+    IniContent.SaveToFile(ErlIniFile);
+  finally
+    IniContent.Free;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  InstallDir: String;
+begin
+  if CurStep = ssPostInstall then begin
+    // Get the installation directory
+    InstallDir := ExpandConstant('{app}\ErlangOTP');
+    // Update erl.ini in the installation directory
+    UpdateErlIni(InstallDir);
+  end;
+end;
 
 
 [UninstallRun]
