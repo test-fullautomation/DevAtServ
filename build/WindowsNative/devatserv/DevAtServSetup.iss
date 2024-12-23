@@ -111,6 +111,8 @@ Name: "RabbitMQServer"; Description: "RabbitMQ Server"; Types: Standard Full;
 [Registry]
 ; Set ERLANG_HOME as a system-wide environment variable
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "ERLANG_HOME"; ValueData: "{app}\ErlangOTP"; Flags: preservestringtype
+Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DevAtServ"; ValueData: {app}\python39;
+
 
 
 [Run]
