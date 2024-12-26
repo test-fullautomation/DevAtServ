@@ -264,9 +264,42 @@ main() {
 
 if [ ! -d "$sourceDir" ]; then
 	mkdir "$sourceDir"
-else
-	rm -R -- "$sourceDir"/*
 fi
 
-main
+show_help() {
+    echo "Usage: $0 [options]"
+    echo
+    echo "Options:"
+    echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -h, --help                          Show this help message"
+}
 
+# Parse command-line arguments
+if [[ "$#" -eq 0 ]]; then
+    # If no arguments
+    main
+else
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -f|--config-file) # Input config file
+                config_file="$2"
+                if [[ -z "$config_file" ]]; then
+                    echo "Error: Missing input config file"
+                    show_help
+                    exit 1
+                fi
+                main $config_file
+                shift 2
+                ;;
+            -h|--help) # Show help
+                show_help
+                exit 0
+                ;;
+            *) # Unknown option
+                echo "Error: Invalid option $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+fi
