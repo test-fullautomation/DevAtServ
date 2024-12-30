@@ -1,8 +1,20 @@
 @echo off
 
-REM Run the base service
-start "Base Service" cmd /k "%DevAtServ%\python.exe" "%HOMEDRIVE%\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry.py"
+if "%1" == "start" (
+    echo Starting DevAtServ...
+    start "Base Service" cmd /k "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry.py"
+    start "Cleware Switch Service" cmd /k "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py"
+    start "Debug Board Service" cmd /k python "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py"
+) else if "%1" == "stop" (
+    echo Stopping DevAtServ...
+    @REM TODO in next action
+    @REM taskkill /FI "WINDOWTITLE eq Base Service" /T /F
+    @REM taskkill /FI "WINDOWTITLE eq Cleware Switch Service" /T /F
+    @REM taskkill /FI "WINDOWTITLE eq Debug Board Service" /T /F
+) else (
+    echo Usage: %~nx0 [start|stop]
+)
 
-REM Run the cleware switch service
-start "Cleware Switch Service" cmd /k "%DevAtServ%\python.exe" "%HOMEDRIVE%\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py"
-
+@REM start "Base Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-base\MicroserviceBase\ServiceRegistry\ServiceRegistry.py
+@REM start "Cleware Switch Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-cleware-switch\MicroserviceClewareSwitch\ServiceCleware.py
+@REM start "Debug Board Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-debugboard\MicroserviceDebugboard\ServiceDebugboard.py
