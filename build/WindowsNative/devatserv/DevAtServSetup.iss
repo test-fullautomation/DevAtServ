@@ -61,6 +61,7 @@ Source: "..\devatserv\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignorever
 ; RabbitMQ installation
 Source: "..\devatserv\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
 ; Resource on DevAtServ
+Source: "..\devatserv\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: "..\devatserv\share\applications\*"; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 
@@ -69,7 +70,8 @@ Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignorever
 ;
 ;   DESKTOP
 ;
-Name: "{group}\DevAtServ"; Filename: "{app}\bin\devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
+Name: "{group}\DevAtServ Start"; Filename: "{app}\bin\devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start all services"
+Name: "{group}\DevAtServ Set Up"; Filename: "{app}\bin\startup-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
 Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.0.exe;
 
 ;
