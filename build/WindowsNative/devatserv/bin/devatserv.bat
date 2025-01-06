@@ -14,7 +14,3 @@ if "%1" == "start" (
 ) else (
     echo Usage: %~nx0 [start|stop]
 )
-
-@REM start "Base Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-base\MicroserviceBase\ServiceRegistry\ServiceRegistry.py
-@REM start "Cleware Switch Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-cleware-switch\MicroserviceClewareSwitch\ServiceCleware.py
-@REM start "Debug Board Service" cmd /k python C:\workspace\robot-framework-aio\python-microservice-debugboard\MicroserviceDebugboard\ServiceDebugboard.py

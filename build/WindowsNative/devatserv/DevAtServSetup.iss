@@ -70,8 +70,8 @@ Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignorever
 ;
 ;   DESKTOP
 ;
-Name: "{group}\DevAtServ Start"; Filename: "{app}\bin\devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start all services"
-Name: "{group}\DevAtServ Set Up"; Filename: "{app}\bin\startup-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start DevAtServ App"
+Name: "{group}\DevAtServ"; Filename: "{app}\bin\startup-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start up DevAtServ App"
+Name: "{group}\DevAtServ CLI"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}\bin"""; WorkingDir: "{app}\bin"; Comment: "DevAtServ Control by Command Line"
 Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.0.exe;
 
 ;
@@ -114,14 +114,13 @@ Name: "RabbitMQServer"; Description: "RabbitMQ Server"; Types: Standard Full;
 ; Set ERLANG_HOME as a system-wide environment variable
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "ERLANG_HOME"; ValueData: "{app}\ErlangOTP"; Flags: preservestringtype
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DevAtServ"; ValueData: {app}\python39;
-Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DEVATSERV_HOME"; ValueData: {app}\python39;
+Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DEVATSERV_HOME"; ValueData: {app}\;
 
 
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
 Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx HOMEDRIVE ""{app}\"; Components: "Erlang"; Flags: runhidden
 ; Optional: Set environment variables for RabbitMQ
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
 ; Set PATH for all componenst
