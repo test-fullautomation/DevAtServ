@@ -14,3 +14,4 @@ if "%1" == "start" (
 ) else (
     echo Usage: %~nx0 [start|stop]
 )
+

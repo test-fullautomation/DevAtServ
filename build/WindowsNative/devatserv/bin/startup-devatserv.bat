@@ -8,20 +8,6 @@ if %errorlevel% neq 0 (
 )
 
 echo Running with admin rights...
-
-REM Ask user if they want to set an environment variable
-
-set /p setEnvVar="Do you want to set HOMEDRIVE variable to the default path (HOMEDRIVE=%DEVATSERV_HOME%)? (Y/N): "
-if /i "%setEnvVar%"=="Y" (
-    set HOMEDRIVE=%DEVATSERV_HOME%
-    echo HOMEDRIVE variable is already set to %HOMEDRIVE%.
-) else (
-    set /p customEnvPath="Enter the path to set as HOMEDRIVE variable (if not, leave blank): "
-    if not "%customEnvPath%"=="" (
-        set HOMEDRIVE=%customEnvPath%
-    )
-)
-
 echo Set up pre-configuration...
 REM Run rabbitmq-service.bat with specified arguments
 if exist "%RABBITMQ_HOME%\sbin\rabbitmq-service.bat" (
