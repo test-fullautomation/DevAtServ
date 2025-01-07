@@ -111,17 +111,19 @@ Name: "Erlang"; Description: "Erlang"; Types: Standard Full;
 Name: "RabbitMQServer"; Description: "RabbitMQ Server"; Types: Standard Full;
 
 [Registry]
+; Delete the old value of HOMEDRIVE
+Root: HKCU; Subkey: "Volatile Environment"; ValueType: string; ValueName: "HOMEDRIVE"; Flags: deletevalue
 ; Set ERLANG_HOME as a system-wide environment variable
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "ERLANG_HOME"; ValueData: "{app}\ErlangOTP"; Flags: preservestringtype
+; DevAtServ variable environment
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DevAtServ"; ValueData: {app}\python39;
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DEVATSERV_HOME"; ValueData: {app}\;
-
 
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
 Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx HOMEDRIVE ""{app}\"; Components: "Erlang"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C setx HOMEDRIVE ""{app}\"""; Components: "Erlang"; Flags: runhidden
 ; Optional: Set environment variables for RabbitMQ
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
 ; Set PATH for all componenst
@@ -180,9 +182,12 @@ begin
   end;
 end;
 
-
 [UninstallRun]
 ; Remove all services in DevAtServ
+; Stop and uninstall RabbitMQ 
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "stop"; Flags: runhidden
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "disable"; Flags: runhidden
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "remove"; Flags: runhidden
 
 [UninstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
