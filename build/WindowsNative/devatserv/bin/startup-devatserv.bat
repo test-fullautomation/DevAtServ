@@ -20,10 +20,10 @@ if exist "%RABBITMQ_HOME%\sbin\rabbitmq-service.bat" (
 
 echo [INFO] Start up all services...
 echo Running Base Service
-start "Base Service" cmd /k "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry.py"
+start "Base Service" cmd /k ""%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry\ServiceRegistry.py""
 echo Running Cleware Swtich Service
-start "Cleware Switch Service" cmd /k "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py"
+start "Cleware Switch Service" cmd /k ""%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py""
 echo Running Debug Board Service
-start "Debug Board Service" cmd /k python "%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py"
+start "Debug Board Service" cmd /k ""%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py" --use_remote_tools --remotetools_path="%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceDebugboard\tools\remote_tools\windows\Gen5DBG_RemoteCtrl.exe""
 
 pause
