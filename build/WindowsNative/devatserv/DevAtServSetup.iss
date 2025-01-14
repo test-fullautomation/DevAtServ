@@ -93,14 +93,6 @@ Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Database Directory"; Filename:
 Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Logs"; Filename: "explorer.exe"; Parameters: """{app}\RabbitMQ\rabbitmq_server-4.0.5\log"""; Components: "RabbitMQServer";
 ; RabbitMQ Plugins
 Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Plugins"; Filename: {app}\RabbitMQ\rabbitmq_server-4.0.5\plugins; Components: "RabbitMQServer";
-; RabbitMQ Service - (re)install
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - (re)install"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat install"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
-; RabbitMQ Service - remove
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - remove"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat remove"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
-; RabbitMQ Service - start
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - start"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat start"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
-; RabbitMQ Service - stop
-Name: "{group}\DevAtServ\RabbitMQ Server\RabbitMQ Service - stop"; Filename: "{cmd}"; Parameters: "/C rabbitmq-service.bat stop"; WorkingDir: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin"; IconFilename: "{app}\share\applications\rabbitmq.ico"; Components: "RabbitMQServer";
 
 [Types]
 Name: Standard; Description: "Standard Installation"; Flags: iscustom
@@ -186,10 +178,13 @@ end;
 
 [UninstallRun]
 ; Remove all services in DevAtServ
+
 ; Stop and uninstall RabbitMQ 
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "stop"; Flags: runhidden
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "disable"; Flags: runhidden
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "remove"; Flags: runhidden
+; Stop erlang port mapper daemon in run TimeStampRounding=
+Filename: "cmd"; Parameters: "/C taskkill /IM epmd.exe /F"; Flags: runhidden;
 
 [UninstallDelete]
 Name: {app}\bin\*; Type: filesandordirs;
