@@ -126,6 +126,10 @@ Filename: "{cmd}"; Parameters: "/C setx HOMEDRIVE ""{app}\ErlangOTP"""; Componen
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
 ; Set PATH for all componenst
 Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\bin;{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin;{app}\ErlangOTP\bin;%PATH%"""; Components: "RabbitMQServer"; Flags: runhidden
+; Run RabbitMQ in background
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "install"; Flags: runhidden
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "enable"; Flags: runhidden
+Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "start"; Flags: runhidden
 
 [Code]
 function EscapeBackslashes(const Input: String): String;
