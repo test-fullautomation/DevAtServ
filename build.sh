@@ -6,19 +6,7 @@ source ./util/format.sh
 source ./util/common.sh
 
 
-
-######################## Environments ########################
-###### Platforms
-UNAME=$(uname)
-if [ "$UNAME" == "Linux" ] ; then
-    PLATFORM="Linux"
-elif [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]] ; then
-    PLATFORM="Windows"
-else
-    errormsg "Operation system '$UNAME' is not supported."
-fi
-
-###### Project env
+###### Project configuration
 CONFIG_SERVICE_FILE="$WORKSPACE/config/repositories/repositories.conf"
 CONFIG_DEBIAN_FILE="$WORKSPACE/build/Linux/DEBIAN/control"
 
@@ -30,6 +18,7 @@ else
 fi
 
 ###### Pipeline
+PLATFORM=""
 DASVersion=""
 TypeOfBuild=""
 if [[ "$TRIGGER_BY" == "tag" ]] && [[ "$TAG_NAME" =~ $TAG_REGEX ]]; then
@@ -51,19 +40,30 @@ else
     DASVersion=$VERSION
 fi
 
-######################## DevAtServ tool info ########################
-###### DevAtServ info
-DAS_VERSION=$DASVersion
-DAS_NAME=DevAtServ
-DAS_PACK_NAME=${DAS_NAME}_${DAS_VERSION}
-DAS_PACK_SRC_DIR="./build/${PLATFORM}"
-DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_NAME}"
-DAS_DEBIAN_NAME="${DAS_PACK_NAME}-0_amd64.deb"
-DAS_WINDOW_NAME="${DAS_PACK_NAME}-setup.exe"
+function dump_project_info() {
 
-###### DevAtServ's GUI info
+    ###### DevAtServ info
+    DAS_VERSION=$DASVersion
+    DAS_NAME=DevAtServ
+    DAS_PACK_NAME=${DAS_NAME}_${DAS_VERSION}
+    DAS_PACK_SRC_DIR="./build/${PLATFORM}"
+    DAS_PACK_DEST_DIR="./output_${PLATFORM}/${DAS_NAME}"
+    if [ "$PLATFORM" == "Linux" ]; then
+        DAS_INSTALLER_NAME="${DAS_PACK_NAME}-0_amd64.deb"
+    elif [ "$PLATFORM" == "Windows" ] || [ "$PLATFORM" == "WindowsNative" ]; then
+        DAS_INSTALLER_NAME="${DAS_PACK_NAME}-setup.exe"
+    fi
+    
+    echo -e "${MSG_INFO} DevAtServ tool info..."
+    echo "DAS Version:      $DAS_VERSION"
+    echo "Package Name:     $DAS_PACK_NAME"
+    echo "Source Dir:       $DAS_PACK_SRC_DIR"
+    echo "Destination Dir:  $DAS_PACK_DEST_DIR"
+    echo "Installer Name:   $DAS_INSTALLER_NAME"
+    ###### DevAtServ's GUI info
 
 
+}
 
 #################### functionality ########################
 function update_version_debian() {
@@ -80,7 +80,6 @@ function prepare_docker_compose_for_deployment() {
 
     echo -e "${MSG_INFO} Prepare docker compose file for deployment..."
 
-    parse_supported_server $CONFIG_SERVICE_FILE
     # Check for specific SUPPORT_SERVER value
     if [ "$SUPPORT_SERVER" == "gitlab" ]; then
         cp -rf ./build/Linux/opt/devatserv/share/start-services/docker-compose.gitlab.yml \
@@ -120,12 +119,7 @@ function pre_build_debian() {
     echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
 
     # Display info for compiling
-    echo -e "${MSG_INFO} DevAtServ tool info..."
-    echo "DAS Version: $DAS_VERSION"
-    echo "Package Name: $DAS_PACK_NAME"
-    echo "Source Directory: $DAS_PACK_SRC_DIR"
-    echo "Destination Directory: $DAS_PACK_DEST_DIR"
-    echo "Debian Package Name: $DAS_DEBIAN_NAME"
+    dump_project_info
     
     # Update a new version to control file
     update_version_debian $DAS_VERSION
@@ -178,10 +172,10 @@ function build_debian() {
     chmod 755 "$DAS_PACK_DEST_DIR"/DEBIAN/*
     chmod 755 "$DAS_PACK_DEST_DIR"/opt/devatserv/share/storage/*
     
-    dpkg-deb --root-owner-group --build ${DAS_PACK_DEST_DIR} ./output_Linux/${DAS_DEBIAN_NAME}
+    dpkg-deb --root-owner-group --build ${DAS_PACK_DEST_DIR} ./output_Linux/${DAS_INSTALLER_NAME}
 	logresult "$?" "built deb package" "build deb package"
 
-	dpkg -I ./output_Linux/${DAS_DEBIAN_NAME}
+	dpkg -I ./output_Linux/${DAS_INSTALLER_NAME}
 	goodmsg "done."
 }
 
@@ -197,12 +191,7 @@ function pre_build_windows() {
     INSTALLER_NAME="DockerDesktopInstaller.exe"
 
     # Display info for compiling
-    echo -e "${MSG_INFO} DevAtServ tool info..."
-    echo "DAS Version: $DAS_VERSION"
-    echo "Package Name: $DAS_PACK_NAME"
-    echo "Source Directory: $DAS_PACK_SRC_DIR"
-    echo "Destination Directory: $DAS_PACK_DEST_DIR"
-    echo "Windows Package Name: $DAS_WINDOW_NAME"
+    dump_project_info
 
    # Update a new version to control file
     update_version_debian $DAS_VERSION
@@ -280,19 +269,48 @@ function build_windows() {
 	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
 }
 
-main() {
+function pre_build_windows_native() {
+    echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+    echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
+    echo -e "${COL_GREEN}#          Compiling DevAtServ setup on Windows...                                 #${COL_RESET}"
+    echo -e "${COL_GREEN}#                                                                                  #${COL_RESET}"
+    echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+ 
+    # Display info for compiling
+    dump_project_info
 
-    echo -e "${MSG_INFO} Type of build: $TypeOfBuild"
-    if [ "$UNAME" == "Linux" ] ; then
-        pre_build_debian
-        build_debian
-    elif [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]] ; then
-        pre_build_windows
-        build_windows
+    ######### Prepare DevAtServ's GUI for Inno Setup tools #########
+    echo -e "${MSG_INFO} Extracting DevAtServ's GUI'..."
+    mkdir -p ./build/WindowsNative/devatserv/share/GUI
+    mv *.exe ./build/WindowsNative/devatserv/share/GUI/DevAtServGUISetup1.0.0.exe
+    if [ $? -eq 0 ]; then
+        echo -e "${MSG_DONE} Get DevAtServ's GUI completed successfully."
     else
-        errormsg "Operation system '$UNAME' is not supported."
+        echo -e "${MSG_ERR} Failed to get DevAtServ's GUI."
+        exit 1
     fi
+}
 
+function build_windows_native() {
+
+    # Add pandoc to PATH env
+	mypath=$(realpath $(dirname $0))
+	export PATH=$PATH:$mypath/../pandoc/pandoc-2.18
+
+	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+	echo -e "${COL_GREEN}#          Executing InnoSetup to create installer...                              #${COL_RESET}"
+	echo -e "${COL_GREEN}####################################################################################${COL_RESET}"
+
+    echo "Directory $DAS_PACK_DEST_DIR does not exist. Creating..."
+    mkdir -p "$DAS_PACK_DEST_DIR"
+
+    # Copy source & util
+    cp -r "$DAS_PACK_SRC_DIR"/* "$DAS_PACK_DEST_DIR"
+
+    ./util/precompile.bat $ProjectConfigFile
+	./tools/InnoSetup5.5.1/ISCC "${arguments}" ./${DAS_PACK_DEST_DIR}/devatserv/DevAtServSetup.iss
+	logresult "$?" "built DevAtServ installer" "build DevAtServ installer"
+    ./util/postcompile.bat
 }
 
 show_help() {
@@ -300,8 +318,44 @@ show_help() {
     echo
     echo "Options:"
     echo "  -f, --config-file   <config_file>   Input a specified config file"
+    echo "  -b, --build-native                  Specific a type of build."
     echo "  -h, --help                          Show this help message"
 }
+
+main() {
+
+    ###### Platforms
+    UNAME=$(uname)
+    if [ "$UNAME" == "Linux" ] ; then
+        PLATFORM="Linux"
+    elif [[ "$UNAME" == CYGWIN* || "$UNAME" == MINGW* ]] ; then
+        PLATFORM="Windows"
+        if [ -n "$BUILD_TYPE" ]; then
+            PLATFORM="WindowsNative"
+        fi
+    else
+        errormsg "Operation system '$UNAME' is not supported."
+    fi
+
+    parse_supported_server $CONFIG_SERVICE_FILE
+    echo -e "${MSG_INFO} Triggered by:      $TypeOfBuild"
+    echo -e "${MSG_INFO} Platforms:         $PLATFORM"
+    echo -e "${MSG_INFO} Support Server:    $SUPPORT_SERVER"
+
+    if [ "$PLATFORM" == "Linux" ]; then
+        pre_build_debian
+        build_debian
+    elif [ "$PLATFORM" == "Windows" ]; then
+        pre_build_windows
+        build_windows
+    elif [ "$PLATFORM" == "WindowsNative" ]; then
+        pre_build_windows_native
+        build_windows_native
+    else
+        errormsg "Operation system '$UNAME' is not supported."
+    fi
+}
+
 
 ############################
 # main execution
@@ -322,6 +376,11 @@ else
                 fi
                 main
                 shift 2
+                ;;
+            -b|--build-native)
+                BUILD_TYPE="Native"
+                main
+                shift
                 ;;
             -h|--help) # Show help
                 show_help

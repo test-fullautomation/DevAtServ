@@ -1,0 +1,6 @@
+pika
+pywin32
+colorama
+pypandoc_binary==1.13
+PythonExtensionsCollection
+GenPackageDoc
