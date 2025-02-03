@@ -55,15 +55,15 @@ OutputDir=..\..\
 
 [Files]
 ;python 3.9 for DevAtServ and all installed packages delivered with DevAtServ
-Source: "..\devatserv\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
+Source: "R:\devatserv\python39\*"; Excludes: ".git,*.pyc"; DestDir: {app}\python39; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full;
 ; Erlang installation
-Source: "..\devatserv\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
+Source: "R:\devatserv\ErlangOTP\*"; DestDir: "{app}\ErlangOTP"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-full;
 ; RabbitMQ installation
-Source: "..\devatserv\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
+Source: "R:\devatserv\RabbitMQ\*"; DestDir: "{app}\RabbitMQ"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist; Permissions: users-full;
 ; Resource on DevAtServ
-Source: "..\devatserv\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
-Source: "..\devatserv\share\applications\*"; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
-Source: "..\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "R:\devatserv\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "R:\devatserv\share\applications\*"; DestDir: "{app}\share\applications"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
+Source: "R:\devatserv\share\GUI\*"; DestDir: "{app}\share\GUI"; Flags: ignoreversion onlyifdoesntexist uninsneveruninstall; Permissions: users-full;
 
 
 [Icons]
@@ -109,13 +109,12 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DevAtServ"; ValueData: {app}\python39;
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "DEVATSERV_HOME"; ValueData: {app}\;
 ; Assign a new value for HOMEDRIVE
-Root: HKCU; Subkey: "Volatile Environment"; ValueType: string; ValueName: "HOMEDRIVE"; ValueData: "{app}\;";
+Root: HKCU; Subkey: "Volatile Environment"; ValueType: string; ValueName: "HOMEDRIVE"; ValueData: "{app}\ErlangOTP\";
 
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
 Filename: "{cmd}"; Parameters: "/C setx ERLANG_HOME ""{app}\ErlangOTP"""; Components: "Erlang"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C setx HOMEDRIVE ""{app}\"""; Components: "Erlang"; Flags: runhidden
 ; Optional: Set environment variables for RabbitMQ
 Filename: "{cmd}"; Parameters: "/C setx RABBITMQ_HOME ""{app}\RabbitMQ\rabbitmq_server-4.0.5"""; Components: "RabbitMQServer"; Flags: runhidden
 ; Set PATH for all componenst
@@ -124,6 +123,10 @@ Filename: "{cmd}"; Parameters: "/C setx PATH ""{app}\bin;{app}\RabbitMQ\rabbitmq
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "install"; Flags: runhidden
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "enable"; Flags: runhidden
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "start"; Flags: runhidden
+; Run all services in DevAtServ
+Filename: "{cmd}"; Parameters: "/C sc create BaseService binPath= ""{app}\python39\python.exe {app}\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry\ServiceRegistry.py"" start= auto"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C sc create ClewareSwitchService binPath= ""{app}\python39\python.exe {app}\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py"" start= auto"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C sc create DebugBoardService binPath= ""{app}\python39\python.exe {app}\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py"" --use_remote_tools start= auto"; Flags: runhidden
 
 [Code]
 function EscapeBackslashes(const Input: String): String;
@@ -179,8 +182,13 @@ begin
 end;
 
 [UninstallRun]
-; Remove all services in DevAtServ
-
+; Stop and delete the service during uninstallation
+Filename: "{cmd}"; Parameters: "/C sc stop BaseService"; Flags: runhidden waituntilterminated
+Filename: "{cmd}"; Parameters: "/C sc delete BaseService"; Flags: runhidden waituntilterminated
+Filename: "{cmd}"; Parameters: "/C sc stop ClewareSwitchService"; Flags: runhidden waituntilterminated
+Filename: "{cmd}"; Parameters: "/C sc delete ClewareSwitchService"; Flags: runhidden waituntilterminated
+Filename: "{cmd}"; Parameters: "/C sc stop DebugBoardService"; Flags: runhidden waituntilterminated
+Filename: "{cmd}"; Parameters: "/C sc delete DebugBoardService"; Flags: runhidden waituntilterminated
 ; Stop and uninstall RabbitMQ 
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "stop"; Flags: runhidden
 Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Parameters: "disable"; Flags: runhidden
