@@ -112,6 +112,8 @@ Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 ; Assign a new value for HOMEDRIVE
 Root: HKCU; Subkey: "Volatile Environment"; ValueType: string; ValueName: "HOMEDRIVE"; ValueData: "{app}\ErlangOTP\";
 
+[Dirs]
+Name: {app}\logs; Permissions: users-full; 
 
 [Run]
 ; Optional: Set up environment variables for Erlang (if needed)
@@ -127,20 +129,20 @@ Filename: "{app}\RabbitMQ\rabbitmq_server-4.0.5\sbin\rabbitmq-service.bat"; Para
 ; Run all services in DevAtServ
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "install BaseService ""{app}\python39\python.exe"" \""{app}\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry\ServiceRegistry.py\"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set BaseService AppDirectory ""{app}\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set BaseService AppStdout ""{app}\BaseService.log"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set BaseService AppStderr ""{app}\BaseService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set BaseService AppStdout ""{app}\logs\BaseService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set BaseService AppStderr ""{app}\logs\BaseService.log"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "start BaseService"; Flags: runhidden
 
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "install ClewareSwitchService ""{app}\python39\python.exe"" \""{app}\python39\Lib\site-packages\MicroserviceClewareSwitch\ServiceCleware.py\"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set ClewareSwitchService AppDirectory ""{app}\python39\Lib\site-packages\MicroserviceClewareSwitch"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set ClewareSwitchService AppStdout ""{app}\ClewareSwitchService.log"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set ClewareSwitchService AppStderr ""{app}\ClewareSwitchService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set ClewareSwitchService AppStdout ""{app}\logs\ClewareSwitchService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set ClewareSwitchService AppStderr ""{app}\logs\ClewareSwitchService.log"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "start ClewareSwitchService"; Flags: runhidden
 
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "install DebugBoardService ""{app}\python39\python.exe"" \""{app}\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py\"" --use_remote_tools --remotetools_path=\""\""{app}\python39\Lib\site-packages\MicroserviceDebugboard\tools\remote_tools\windows\Gen5DBG_RemoteCtrl.exe\"""" "; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "install DebugBoardService ""{app}\python39\python.exe"" \""{app}\python39\Lib\site-packages\MicroserviceDebugboard\ServiceDebugboard.py\"" --use_remote_tools --remotetools_path=\""{app}\python39\Lib\site-packages\MicroserviceDebugboard\tools\remote_tools\windows\Gen5DBG_RemoteCtrl.exe\"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set DebugBoardService AppDirectory ""{app}\python39\Lib\site-packages\MicroserviceDebugboard"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set DebugBoardService AppStdout ""{app}\DebugBoardService.log"""; Flags: runhidden
-Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set DebugBoardService AppStderr ""{app}\DebugBoardService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set DebugBoardService AppStdout ""{app}\logs\DebugBoardService.log"""; Flags: runhidden
+Filename: "{app}\share\nssm\nssm.exe"; Parameters: "set DebugBoardService AppStderr ""{app}\logs\DebugBoardService.log"""; Flags: runhidden
 Filename: "{app}\share\nssm\nssm.exe"; Parameters: "start DebugBoardService"; Flags: runhidden
 
 
