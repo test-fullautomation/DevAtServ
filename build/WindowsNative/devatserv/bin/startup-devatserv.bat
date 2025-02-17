@@ -1,6 +1,5 @@
 @echo off
 
-echo [INFO] Start up all services...
 echo Running Base Service
 start "Base Service" cmd /k ""%DevAtServ%\python.exe" "%DEVATSERV_HOME%\python39\Lib\site-packages\MicroserviceBase\ServiceRegistry\ServiceRegistry.py""
 echo Running Cleware Swtich Service
