@@ -74,6 +74,7 @@ Source: "R:\devatserv\share\nssm\*"; DestDir: "{app}\share\nssm"; Flags: ignorev
 Name: "{group}\DevAtServ"; Filename: "{app}\bin\startup-devatserv.bat"; IconFilename: "{app}\share\applications\devatserv.ico"; Comment: "Start up DevAtServ App"
 Name: "{group}\DevAtServ CLI"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}\bin"""; WorkingDir: "{app}\bin"; Comment: "DevAtServ Control by Command Line"
 Name: "{group}\DevAtServ's GUI"; Filename: {app}\share\GUI\DevAtServGUISetup1.0.0.exe;
+Name: "{group}\Remote Control for Debugboard"; Filename: {app}\python39\Lib\site-packages\MicroserviceDebugboard\tools\remote_tools\windows\Gen5DBG_RemoteCtrl.exe;
 
 ;
 ;   START MENU
