@@ -16,29 +16,53 @@ if not exist "%DEVATSERV_HOME%\share\nssm\nssm.exe" (
 
 REM Handle command
 if "%1" == "start" (
-    echo Starting DevAtServ services...
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" start BaseService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" start ClewareSwitchService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" start DebugBoardService
-    echo All services started.
+    if "%2"=="" (
+        echo Starting all DevAtServ services...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" start BaseService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" start ClewareSwitchService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" start DebugBoardService
+        echo All services started.
+    ) else (
+        echo Starting service: %2...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" start %2
+        echo Service %2 started.
+    )
 ) else if "%1" == "stop" (
-    echo Stopping DevAtServ services...
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop BaseService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop ClewareSwitchService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop DebugBoardService
-    echo All services stopped.
+    if "%2"=="" (
+        echo Stopping all DevAtServ services...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop BaseService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop ClewareSwitchService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop DebugBoardService
+        echo All services stopped.
+    ) else (
+        echo Stopping service: %2...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" stop %2
+        echo Service %2 stopped.
+    )    
 ) else if "%1" == "restart" (
-    echo Restarting DevAtServ services...
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart BaseService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart ClewareSwitchService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart DebugBoardService
-    echo All services restarted.
+    if "%2"=="" (
+        echo Restarting all DevAtServ services...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart BaseService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart ClewareSwitchService
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart DebugBoardService
+        echo All services restarted.
+    ) else (
+        echo Restarting service: %2...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" restart %2
+        echo Service %2 restarted.
+    )
 ) else if "%1" == "status" (
-    echo Restarting DevAtServ services...
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" status BaseService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" status ClewareSwitchService
-    "%DEVATSERV_HOME%\share\nssm\nssm.exe" status DebugBoardService
-    echo All services restarted.
+    if "%2"=="" (
+        echo Status service BaseService: 
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" status BaseService
+        echo Status service ClewareSwitchService: 
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" status ClewareSwitchService
+        echo Status service DebugBoardService: 
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" status DebugBoardService
+    ) else (
+        echo Status service: %2...
+        "%DEVATSERV_HOME%\share\nssm\nssm.exe" status %2
+    )
 ) else (
     echo Usage: %~nx0 [start|stop|restart|status]
     echo Please specify a valid command.
