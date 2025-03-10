@@ -26,6 +26,11 @@ install_docker_compose() {
     sudo apt-get install -y docker-compose-plugin
 }
 
+# Grant permission for user execute docker
+grant_docker_user() {
+    sudo usermod -aG docker $USER
+}
+
 # Docker already installed or not
 if ! command -v docker &> /dev/null; then
     install_docker
@@ -40,6 +45,7 @@ if ! docker compose >/dev/null 2>&1; then
     install_docker_compose
 fi
 
+grant_docker_user
 
 echo "Docker installation script completed successfully."
 
