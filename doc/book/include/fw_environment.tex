@@ -1,0 +1,75 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+
+\chapter{Environment}
+
+During an installation of the \rfw\ all content is placed at two different main locations:
+
+\begin{itemize}
+   \item \rlog{RobotFramework}\\
+         Contains the framework installation files itself
+   \item \rlog{RobotTest}\\
+         Contains the \textit{playground} for the user, including default folder for testcases and logfiles
+\end{itemize}
+
+The root path to these folders can be set by the user during the installation process (called \rlog{<root>} in listings below).
+
+The following overview contains a list of environment variables that are introduced by the installer. They can be used
+to refer to locations inside these folders.
+
+\begin{itemize}
+   \item \rcode{RobotLogPath}\\
+         Log files folder in which the \rfw\ places the log files per default.\\
+         Location: \rlog{<root>/RobotTest/logfiles}
+
+   \item \rcode{RobotTestPath}\\
+         Folder in which the user can place the testcases.\\
+         Location: \rlog{<root>/RobotTest/testcases}
+
+   \item \rcode{RobotTutorialPath}\\
+         Folder containing a tutorial of the \rfw\ (useful for self learning).\\
+         Location: \rlog{<root>/RobotTest/tutorial}
+
+   \item \rcode{RobotPythonPath}\\
+         Folder containing the Python installation.\\
+         Location: \rlog{<root>/RobotFramework/python39}
+
+   \item \rcode{RobotScriptPath}\\
+         Folder containing scripts of the Python installation.\\
+         Location: \rlog{<root>/RobotFramework/python39/scripts}
+
+   \item \rcode{RobotVsCode}\\
+         Folder containing the installation of \textit{Visual Studio Code} that is intended
+         to be the main development environment for the \rfw.\\
+         Location: \rlog{<root>/RobotFramework/robotvscode}
+
+   \item \rcode{RobotToolsPath}\\
+         Tools which require and extend functionality of the \rfwcore.\\
+         Location: \rlog{<root>/RobotFramework/tools}
+
+   \item \rcode{RobotDevtools}\\
+         Tools which are independent of \rfwcore, but are bundeled and tested with \rfw.
+         Location: \rlog{<root>/RobotFramework/devtools}
+
+   \item \rcode{RobotAppium}\\
+         Location of Appium tested and distributed with \rfw. More information about Appium you find here:
+         \href{https://appium.io/}{appium}\\
+         Location: \rlog{<root>/RobotFramework/devtools/Windows/Appium}
+
+   \item \rcode{RobotNodeJS}\\
+         Root folder of \rlog{nodjs} tested and distributed with \rfw. More information about \rlog{nodjs} you you find here:
+         \href{https://nodejs.org/en/}{nodejs.org}\\
+         Location: \rlog{<root>/RobotFramework/devtools/Windows/nodejs}
+
+\end{itemize}

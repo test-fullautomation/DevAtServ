@@ -1,0 +1,115 @@
+# **************************************************************************************************************
+#
+# Main doc configuration file
+#
+# OSS version
+#
+# 26.08.2024
+#
+# **************************************************************************************************************
+# Format: extended json format with the possibility to comment out lines (by '#' at the beginning of the line).
+# The reference for relative paths inside this file is the position of this file.
+# --------------------------------------------------------------------------------------------------------------
+# This file has to be referenced in command line in this way:
+#    "%RobotPythonPath%/python.exe" ./genmaindoc.py --configfile "./maindoc_configs/maindoc_config_OSS.json"
+# Reference for the relative path to --configfile is the position of the 'maindoc' folder like defined
+# in repository configuration 'config/repository_config.json' in this way:
+#    "PACKAGEDOC" : "./maindoc"
+# --------------------------------------------------------------------------------------------------------------
+
+{
+
+# Section "CONTROL":
+# ------------------
+# Contains parameter to control the application behavior in general.
+
+   "CONTROL" : {
+                # If 'STRICT' is true: missing LaTeX compiler causes an error; otherwise PDF generation is handled as option
+                # and a missing LaTeX compiler does not cause an error
+                "STRICT" : true,
+                # If 'UPDATE_EXTERNAL_DOC' is true then the documentations listed in next section "IMPORTS", will be rendered
+                # and imported, otherwise not.
+                # The reason is to save time when maintaining only the manual part of the main documentation - in this case
+                # an update of external documentations is not necessary.
+                "UPDATE_EXTERNAL_DOC" : true
+               },
+
+
+# Section "IMPORTS":
+# ------------------
+# Within the folders listed below, the documentation rendering process (GenPackageDoc) is executed.
+# The generated PDF files will be part of the main documentation.
+
+   "IMPORTS" : ["../../../python-genpackagedoc",
+                "../../../python-extensions-collection",
+                "../../../robotframework-extensions-collection",
+                "../../../python-jsonpreprocessor",
+                "../../../robotframework-testsuitesmanagement",
+                "../../../robotframework-qconnect-base",
+                "../../../robotframework-qconnect-winapp",
+                "../../../robotframework-dbus",
+                "../../../robotframework-prometheus",
+                "../../../robotframework-uds",
+                "../../../robotframework-robotlog2rqm",
+                "../../../python-testresultdbaccess",
+                "../../../robotframework-robotlog2db",
+                "../../../robotframework-doip",
+                "../../../python-pytestlog2db",
+                "../../../testresultwebapp"],
+
+
+# Section "BOOKSOURCES":
+# ----------------------
+# Defines the path to the folder containing the manually maintained tex files of the RobotFramework AIO reference.
+# It is expected that within this folder a file with name "MAINTEXFILENAME" is present.
+# This folder is also used as output folder for the generated PDF files.
+
+   "BOOKSOURCES" : "../../book",
+
+
+# Section "MAINTEXFILENAME":
+# --------------------------
+# Defines the name of the main tex file, that has to be executed by the LaTeX compiler.
+# It is expected that this file is present within "BOOKSOURCES".
+
+   "MAINTEXFILENAME" : "RobotFrameworkAIO_Reference_OSS.tex",
+
+
+# Section "JOBNAME":
+# ------------------
+# Defines the name of the pdflatex job.
+# The pdflatex job name is the name of all pdflatex output files - but without the extension of the respective output file.
+# Example: The name of the PDF file is: <JOBNAME>.pdf.
+# All pdflatex output files are generated within "BOOKSOURCES".
+
+   "JOBNAME" : "RobotFrameworkAIO_Reference",
+
+
+# Section "COVERSHEETSUFFIX":
+# ---------------------------
+# Any string that is added to the cover sheet of the resulting PDF (optional).
+
+   # "COVERSHEETSUFFIX" : "",
+
+
+# Section "PROXY":
+# ----------------
+# Installation hints provided within the documentation, may require a proxy address. In case of a concrete proxy address is not known,
+# (because a proxy is company specific) a replacement string has to be defined here:
+
+   "PROXY" : "<<proxy address>>",
+
+
+# Section "TEX":
+# --------------
+# Converting the generated text source files to a PDF document requires a LaTeX distribution.
+# GenPackageDoc needs to know where to find LaTeX. Because the path to the LaTeX interpreter depends
+# on the operating system, this path has to be defined separately for every supported operating system
+# (currently "WINDOWS" and "LINUX").
+# Example:
+
+   "TEX" : {
+            "WINDOWS" : "%GENDOC_LATEXPATH%/pdflatex.exe",
+            "LINUX"   : "${GENDOC_LATEXPATH}/pdflatex"
+           }
+}

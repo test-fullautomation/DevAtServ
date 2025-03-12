@@ -1,0 +1,13 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Installation and start}{2}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Components}{5}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Environment}{8}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Code analysis}{10}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Logging}{12}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Background}{12}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Summary}{12}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Library documentation}{13}{chapter.7}%
+\contentsline {section}{\numberline {7.1}MicroserviceBase}{14}{section.7.1}%
+\contentsline {section}{\numberline {7.2}MicroserviceClewareSwitch}{55}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Appendix}{80}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Installed Python Modules}{80}{section.8.1}%

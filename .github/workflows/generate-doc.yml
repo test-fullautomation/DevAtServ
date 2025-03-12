@@ -26,7 +26,6 @@ jobs:
     name: DevAtServ Windows
     runs-on: windows-latest
     needs: [ build-devatserv-GUI ]
-    if: ${{ ! failure() && ! cancelled() }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,14 +33,5 @@ jobs:
       - name: Install DevAtServ
         shell: bash
         run: |
-          chmod +x ./install_native.sh
-          ./install_native.sh
-          mv ../devatserv_documentation
-
-      - name: Upload Exe package
-        uses: actions/upload-artifact@v4
-        with:
-          name: devatserv-windows-package
-          path: output_WindowsNative/*.exe
-
-    
+          cd doc
+          python ./genmaindoc.py --configfile "../config/documents/maindoc_config_OSS.json" --bundle_name "DevAtServ" --bundle_version "0.13.1.0" --bundle_version_date "11/2024"
