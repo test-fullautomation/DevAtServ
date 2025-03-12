@@ -1,0 +1,47 @@
+name: Build doc DevAtServ
+
+on:
+  push:
+    tags:
+      - "rel/das/*.*.*.*"
+      - "dev/das/*.*.*.*"
+  pull_request:
+    types:
+      - closed
+      - opened
+      - synchronize
+    branches:
+    - develop
+
+  workflow_dispatch:
+
+env:
+  GITHUB_PAT: ${{ secrets.PAT_GITHUB }} 
+  TRIGGER_BY: ${{ github.ref_type }}
+  TAG_NAME: ${{ github.ref_name }}
+  REF_NAME: ${{ github.ref_name }}
+
+jobs:
+  devatserv-windows-native:
+    name: DevAtServ Windows
+    runs-on: windows-latest
+    needs: [ build-devatserv-GUI ]
+    if: ${{ ! failure() && ! cancelled() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install DevAtServ
+        shell: bash
+        run: |
+          chmod +x ./install_native.sh
+          ./install_native.sh
+          mv ../devatserv_documentation
+
+      - name: Upload Exe package
+        uses: actions/upload-artifact@v4
+        with:
+          name: devatserv-windows-package
+          path: output_WindowsNative/*.exe
+
+    
