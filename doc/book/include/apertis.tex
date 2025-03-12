@@ -1,0 +1,175 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+\chapter{Apertis Pro}
+\section{How to use DLT}
+
+\subsection{dlt-daemon on Apertis}
+Verify that \textbf{dlt-daemon} has installed on Apertis Pro target or not.\\
+\rlog{systemctl status dlt-daemon}\\
+\\
+In case \textbf{dlt-daemon} is not available, follow below steps to install and
+start dlt-daemon service:
+\begin{itemize}
+   \item Install \textbf{dlt-daemon} package\\
+         \rlog{sudo apt install dlt-daemon}
+   \item Start \textbf{dlt-daemon} service\\
+         \rlog{sudo systemctl start dlt-daemon}
+\end{itemize}
+
+\subsection{Apertis Pro firewall configuration}
+In order to capture DLT log/trace from DLT client(\textbf{DLT Viewer},
+\textbf{DLTConnector}), DLT client has to communicate with Apertis Pro
+(TCP/IP protocol) via port \textbf{3490} (as default).\\
+So that, this connection should be allowed on Apertis Pro target.\\
+\\
+Adopt settings of firewall at Apertis Pro:
+\begin{itemize}
+   \item Add new rule to allow DLT service at port \textbf{3490} (as default)\\
+   Edit \rlog{/etc/iptables/rules.v4} file to add below line
+   \begin{robotcode}
+...
+# Accept dlt for development
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 3490 -j ACCEPT
+...
+   \end{robotcode}
+
+   \item Restart the firewall with changed parameters\\
+   \rlog{sudo systemctl restart iptables.service}
+\end{itemize}
+
+\subsection{DLTSelfTestApp}
+\href{https://sourcecode.socialcoding.bosch.com/projects/ROBFW/repos/selftest/browse/helpers/DLT}
+{DLTSelfTestApp} is an application which will be run on the Apertis Pro target for
+testing the DLT connection between \rfw\ and target.\\
+This package is a part of \rfw\ selftest helpers.\\
+To install \textbf{DLTSelfTestApp}, download its debian package on Apertis Pro
+target then execute the below command.\\
+\rlog{sudo dpkg -i <path/to/dltselftestapp_1.0.0_amd64.deb>}\\
+\\
+\textbf{DLTSelfTestApp} application will be installed in
+\rlog{/opt/bosch/robfw/dlt} directory and can be started with below command:\\
+\rlog{/opt/bosch/robfw/dlt/DLTSelfTestApp}\\
+\\
+Welcome log message \rlog{Welcome to RobotFramework AIO DLTSelfTestApp...}
+will be sent at application startup.\\
+Then the ping log \rlog{ping message from RobotFramework AIO DLTSelfTestApp}
+every 5 seconds.\\
+\\
+\textbf{\underline{DLT command injection:}}\\
+To perform the DLT command injection, use below information:
+\begin{itemize}
+   \item App ID: \textbf{RBFW}
+   \item Context ID: \textbf{TEST}
+   \item Service ID: \textbf{0x1000}
+   \item Data as Textdata
+\end{itemize}
+
+DLT log reponse of \textbf{DLTSelfTestApp} will bases on injected command:
+\begin{itemize}
+   \item \rcode{welcome}: DLT reponse as above welcome message.
+   \item \rcode{exit}: DLT reponse as \rlog{Bye...} then \textbf{DLTSelfTestApp}
+                       will be terminated.
+   \item Other commands: DLT reponse as combination of data and string.\\
+   e.g: \rlog{Data: 000000: 77 65 6c 63 6f 6d 65 31 32 31 32 00 xx xx xx xx
+              welcome1212}
+\end{itemize}
+
+\subsection{QConnectDLTLibrary}
+\href{https://sourcecode.socialcoding.bosch.com/projects/ROBFW/repos/robotframework-qconnect-dlt/browse}
+{QConnectDLTLibrary} is part of \rfw.
+It provides the ability for handling connection to Diagnostic Log and Trace(DLT) Module.
+The library support for getting trace message and sending trace command\\
+\\
+Sample \rfw\ testcase which are using \textbf{QConnectDLTLibrary} to
+test DLTSelfTestApp on Apertis Pro target:
+\begin{itemize}
+   \item Header of a \rfw\ testcase containing common settings (\rcode{*** Settings ***}) like the setups and teardowns,
+         the definition of variables (\rcode{*** Variables ***})
+         and the definition of keywords (\rcode{*** Keywords ***}):
+   \begin{robotcode}
+*** Settings ***
+Documentation  This is selftest for DLT connection with DLTSelfTestApp
+Library     QConnectionLibrary.ConnectionManager
+Suite Setup     Open Connection
+Suite Teardown  Close Connection
+
+*** Variables ***
+${CONNECTION_NAME}  TEST_CONN_DLTSelfTestApp
+${DLT_CONNECTION_CONFIG} =  SEPARATOR=
+...  {
+...      "gen3flex@DLTLSIMWFH": {
+...            "target_ip": "127.0.0.1",
+...            "target_port": 4490,
+...            "mode": 0,
+...            "ecu": "ECU1",
+...            "com_port": "COM1",
+...            "baudrate": 115200,
+...            "server_ip": "localhost",
+...            "server_port": 1234
+...      }
+...  }
+
+*** Keywords ***
+Close Connection
+   disconnect  ${CONNECTION_NAME}
+   Log to console    \nDLT connection has been closed!
+
+Open Connection
+   ${dlt_config} =    evaluate    json.loads('''${DLT_CONNECTION_CONFIG}''')   json
+
+   connect             conn_name=${CONNECTION_NAME}
+   ...                 conn_type=DLT
+   ...                 conn_mode=dltconnector
+   ...                 conn_conf=${dlt_config}
+
+   Log to console    \nDLT connection has been opened successfully!
+   \end{robotcode}
+
+   \item Sample \rfw\ testcase to verify the ping message from DLTSelfTestApp
+   \begin{robotcode}
+*** Test Cases ***
+Match log/trace from DLTSelfTestApp
+   [Documentation]   Match log/trace from DLTSelfTestApp
+   [Tags]   DLTSelfTestApp
+   ${res}=    verify     conn_name=${CONNECTION_NAME}
+   ...                   search_pattern=(DLT:0x01.*RBFW.*)
+   ...                   timeout=6    # DLTSelfTestApp pings a message every 5 seconds
+
+   # log to console     \n${res}[0]
+   # verify that reponse message should contain "Ping" keyword
+   Should Match Regexp     ${res}[0]    DLT:0x01.*RBFW.*Ping.*
+   \end{robotcode}
+
+   \item Sample \rfw\ testcase to verify command injection with DLTSelfTestApp
+   \begin{robotcode}
+Command injection with DLTSelfTestApp
+   [Documentation]   Get log/trace from DLTSelfTestApp
+   [Tags]   DLTSelfTestApp
+   ${res}=    verify     conn_name=${CONNECTION_NAME}
+   ...                   search_pattern=(DLT:0x01.*RBFW.*Welcome.*)
+   ...                   send_cmd=DLT_CALL_SW_INJECTION_ECU ECU1 1000 RBFW TEST 'welcome'
+
+   # log to console     \n${res}[0]
+
+   ${res}=    verify     conn_name=${CONNECTION_NAME}
+   ...                   search_pattern=(DLT:0x01.*RBFW.*other_cmd.*)
+   ...                   send_cmd=DLT_CALL_SW_INJECTION_ECU ECU1 1000 RBFW TEST 'other_cmd'
+
+   # log to console     \n${res}[0]
+   \end{robotcode}
+\end{itemize}
+
+Please refer \href{https://sourcecode.socialcoding.bosch.com/projects/ROBFW/repos/robotframework-qconnect-dlt/browse}
+{QConnectDLTLibrary repository} for more details about usage and other
+example testcase for DLT connection.

@@ -1,0 +1,60 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+
+\chapter{Introduction}
+
+The \rfwcore\ is an automation framework that can be used to execute automated software tests. It's open source, keyword driven, and extensible.
+Tests are implemented in simple text files.
+
+The extensibility of the \rfwcore\ gives every test developer the possibility to add missing functionality easily. But when thinking about missing
+functionality, some aspects urgently need to be considered:
+
+\begin{itemize}
+   \item Additions should be designed carefully to make them as much generic as possible. This will make the additions useful for a wide range of test developers.
+   \item Additions have to be bundled in a meaningful way, and they have to be set under version control.
+   \item Tests need to be reproduced, and therefore also the entire test system (\rfwcore\ together with all additions) must be reproducible.
+\end{itemize}
+
+And these deliberations are not only related to the \rfwcore\ itself. Developing software in an efficient way also requires a development environment.
+And this development environment most probably needs to be configured - at least to be able to handle the additions also.
+It has to be ensured to use open source software only, to avoid any license fee.
+And finally it must be ensured that every test developer within a team of developers uses the same development environment with the same settings.
+
+To cover all aspects mentioned above, the following things have been done:
+
+\begin{itemize}
+   \item Download a certain Python version (because the \rfwcore\ is a Python based application).
+   \item Add further useful Python modules to the Python installation.
+   \item Download a certain version of the \rfwcore. This is the base.
+   \item Implement (carefully) some changes within the core source code of the \rfwcore.
+   \item Add further components to provide useful features that are currently missing in \rfwcore\ (like a management of test configuration values
+         and a version control mechanism).
+   \item Select a development environment (here: VSCodium).
+   \item Configure this development environment to handle especially the \rfwcore\ code together with all additions.
+   \item Put all things together in a separate installer.
+\end{itemize}
+
+\textit{The outcome is one single installer, that installs all together: the framework, additional libraries, the development environment and all settings.}
+
+\vspace{2ex}
+
+This is what we call "\textbf{\rfw}", with \textbf{AIO} means: \textbf{A}ll \textbf{I}n \textbf{O}ne.
+
+\vspace{2ex}
+
+With this solution the entire test setup is reproducible by every developer on every computer.
+
+And there is no need any more for any user, to install all affected components manually, and there is also no need any more for any user,
+to spend effort on the configuration of the test setup. After using the \rfw\ installer, test developers immediately can start to implement tests.
+

@@ -1,0 +1,165 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+
+\chapter{Components}
+
+Compared with the core \rfwcore, the \rfw\ contains some additional components, that extend the functionality by useful features.
+All components are hosted on GitHub. Most of the components can also be used stand-alone (= outside the context of \rfw). But in case of a stand-alone
+usage, the user is responsible for the installation and configuration. Further hints can be found in the readme files of the corresponding GitHub repository.
+
+The following is an overview about all additional components, that are part of the \rfw:
+
+\vspace{2ex}
+
+\textbf{1. RobotFramework\_TestsuitesManagement}
+
+The \textbf{RobotFramework\_TestsuitesManagement} enables users to define dynamic configuration values within separate configuration
+files in JSON format. These configuration values are available during test execution - but under certain conditions that can be defined by
+the user (e.g. to realize a variant handling or to define parameters that are test bench specific).
+
+The \textbf{RobotFramework\_TestsuitesManagement} also provides a version control mechanism to ensure that the developed tests fit to the test environment.
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-testsuitesmanagement}{RobotFramework\_TestsuitesManagement}
+
+\vspace{2ex}
+
+\textbf{2. JsonPreprocessor}
+
+The \textbf{JsonPreprocessor} provides additional features in JSON files. These features extend the standard JSON format and make it easier
+to use JSON files for e.g. configuring tests (see also \textbf{RobotFramework\_TestsuitesManagement}). The additional features are:
+\begin{itemize}
+   \item Add comments
+   \item Let a JSON file import other JSON files (nested imports; e.g. to avoid redundancy)
+   \item Allow also pure Python keywords like \pcode{True}, \pcode{False} and \pcode{None}
+   \item Define new parameters and overwrite already existing ones
+\end{itemize}
+
+Homepage: \href{https://github.com/test-fullautomation/python-jsonpreprocessor}{JsonPreprocessor}
+
+\vspace{2ex}
+
+\textbf{3. QConnectBase}
+
+\textbf{QConnectBase} is a connection testing library for the \rfwcore. It provides a mechanism to handle trace log continously receiving from a connection
+(such as Raw TCP, SSH, Serial, etc.) besides sending data back to the other side. It's especially efficient for monitoring the overflowed response trace log
+from asynchronous trace systems.
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-qconnect-base}{QConnectBase}
+
+\vspace{2ex}
+
+\textbf{4. RobotLog2RQM}
+
+\textbf{RobotLog2RQM} writes \rfwcore\ test results (available in XML format) to the IBM® Rational® Quality Manager (RQM).
+This includes:
+\begin{itemize}
+   \item Create all required resources (Test Case Excution Record, Test Case Execution Result, ...) for new testcase on RQM
+   \item Link all testcases to provided testplan
+   \item Add new test result for existing testcase on RQM
+   \item Update existing testcase on RQM
+\end{itemize}
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-robotlog2rqm}{RobotLog2RQM}
+
+\vspace{2ex}
+
+\textbf{5. RobotLog2DB}
+
+\textbf{RobotLog2DB} writes \rfwcore\ test results (available in XML format) to a database. This database is provided by another component
+called \textbf{TestResultWebApp}. Based on the content of the database the \textbf{TestResultWebApp} presents an overview about the whole test execution
+and details about each test result.
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-robotlog2db}{RobotLog2DB}
+
+\vspace{2ex}
+
+\textbf{6. PyTestLog2DB}
+
+\textbf{PyTestLog2DB} writes test results of the Python module pytest (available in XML format) to a database. This database is provided by another component
+called \textbf{TestResultWebApp}. Based on the content of the database the \textbf{TestResultWebApp} presents an overview about the whole test execution
+and details about each test result.
+
+Homepage: \href{https://github.com/test-fullautomation/python-pytestlog2db}{PyTestLog2DB}
+
+\vspace{2ex}
+
+\textbf{7. TestResultWebApp}
+
+\textbf{TestResultWebApp} is a web-based application and is used for visualizing and tracking test execution results. It provides charts from an overview of
+the test result to the detail of all included test cases. It also provides tools to control the quality of developing software version (under testing)
+by the a graphical comparison of test results from different test executions
+
+Homepage: \href{https://github.com/test-fullautomation/testresultwebapp}{TestResultWebApp}
+
+\vspace{2ex}
+
+\textbf{8. GenPackageDoc}
+
+\textbf{GenPackageDoc} provides a toolchain to generate a documentation in PDF format out of Python sources that are stored within a repository.
+The content of this documentation is taken out of the docstrings of functions, classes and their methods. All docstrings have to be written in
+reStructuredText (RST) format, that is a certain markdown dialect.
+It is possible to extend the documentation by the content of additional files either in RST format or in LaTeX format.
+\textbf{GenPackageDoc} is also designed to consider setup informations of a repository.
+
+Homepage: \href{https://github.com/test-fullautomation/python-genpackagedoc}{GenPackageDoc}
+
+\vspace{2ex}
+
+\textbf{9. PythonExtensionsCollection}
+
+The \textbf{PythonExtensionsCollection} extends the functionality of Python by some useful functions that are not available in Python immediately.
+This covers for example file and folder operations, string operations like normalizing a path and a pretty print method.
+Also a file comparison feature is available.
+
+Homepage: \href{https://github.com/test-fullautomation/python-extensions-collection}{PythonExtensionsCollection}
+
+\vspace{2ex}
+
+\textbf{10. RobotframeworkExtensions}
+
+The \textbf{RobotframeworkExtensions} extend the functionality of the \rfwcore\ by some useful keywords.
+This covers for example string operations like normalizing a path and a pretty print keyword (especially for composite
+Python data types). The \textbf{RobotframeworkExtensions} keywords are implemented in Python (see \textbf{PythonExtensionsCollection}).
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-extensions-collection}{RobotframeworkExtensions}
+
+\vspace{2ex}
+
+\textbf{11. Tutorial}
+
+The \rfw\ tutorial contains robot code examples together with the documentation explaining how to use these examples and how they work.
+The basic idea behind this tutorial is not to have theory only but additionally to this theory also the possibility to experience what is explained inside.
+The main focus of this tutorial is on some feature extensions available for the \rfwcore.
+
+Homepage: \href{https://github.com/test-fullautomation/robotframework-tutorial}{Tutorial}
+
+\newpage
+
+\textbf{12. Development environment}
+
+The \rfw\ installer also installs VSCodium, that is an open source editor. VSCodium is preconfigured especially for the usage together with
+the \rfw.
+
+Features:
+
+\begin{itemize}
+   \item Workspace with included testcases folder, documentation and tutorial
+   \item Previews for certain formats like, MD, RST, PDF, PlantUML
+   \item Support of the extended JSON syntax of \textbf{RobotFramework\_TestsuitesManagement}
+   \item Static code analysis by Robocop, that is an also included static code checker
+\end{itemize}
+
+
+
+

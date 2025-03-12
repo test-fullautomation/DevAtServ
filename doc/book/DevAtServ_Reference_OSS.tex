@@ -1,0 +1,102 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+%
+\documentclass[a4paper,10pt]{report}
+
+% --------------------------------------------------------------------------------------------------------------
+% common preamble
+% --------------------------------------------------------------------------------------------------------------
+
+\input{./styles/preamble}
+
+
+% --------------------------------------------------------------------------------------------------------------
+% document title
+% --------------------------------------------------------------------------------------------------------------
+
+% - file BundleVersionDate.tex created and updated by genmaindoc.py
+% - requires UPDATE_EXTERNAL_DOC set to true within maindoc_config.json
+% - requires import of robotframework-testsuitesmanagement within maindoc_config.json
+\input{./BundleVersionDate.tex}
+
+\author{Implemented by: \\ \\
+        \textit{Thomas Pollerspöck} \\ \\
+        \textit{Nguyen Huynh Tri Cuong} \\
+        \textit{Tran Duy Ngoan} \\
+        \textit{Mai Dinh Nam Son} \\
+        \textit{Hua Van Thong} \\
+        \textit{Holger Queckenstedt}}
+
+
+% --------------------------------------------------------------------------------------------------------------
+% document header
+% --------------------------------------------------------------------------------------------------------------
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+
+\maketitle
+
+\clearpage
+\pagenumbering{Alph}
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+
+\hypersetup{pageanchor=true}
+
+% \listoftodos % ! to be clarified separately !
+
+% --------------------------------------------------------------------------------------------------------------
+% document content (manually maintained part)
+% --------------------------------------------------------------------------------------------------------------
+
+\include{./include/introduction}
+
+\include{./include/installation}
+
+\include{./include/components}
+
+\include{./include/fw_environment}
+
+\include{./include/code_analysis}
+
+\include{./include/logging}
+
+
+% --------------------------------------------------------------------------------------------------------------
+% document content (automatically generated part)
+%
+% following input files require the execution of genmaindoc.py, otherwise they are not available
+% --------------------------------------------------------------------------------------------------------------
+
+\input{./externaldocs/library_doc_overview}
+
+\input{./externaldocs/library_doc_imports}
+
+\input{./externaldocs/python_modules_installed}
+
+\input{./externaldocs/final_summary}
+
+
+% --------------------------------------------------------------------------------------------------------------
+% appendix
+% --------------------------------------------------------------------------------------------------------------
+
+%\backmatter
+%glossary and index would go here.
+
+\end{document}

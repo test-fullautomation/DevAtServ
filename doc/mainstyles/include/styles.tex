@@ -1,0 +1,507 @@
+%  Copyright 2020-2024 Robert Bosch GmbH
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+
+\usepackage[left=1.0 cm, right=1.0 cm, top=0.5in, bottom=0.5in]{geometry}
+
+%makes larger/less than required for syntax descriptions working without
+%math mode
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\usepackage{color}
+
+\usepackage{fancyhdr}
+
+\usepackage[table]{xcolor}
+
+\usepackage{pifont}
+
+\usepackage{verbatim}
+
+\definecolor{heading}{rgb}{1,0,0}
+\pagestyle{fancy}
+\fancyhf{} %clear all headers/footers
+\fancyhead[RO]{\textsl{\rightmark}}
+\fancyhead[LO]{\textsl{\leftmark}}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.7pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancypagestyle{plain}{}
+
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+  {\normalfont\bfseries\large}{\thechapter.}{5pt}{}
+\titleformat{\subparagraph}
+    {\normalfont\normalsize\bfseries}{\thesubparagraph}{5pt}{}
+
+\makeatletter
+   \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+     {-3.25ex\@plus -1ex \@minus -.2ex}%
+     {1.5ex \@plus .2ex}%
+     {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\titlespacing*{\chapter}
+{0pt}{1.0em}{0.0em}
+\titlespacing*{\section}
+{0pt}{1.0em}{0.0em}
+\titlespacing*{\subsection}
+{0pt}{1.0em}{0.0em}
+\titlespacing*{\subsubsection}
+{0pt}{1.0em}{0.0em}
+\titlespacing*{\paragraph}
+{0pt}{1.0em}{0.0em}
+\titlespacing*{\subparagraph}
+{0pt}{1.0em}{0.0em}
+
+\parindent=0in
+\parskip=5pt
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+%provide \includepdf and allow multidots in filenames
+\usepackage{grffile}
+\usepackage{pdfpages}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\renewcommand{\ttdefault}{pcr}
+
+\usepackage{efbox}
+
+\usepackage{scrextend}
+\usepackage{enumitem}
+
+\usepackage{listings}
+\usepackage{expl3,xparse}
+
+% ----------------------------------------------------------------------- %
+%lstlinebgrd needs this fix to run with current listings version provided by MiKTeX
+\makeatletter
+\let\old@lstKV@SwitchCases\lstKV@SwitchCases
+\def\lstKV@SwitchCases#1#2#3{}
+\makeatother
+\usepackage{lstlinebgrd}
+\makeatletter
+\let\lstKV@SwitchCases\old@lstKV@SwitchCases
+
+\lst@Key{numbers}{none}{%
+    \def\lst@PlaceNumber{\lst@linebgrd}%
+    \lstKV@SwitchCases{#1}%
+    {none:\\%
+     left:\def\lst@PlaceNumber{\llap{\normalfont
+                \lst@numberstyle{\thelstnumber}\kern\lst@numbersep}\lst@linebgrd}\\%
+     right:\def\lst@PlaceNumber{\rlap{\normalfont
+                \kern\linewidth \kern\lst@numbersep
+                \lst@numberstyle{\thelstnumber}}\lst@linebgrd}%
+    }{\PackageError{Listings}{Numbers #1 unknown}\@ehc}}
+\makeatother
+% ----------------------------------------------------------------------- %
+
+\usepackage{longtable}
+%align long-table to left side
+\setlength{\LTleft}{0pt}
+
+%configure description environment to use normal font for
+%description
+\setdescription{font=\normalfont\color{blue!60!black}}
+
+\usepackage[breakable,skins]{tcolorbox}
+\tcbuselibrary{skins}
+\tcbuselibrary{breakable}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.7}
+
+%\definecolor{infobackground}{RGB}{217,237,247}
+%\definecolor{infoforeground}{RGB}{58,135,173}
+%\definecolor{infoborder}{RGB}{188,232,241}
+
+\usepackage{environ}
+\usepackage{tikz}
+
+\usepackage{wasysym}
+\usepackage{amssymb}
+
+\usepackage[]{todonotes}
+
+\usepackage{makecell}
+\usepackage{tabularx}
+
+\usetikzlibrary{fit,backgrounds,calc}
+
+\usepackage[bookmarksopen, bookmarksdepth=subchapter]{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    urlcolor=blue,
+    final=true
+}
+%\fullref shows a full reference in format "page number, chapter number chapter name"
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{page \pageref*{#1}, \autoref*{#1} \nameref*{#1}}}
+
+
+\definecolor{lightgray}{rgb}{0.9,0.9,0.9}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{RED}{rgb}{1,0,0}
+\definecolor{green}{rgb}{0,0.5,0}
+\definecolor{lightgreen}{HTML}{C5F7C3}
+\definecolor{lightred}{HTML}{F7CAC3}
+
+%
+%  style definitions for Robot syntax description boxes
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% style definitions for interface descriptions
+%
+
+\definecolor{col_section}{RGB}{255,0,0}
+\definecolor{col_syntax}{RGB}{128,0,128}
+\definecolor{col_flowcontrol}{RGB}{165,42,42}
+\definecolor{col_builtin_kw}{RGB}{0,0,255}
+\definecolor{col_user_kw}{RGB}{0,0,255}
+\definecolor{col_test_task}{RGB}{0,0,0}
+\definecolor{col_robot_var}{RGB}{0,100,0}
+\definecolor{col_string}{RGB}{255,0,0}
+\definecolor{col_comment}{RGB}{128,128,128}
+\definecolor{col_argument}{RGB}{128,0,128}
+
+\newcommand{\ifsection}[1]{\textnormal{\textcolor{col_section}{#1}}}
+\newcommand{\ifsyntax}[1]{\textnormal{\textcolor{col_syntax}{#1}}}
+\newcommand{\ifflowcontrol}[1]{\textnormal{\textcolor{col_flowcontrol}{#1}}}
+\newcommand{\ifbuiltinkeyword}[1]{\textnormal{\textcolor{col_builtin_kw}{#1}}}
+\newcommand{\ifuserkeyword}[1]{\textbf{\textcolor{col_user_kw}{#1}}}
+\newcommand{\iftesttask}[1]{\textbf{\textcolor{col_test_task}{#1}}}
+\newcommand{\ifvar}[1]{\textnormal{\textcolor{col_robot_var}{#1}}}
+\newcommand{\ifstring}[1]{\textnormal{\textcolor{col_string}{#1}}}
+\newcommand{\ifcomment}[1]{\textnormal{\textcolor{col_comment}{#1}}}
+\newcommand{\ifargument}[1]{\textnormal{\textcolor{col_argument}{#1}}}
+
+%distance from left side if attribute can have many values which don't
+%fit in one line
+\newcommand{\ifs}[0]{\rule{1.21em}{0em}}
+
+\newtcolorbox{boxsyn_template}[1][]{
+  enhanced,
+  before skip=2mm,
+  after skip=3mm,
+  boxrule=2pt,
+  left=12mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm,
+  colback=black!1,
+  colframe=black!30!white,
+  breakable,
+   }
+
+
+\NewDocumentEnvironment{boxsyn}{ m }
+{
+\begin{boxsyn_template}
+{\color{black!30!white} Robot Syntax}
+\ttfamily #1
+\end{boxsyn_template}
+}
+
+%
+%  style definitions for Robot code listings and log listings
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{color_code_background}{RGB}{255, 239, 222}
+\definecolor{color_code_frame}{RGB}{255, 222, 189}
+\definecolor{color_code_highlight}{RGB}{255, 222, 189}
+
+\definecolor{color_log_background}{RGB}{222, 231, 247}
+\definecolor{color_log_frame}{RGB}{189, 206, 231}
+\definecolor{color_log_highlight}{RGB}{189, 206, 231}
+
+%
+%  \hlcode command and \hllog command
+%  for highlighting specific lines in code and log listings
+%
+\ExplSyntaxOn
+\NewDocumentCommand \hlcode { O{color_code_highlight} O{color_code_background } m }
+{
+ \clist_if_in:nVTF { #3 } { \the\value{lstnumber} }{ \color{#1} }{ \color{#2}  }
+}
+
+\NewDocumentCommand \hllog { O{color_log_highlight} O{color_log_background } m }
+{
+ \clist_if_in:nVTF { #3 } { \the\value{lstnumber} }{ \color{#1} }{ \color{#2}  }
+}
+\ExplSyntaxOff
+
+%
+% environment for robot code listings
+%
+\lstdefinelanguage{Robot_code}{
+      alsoletter={-,[,],{,},$,@,\%},
+      basicstyle=\ttfamily\small,
+      columns=fixed,
+      showstringspaces=false,
+      frame=single,
+      framesep=5pt,
+      breaklines=false,
+      captionpos=b,
+      keywords={
+         Library,
+         Resource,
+         Variables,
+         Metadata,
+         Test,
+         Suite,
+         Setup,
+         Teardown,
+         },%keywords with spaces can not be defined in keywords
+      morekeywords=[1]{
+         \[Documentation],
+         [Tags],[Arguments],
+         [Return],[Teardown],
+         [Precondition],
+         [Postcondition],
+         [Template],
+         [Timeout],
+         [Return]},
+      morekeywords=[2]{
+         Given,
+         When,
+         And,
+         Then,
+         FOR,
+         WITH,
+         NAME,
+         IN,
+         RANGE,
+         END,
+         CONTINUE,
+      },
+      keywordstyle=\color{cyan},
+      keywordstyle=[1]\color{col_syntax},
+      keywordstyle=[2]\color{col_flowcontrol},
+      comment=[l][\color{col_comment}]{\#},
+      commentstyle=\color{col_comment}\upshape,
+      moredelim=[s][\color{col_section}]{***}{***},
+      moredelim=[s][\color{green}]{$\{}{\}},
+      moredelim=[s][\color{green}]{@\{}{\}},
+      moredelim=[s][\color{green}]{\%\{}{\}},
+      morestring=[b]",
+      stringstyle=\color{red},
+      identifierstyle=\color{blue},
+      rulesepcolor=\color{color_code_frame},
+      rulecolor=\color{color_code_frame},
+      backgroundcolor=\color{color_code_background},
+      columns=fixed,
+      keepspaces=true,
+      abovecaptionskip=15pt
+}
+
+\lstnewenvironment{robotlisting}[1][]{%
+   \lstset{%
+      xleftmargin=5pt,
+      xrightmargin=5pt,
+      alsolanguage=Robot_code,
+      #1
+   }
+}{}
+
+\newcommand{\rcode}[1]{
+   \efbox[margin=2pt,
+         linewidth=1pt,
+         linecolor=color_code_frame,
+         backgroundcolor=color_code_background,
+         font=\ttfamily\small]{\lstinline[language=Robot_code]!#1!}
+}
+
+%
+% environment for robot log listings
+%
+\lstdefinelanguage{Robot_log}{
+      alsoletter=-,
+      basicstyle=\ttfamily\small,
+      columns=fixed,
+      showstringspaces=false,
+      commentstyle=\color{gray}\upshape,
+      frame=single,
+      framesep=5pt,
+      breaklines=false,
+      captionpos=b
+      moredelim=[is][\bfseries]{[*}{*]},
+      morestring=[m][\color{red}]{'},
+      morestring=[m][\color{red}]{"},
+      stringstyle=\color{red},
+      identifierstyle=\color{black},
+      keywordstyle=\color{darkblue},
+      morekeywords=[1]{PASS, passed},
+      morekeywords=[2]{FAIL, failed},
+      keywordstyle=[1]\color{green},
+      keywordstyle=[2]\color{red},
+      rulesepcolor=\color{color_log_frame},
+      rulecolor=\color{color_log_frame},
+      backgroundcolor=\color{color_log_background},
+      columns=fixed,
+      keepspaces=true,
+      abovecaptionskip=15pt
+}
+
+\lstnewenvironment{robotlog}[1][]{%
+   \lstset{%
+      xleftmargin=5pt,
+      xrightmargin=5pt,
+      alsolanguage=Robot_log,
+      #1
+   }
+}{}
+
+\newcommand{\rlog}[1]{
+   \efbox[margin=2pt,
+         linewidth=1pt,
+         linecolor=color_log_frame,
+         backgroundcolor=color_log_background,
+         font=\ttfamily\small]{\lstinline[language=Robot_log]!#1!}
+}
+
+
+%
+%  style definitions for message boxes
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% warning box
+%
+
+\newtcolorbox{boxwarning_template}[1][]{
+  #1,
+  enhanced,
+  before skip=2mm,
+  after skip=3mm,
+  boxrule=2pt,
+  left=12mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm,
+  colback=red!10,
+  colframe=red!70!white,
+  underlay={%
+    \path[fill=red!70!white,draw=none] (interior.south west) rectangle node[white]{\Huge\bfseries \lightning} ([xshift=10mm]interior.north west);
+    },
+   , #1}
+
+
+\NewDocumentEnvironment{boxwarning}{ m m }
+{
+\begin{boxwarning_template}
+{\color{red} #1}
+\vspace{5pt}
+\\
+#2
+\end{boxwarning_template}
+}
+
+%
+% good practice box
+%
+
+\newtcolorbox{boxgoodpractice_template}[1][]{
+  #1,
+  enhanced,
+  before skip=2mm,
+  after skip=3mm,
+  boxrule=2pt,
+  left=12mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm,
+  colback=green!10,
+  colframe=green!60!black,
+  underlay={%
+    \path[fill=green!60!black,draw=none] (interior.south west) rectangle node[white]{\Huge\bfseries \checkmark} ([xshift=10mm]interior.north west);
+    },
+   , #1}
+
+
+\NewDocumentEnvironment{boxgoodpractice}{ m m }
+{
+\begin{boxgoodpractice_template}
+{\color{green!60!black} #1}
+\vspace{5pt}
+\\
+#2
+\end{boxgoodpractice_template}
+}
+
+%
+% info box
+%
+
+\newtcolorbox{boxinfo_template}[1][]{
+  #1,
+  enhanced,
+  before skip=2mm,
+  after skip=3mm,
+  boxrule=2pt,
+  left=12mm,
+  right=2mm,
+  top=1mm,
+  bottom=1mm,
+  colback=orange!10,
+  colframe=orange!80!white,
+  underlay={%
+    \path[fill=orange!80!white,draw=none] (interior.south west) rectangle node[white]{\Huge\bfseries i} ([xshift=10mm]interior.north west);
+    },
+   , #1}
+
+
+\NewDocumentEnvironment{boxinfo}{ m m }
+{
+\begin{boxinfo_template}
+{\color{orange!80!white} #1}
+\vspace{5pt}
+\\
+#2
+\end{boxinfo_template}
+}
+
+\newcommand{\ifalignrcode}{\hspace{2pt}}
+\newcommand{\iftab}{\phantom{x}\hspace{3ex}}
+\newcommand{\ifunknown}[1]{\textcolor{blue}{#1}}
+\newcommand{\ifaborted}[1]{\textcolor{gray}{#1}}
+\newcommand{\ifpassed}[1]{\textcolor{green}{#1}}
+\newcommand{\iffailed}[1]{\textcolor{red}{#1}}
+\newcommand{\ifnotice}[1]{\textbf{\textcolor{red}{#1}}}
+\usepackage{multirow}
+
+% use for flowchart drawing
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=0.8cm,text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=0.8cm, text centered, draw=black, fill=blue!30, text width=3cm]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=0.8cm, text centered, draw=black, fill=orange!30, text width=4cm]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30, text width=5cm, inner sep=-5pt, aspect=4]
+\tikzstyle{arrow} = [thick,->,>=stealth]
