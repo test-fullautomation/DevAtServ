@@ -1,6 +1,7 @@
 pika
 pywin32
 colorama
+robotframework
 pypandoc_binary==1.13
 PythonExtensionsCollection
 GenPackageDoc
