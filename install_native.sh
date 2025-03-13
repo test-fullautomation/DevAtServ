@@ -78,8 +78,9 @@ clone_microservices () {
 	parse_config $CONFIG_SERVICE_FILE
 
 	echo "Prepare for documentation"
-	cp -rf doc/* ../devatserv_documentation
-	ls -la ../devatserv_documentation
+	mkdir -p ../devatserv-documentation
+	cp -rf doc/* ../devatserv-documentation
+	ls -la ../devatserv-documentation
 	ls -la
 
     echo -e "${MSG_DONE} All services are cloned successfully."
@@ -177,6 +178,10 @@ install_packaging_python_windows() {
 			logresult "$?" "installed ${reponame}" "install ${reponame}"
 		fi
 	done
+
+	echo "Building document"
+	cd ../devatserv-documentation
+	$destDir/python39/python.exe ./setup.py clean --all install
 
 	logresult "$?" "all microservices are intergrated into Python" "require to intergrate microservices for Python"
 
