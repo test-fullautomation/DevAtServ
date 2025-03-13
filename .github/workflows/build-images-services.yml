@@ -149,12 +149,6 @@ jobs:
         with:
           name: das-gui-artifact-exe
       
-      - name: Prepare doc
-        shell: bash
-        run: |
-          cp -rf doc/* ../devatserv_documentation
-          ls -la ../devatserv_documentation
-
       - name: Install DevAtServ
         shell: bash
         run: |
