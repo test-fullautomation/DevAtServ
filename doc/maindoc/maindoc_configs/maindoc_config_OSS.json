@@ -72,7 +72,7 @@
 # Defines the name of the main tex file, that has to be executed by the LaTeX compiler.
 # It is expected that this file is present within "BOOKSOURCES".
 
-   "MAINTEXFILENAME" : "RobotFrameworkAIO_Reference_OSS.tex",
+   "MAINTEXFILENAME" : "DevAtServ_Reference_OSS.tex",
 
 
 # Section "JOBNAME":
