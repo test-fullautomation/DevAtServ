@@ -40,8 +40,8 @@
 # Within the folders listed below, the documentation rendering process (GenPackageDoc) is executed.
 # The generated PDF files will be part of the main documentation.
 
-   "IMPORTS" : ["../../python-microservice-base",
-                "../../python-microservice-cleware-switch"],
+   "IMPORTS" : ["../../../python-microservice-base",
+                "../../../python-microservice-cleware-switch"],
 
 
 # Section "BOOKSOURCES":
