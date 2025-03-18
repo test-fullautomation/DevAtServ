@@ -153,6 +153,12 @@ jobs:
         with:
           name: das-gui-artifact-exe
       
+      - name: Install dependencies and set environment variables
+        shell: bash
+        run: |
+          . ./requirements_windows.sh
+          echo "GENDOC_LATEXPATH=$GENDOC_LATEXPATH" >> $GITHUB_ENV
+
       - name: Install DevAtServ
         shell: bash
         run: |
