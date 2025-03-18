@@ -20,6 +20,7 @@ env:
   TRIGGER_BY: ${{ github.ref_type }}
   TAG_NAME: ${{ github.ref_name }}
   REF_NAME: ${{ github.ref_name }}
+  MAINDOC_CONFIGFILE: --configfile "./maindoc/maindoc_configs/maindoc_config_OSS.json"
 
 jobs:
   tag-repos:
