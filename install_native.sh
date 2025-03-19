@@ -223,10 +223,6 @@ install_packaging_python_windows() {
 		fi
 	done
 
-	echo "Building document"
-	cd ../devatserv-documentation
-	$destDir/python39/python.exe ./setup.py clean --all install
-
 	logresult "$?" "all microservices are intergrated into Python" "require to intergrate microservices for Python"
 
     echo -e "${MSG_DONE} Installed python package successfully."
