@@ -200,6 +200,43 @@ jobs:
           name: devatserv-windows-docker-package
           path: output_Windows/*.exe
 
+  install-test-windows:
+    name: Test Windows package
+    runs-on: windows-latest
+    needs: [ devatserv-windows-native ]
+    if: ${{ ! failure() && ! cancelled() }}
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Download Windows installer package
+      uses: actions/download-artifact@v4
+      with:
+        name: devatserv-windows-package
+
+    - name: Install RobotFramework AIO on Windows
+      shell: cmd
+      run: ./tools/scripts/install-windows.bat
+
+  install-test-linux:
+    name: Test Linux package
+    runs-on: ubuntu-latest
+    needs: [ devatserv-linux-docker ]
+    if: ${{ ! failure() && ! cancelled() }}
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Download Linux installer package
+      uses: actions/download-artifact@v4
+      with:
+        name: devatserv-linux-docker-package
+
+    - name: Install on Linux
+      run: |
+        sudo apt-get update
+        sudo apt-get install ./*.deb --fix-missing
+
   release:
     name: Release DAS
     runs-on: ubuntu-latest
