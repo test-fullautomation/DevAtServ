@@ -28,19 +28,19 @@ fi
 
 
 
-# Configure Unitiy Launchers folder
-APPS_PATH=${HOME}/.local/share/applications
-if [ -e "${APPS_PATH}" ]; then
-   # Check whether it is file or directory
-   # remove it in case it is fine then create appropriate directory 
-   if [ -f "${APPS_PATH}" ]; then
-      rm "${APPS_PATH}"
-      mkdir "${APPS_PATH}"
-   fi
-else
-   # Create applications launcher folder if not existing
-   mkdir "${APPS_PATH}"
-fi
+# # Configure Unitiy Launchers folder
+# APPS_PATH=${HOME}/.local/share/applications
+# if [ -e "${APPS_PATH}" ]; then
+#    # Check whether it is file or directory
+#    # remove it in case it is fine then create appropriate directory 
+#    if [ -f "${APPS_PATH}" ]; then
+#       rm "${APPS_PATH}"
+#       mkdir "${APPS_PATH}"
+#    fi
+# else
+#    # Create applications launcher folder if not existing
+#    mkdir "${APPS_PATH}"
+# fi
 
 # For scrip excution
 cp /opt/devatserv/bin/devatserv /usr/local/bin/devatserv
