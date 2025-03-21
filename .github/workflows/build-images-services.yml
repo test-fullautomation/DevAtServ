@@ -237,6 +237,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install ./*.deb --fix-missing
 
+    - name: Run devatserv
+      run: |
+        devatserv startup
+
   release:
     name: Release DAS
     runs-on: ubuntu-latest
