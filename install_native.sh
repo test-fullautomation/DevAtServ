@@ -77,12 +77,6 @@ clone_microservices () {
 	# Parse and clone all services
 	parse_config $CONFIG_SERVICE_FILE
 
-	echo "Prepare for documentation"
-	mkdir -p ../devatserv-documentation
-	cp -rf doc/* ../devatserv-documentation
-	ls -la ../devatserv-documentation
-	ls -la
-
     echo -e "${MSG_DONE} All services are cloned successfully."
 }
 
