@@ -214,7 +214,7 @@ jobs:
       with:
         name: devatserv-windows-package
 
-    - name: Install RobotFramework AIO on Windows
+    - name: Install DevAtServ on Windows
       shell: cmd
       run: ./tools/scripts/install-windows.bat
 
@@ -232,7 +232,7 @@ jobs:
       with:
         name: devatserv-linux-docker-package
 
-    - name: Install on Linux
+    - name: Install DevAtServ on Linux
       run: |
         sudo apt-get update
         sudo apt-get install ./*.deb --fix-missing
