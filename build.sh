@@ -96,19 +96,32 @@ function prepare_docker_compose_for_deployment() {
         errormsg "Docker compose file not found"
     fi
 
-    # prepare compose file configuration for USB Cleware
-    cp -rf docker-compose.usbcleware.yml \
-        ./build/Linux/opt/devatserv/share/start-services/
-    
-    cp -rf docker-compose.usbcleware.yml \
-    ./build/Windows/devatserv/share/start-services/
+    parse_services $CONFIG_SERVICE_FILE
 
-    # prepare compose file configuration for ttyUSB Debug Board
-    cp -rf docker-compose.ttyusb.yml \
-        ./build/Linux/opt/devatserv/share/start-services/
+    for service in "${list_services[@]}"
+    do
+        service_name=${service#${service_type}.}
+        if [ "$service_name" == "devatserv-cleware-service" ]; then
+            echo "Integrate cleware-switch-service: docker-compose.usbcleware.yml"
+            # prepare compose file configuration for USB Cleware
+            cp -rf docker-compose.usbcleware.yml \
+                ./build/Linux/opt/devatserv/share/start-services/
+            
+            cp -rf docker-compose.usbcleware.yml \
+            ./build/Windows/devatserv/share/start-services/
 
-    cp -rf docker-compose.ttyusb.yml \
-    ./build/Windows/devatserv/share/start-services/
+        elif [ "$service_name" == "devatserv-debug-board-service" ]; then
+            echo "Integrate debug-board-service: docker-compose.ttyusb.yml"
+            # prepare compose file configuration for ttyUSB Debug Board
+            cp -rf docker-compose.ttyusb.yml \
+                ./build/Linux/opt/devatserv/share/start-services/
+
+            cp -rf docker-compose.ttyusb.yml \
+            ./build/Windows/devatserv/share/start-services/
+
+        fi
+    done
+   
 }
 
 function pre_build_debian() {
