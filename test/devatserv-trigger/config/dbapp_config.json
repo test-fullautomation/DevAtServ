@@ -1,0 +1,6 @@
+{
+   "components"  : {
+                     "Micr Srv Base"    : "MicroserviceBase",
+                     "Micr Srv Cle Swi" : "MicroserviceClewareSwitch"
+                   }
+}
