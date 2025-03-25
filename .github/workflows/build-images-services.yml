@@ -218,6 +218,11 @@ jobs:
       shell: cmd
       run: ./tools/scripts/install-windows.bat
 
+    - name: Run tests on Windows
+      shell: bash
+      run: |
+        "$DevAtServ/python.exe" test/devatserv-trigger/services-test-trigger.py --configfile ./test/config/testtrigger_config.json
+          
   install-test-linux:
     name: Test Linux package
     runs-on: ubuntu-latest
