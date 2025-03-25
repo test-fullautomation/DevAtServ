@@ -214,6 +214,12 @@ jobs:
       with:
         name: devatserv-windows-package
 
+    - name: Clone services
+      shell: bash
+      run: |
+        chmod +x ./install.sh
+        ./install.sh --config-file config/repositories/repositories.conf -c
+
     - name: Install DevAtServ on Windows
       shell: cmd
       run: ./tools/scripts/install-windows.bat
