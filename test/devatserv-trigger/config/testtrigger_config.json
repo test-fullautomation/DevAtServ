@@ -46,7 +46,7 @@
 
    "COMPONENTS" : [
                     {
-                       "COMPONENTROOTPATH" : "../../../../python-microservice-base",
+                       "COMPONENTROOTPATH" : "../../../python-microservice-base",
                        "TESTFOLDER"        : "pytest",
                        "TESTTYPE"          : "PYTEST",
                        "TESTEXECUTOR"      : "executepytest.py",
@@ -54,7 +54,7 @@
                        "LOGFILE"           : "../../../../python-microservice-base/pytest/aiotestlogfiles/aiotestlogfile.xml"
                     },
                     {
-                       "COMPONENTROOTPATH" : "../../../../python-microservice-cleware-switch",
+                       "COMPONENTROOTPATH" : "../../../python-microservice-cleware-switch",
                        "TESTFOLDER"        : "pytest",
                        "TESTTYPE"          : "PYTEST",
                        "TESTEXECUTOR"      : "executepytest.py",
