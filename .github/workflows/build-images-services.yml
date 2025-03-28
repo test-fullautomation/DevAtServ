@@ -257,6 +257,16 @@ jobs:
       run: |
         devatserv startup
 
+    - name: Run tests on Linux
+      shell: bash
+      run: |
+        git clone https://github.com/test-fullautomation/python-extensions-collection.git
+        cd python-extensions-collection
+        pip install -r ./requirements.txt
+        pip install pytest
+        cd ..
+        python test/devatserv-trigger/services-test-trigger.py --configfile "./config/testtrigger_config.json"
+
   release:
     name: Release DAS
     runs-on: ubuntu-latest
