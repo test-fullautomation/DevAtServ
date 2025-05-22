@@ -102,6 +102,50 @@ install_genpackage_pandoc() {
     echo -e "${MSG_DONE} Installed Pandoc successfully"
 }
 
+install_texlive () {
+	CDIR=$(pwd)
+	mkdir -p download
+	cd download
+	# Try this if the mirror.foobar.to can't be download
+	if [ ! -f "install-tl-unx.tar.gz" ]; then
+		curl -L https://mirror.foobar.to/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz -o ./install-tl-unx.tar.gz
+	fi
+
+	zcat install-tl-unx.tar.gz | tar xf -
+	cd install-tl-20*
+	sudo perl ./install-tl --no-interaction
+	cd $CDIR
+}
+
+check_and_install_texlive () {
+
+	if [ ! -z "$GENDOC_LATEXPATH" ]; then
+		return 0
+	fi
+	echo "install texlive"
+	# get last word of pdflatex version text
+
+
+	# If pdflatex exist
+	ver=`pdflatex -v | head -n 1 | awk 'NF>1{print $NF}'`
+	if [ ! -z "$ver" ]; then
+		release_year=${ver:0:4}
+		if [ $release_year -lt 2019 ]; then
+			if [ -f "/usr/local/texlive/$(date +%Y)/bin/x86_64-linux/pdflatex" ]; then
+				export GENDOC_LATEXPATH=/usr/local/texlive/$(date +%Y)/bin/x86_64-linux
+				return 0
+			fi
+		else
+			export PDFLATEXPATH=`which pdflatex`
+			export GENDOC_LATEXPATH=`dirname $PDFLATEXPATH`
+			return 0
+		fi
+	fi
+	install_texlive
+	export GENDOC_LATEXPATH="/usr/local/texlive/$(date +%Y)/bin/x86_64-linux"
+}
+
+
 install_packaging_python_windows() {
     
     echo -e "${MSG_INFO} Installing python package..."
@@ -239,7 +283,12 @@ main() {
     }
 
 	install_genpackage_pandoc || {
-		echo 'error installing pandoc package' 
+		echo 'error installing pandoc package' 	
+        return 1
+	}
+
+	check_and_install_texlive || {
+		echo 'error installing texlive package' 
         return 1
 	}
 
