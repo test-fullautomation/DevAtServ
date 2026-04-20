@@ -35,6 +35,19 @@ pre_check_installation() {
   return $err
 }
 
+post_check_installation() {
+  echo -e "${MSG_INFO} Starting post-check-installation"
+  local err=0
+
+  echo -e "${MSG_INFO} Adding user to docker group..."
+  sudo usermod -aG docker "$USER"
+
+  echo -e "${MSG_INFO} Changing ownership of docker.sock..."
+  sudo chown "$USER" /var/run/docker.sock
+
+  return $err
+}
+
 install_gui_devatserv() {
   echo -e "${MSG_INFO} Starting DevAtServ's GUI"
 
@@ -52,7 +65,7 @@ install_gui_devatserv() {
       echo -e "${MSG_INFO} Installing version $new_version..."
 
       if sudo dpkg -i $DAS_GUI_DIR; then
-        echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully"
+        echo -e "${MSG_DONE} DevAtServ's GUI has been installed successfully."
       else
         echo -e "${MSG_ERR} Installation of DevAtServ's GUI failed."
         return 1
